@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # =============================================================================
-# TASARIM: AYDINLIK & FERAH TEMA (CSS)
+# TASARIM: MOBİL UYUMLU CSS DÜZELTMELERİ
 # =============================================================================
 st.markdown("""
     <style>
@@ -32,6 +32,11 @@ st.markdown("""
         text-shadow: 1px 1px 2px #b0b0b0;
         font-weight: 900 !important;
         font-family: 'Helvetica', sans-serif;
+    }
+
+    /* KRİTİK MOBİL/GENEL METİN GÖRÜNÜRLÜK FIXİ */
+    body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > div {
+        color: #31333F !important; /* Koyu gri/siyah metin rengini zorla */
     }
     
     /* 3. SKOR TABLOSU YAZILARI */
@@ -322,12 +327,16 @@ if secim == "🎮 Oyun Modu":
             durum = st.session_state.sorular_cevaplandi[i]
             if durum is None:
                 with st.container():
-                    st.markdown(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
+                    # MOBİL UYUMLULUK İÇİN SORUYU TEK BİR WİDGET'TA TUTUYORUZ
+                    st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
+                    
+                    # Butonları ayırmak için 2 sütun kullanıyoruz
                     col_btn1, col_btn2 = st.columns(2)
                     buton_aktif = st.session_state.oyun_aktif
                     col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sol"))
                     col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sag"))
             else:
+                # CEVAP GÖRÜNÜMÜ
                 dogru_mu = func(st.session_state.hedef_sayi)
                 kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("yoksa", "").strip()
                 gercek_cevap_metni = ("TEK" if dogru_mu else "ÇİFT") if "TEK" in soru else (f"EVET ({kavram})" if dogru_mu else f"HAYIR ({kavram} DEĞİL)")
@@ -347,7 +356,7 @@ if secim == "🎮 Oyun Modu":
                 yeni_oyun_baslat()
                 st.rerun()
 
-# --- MOD 2: SAYI DEDEKTÖRÜ (SON DÜZELTME UYGULANDI) ---
+# --- MOD 2: SAYI DEDEKTÖRÜ ---
 elif secim == "🔍 Sayı Dedektörü":
     st.title("🔍 Master Class Dedektör")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -370,19 +379,16 @@ elif secim == "🔍 Sayı Dedektörü":
         for ad, func, _, _, _, _ in OZELLIKLER:
             if "TEK" in ad: continue
             
-            # KISA ADI TEMİZLEME (SORU EKİ VE NOKTALAMAYI KALDIRIYORUZ)
+            # KISA ADI TEMİZLEME
             kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
             kisa_temiz = kisa_temiz.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
             kisa_temiz = kisa_temiz.replace("?", "").replace("yoksa", "").strip()
-            
-            # KRİTİK DÜZELTME: Kalan tüm soru eklerini (mı, mi, mu, mü) agresifçe temizle
-            kisa_temiz = kisa_temiz.replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip()
+            kisa_temiz = kisa_temiz.replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip() # Soru eklerini temizle
 
 
             if func(val):
                 hedef = c_sol if idx % 2 == 0 else c_sag
                 with hedef:
-                    # Düzeltilmiş, onay içeren çıktı
                     st.success(f"✅ **{kisa_temiz}**") 
                     
                     if "FIBONACCI" in kisa_temiz:
@@ -390,7 +396,6 @@ elif secim == "🔍 Sayı Dedektörü":
                             st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
                             st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
                             
-                    # RAMANUJAN İÇİN EKSTRA BİLGİ EKLENDİ
                     if "RAMANUJAN" in kisa_temiz:
                          st.info("Bu sayı çok özeldir! İki farklı şekilde iki küpün toplamı olarak yazılabilir (1729 = 1³+12³ ve 9³+10³).")
 
@@ -430,7 +435,10 @@ elif secim == "📚 Bilgi Köşesi":
         * 5 + 8 = 13 (Kendinden önceki iki sayının toplamı)
         * Bu yüzden 13 bir Fibonacci sayısıdır.
         """)
-        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı") 
+
+[Image of Fibonacci sequence spiral]
+
 
     with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
         st.markdown("""
