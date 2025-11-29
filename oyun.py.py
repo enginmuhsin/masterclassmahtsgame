@@ -266,4 +266,70 @@ if secim == "🎮 Oyun Modu":
                         st.success(f"✅ {soru} -> **EVET ({kavram})**")
                     else:
                         # Sayı o özelliğe SAHİP DEĞİL (Kırmızı/Turuncu)
-                        st.error(f"❌ {soru} -> **
+                        st.error(f"❌ {soru} -> **HAYIR ({kavram} DEĞİL)**")
+
+    else:
+        st.info("👈 Oyuna başlamak için sol üstteki menüden 'YENİ OYUN BAŞLAT' butonuna basın.")
+
+# --- MOD 2: SAYI DEDEKTÖRÜ ---
+elif secim == "🔍 Sayı Dedektörü":
+    st.title("🔍 Master Class Dedektör")
+    st.markdown(kurum_kodu, unsafe_allow_html=True)
+    st.markdown("Merak ettiğiniz bir sayıyı girin, **yapay zeka** özelliklerini bulsun!")
+
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        val = st.number_input("Sayı Girin:", 0, 1000000, 0, 1)
+    with col2:
+        st.write(""); st.write("") 
+        btn = st.button("🚀 ANALİZ ET", use_container_width=True, type="primary")
+
+    if btn and val > 0:
+        st.divider()
+        st.subheader(f"📊 {val} Analiz Raporu")
+        
+        c_sol, c_sag = st.columns(2)
+        ozel = False
+        
+        d = "ÇİFT" if val % 2 == 0 else "TEK"
+        c_sol.info(f"👉 Bu sayı bir **{d}** sayıdır.")
+        
+        idx = 0
+        for ad, func, _, _, _, _ in OZELLIKLER:
+            if "TEK" in ad: continue
+            # İsim Temizleme
+            kisa = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
+            kisa = kisa.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
+            
+            if func(val):
+                hedef = c_sol if idx % 2 == 0 else c_sag
+                with hedef:
+                    # Özellik Var -> YEŞİL
+                    st.success(f"✅ {kisa}")
+                    if "FIBONACCI" in kisa:
+                        with st.expander("Fibonacci Bilgisi"):
+                            st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
+                            # 
+
+[Image of Fibonacci sequence spiral]
+
+                            fibo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png"
+                            st.image(fibo_url, caption="Fibonacci Sarmalı")
+
+                if "PALİNDROMİK" not in kisa or val > 10:
+                    ozel = True
+            else:
+                # Özellik Yok -> KIRMIZI (DEDEKTÖR MODUNDA DA GÖSTERELİM)
+                # Normalde dedektörde sadece "var olanlar" gösterilir ama 
+                # kırmızı görmek isterseniz burayı açabiliriz. 
+                # Şimdilik kalabalık olmasın diye sadece "var olanları" yeşil gösteriyorum.
+                pass
+                
+            idx += 1
+
+        st.divider()
+        if ozel:
+            st.balloons()
+            st.success("🌟 SONUÇ: **MASTER CLASS** (Özel) bir sayı! 🌟")
+        else:
+            st.warning("💡 SONUÇ: Sıradan bir sayı.")
