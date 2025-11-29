@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # =============================================================================
-# TASARIM: AYDINLIK & FERAH TEMA (LIGHT MODE)
+# TASARIM: AYDINLIK & FERAH TEMA (CSS)
 # =============================================================================
 st.markdown("""
     <style>
@@ -247,6 +247,12 @@ if secim == "🎮 Oyun Modu":
         st.session_state.ayar_min = 1
         st.session_state.ayar_max = 1000
         st.session_state.ayar_sure = 60
+        
+    # --- İLK YÜKLEMEDE OYUNU OTOMATİK BAŞLATMA (YENİ EK) ---
+    if st.session_state.hedef_sayi == 0 and not st.session_state.oyun_aktif:
+        yeni_oyun_baslat()
+        st.rerun() 
+    # --------------------------------------------------------
 
     kalan_sure = 0
     progress_degeri = 0.0
@@ -328,6 +334,7 @@ if secim == "🎮 Oyun Modu":
                 if durum == "dogru": st.success(f"✅ DOĞRU! -> **{gercek_cevap_metni}**")
                 else: st.error(f"❌ YANLIŞ! Doğrusu -> **{gercek_cevap_metni}**")
     else:
+        # Bu kısım artık çalışmayacak çünkü oyun hemen başlıyor. Ama yedekte kalabilir.
         st.info("👈 Oyuna başlamak için sol üstteki menüden 'YENİ OYUN BAŞLAT' butonuna basın.")
 
 # --- MOD 2: SAYI DEDEKTÖRÜ ---
