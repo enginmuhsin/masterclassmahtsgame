@@ -247,7 +247,7 @@ if secim == "🎮 Oyun Modu":
         st.session_state.ayar_min = 1
         st.session_state.ayar_max = 1000
         st.session_state.ayar_sure = 60
-
+        
     # --- SÜRE VE PUAN HESAPLAMA ---
     kalan_sure = 0
     progress_degeri = 0.0
@@ -269,7 +269,8 @@ if secim == "🎮 Oyun Modu":
             if progress_degeri < 0: progress_degeri = 0.0
             if progress_degeri > 1: progress_degeri = 1.0
 
-    # --- SIDEBAR AYARLARI (ARTIK BURADA - EN BAŞTA GÖRÜNÜR) ---
+    # --- SIDEBAR AYARLARI (ARTIK BURADA - HER ZAMAN GÖRÜNÜR) ---
+    # Not: Bu kısım artık ana 'if' blok dışında olduğu için ilk açılışta görünecek.
     st.sidebar.subheader("⚙️ Ayarlar")
     mn = st.sidebar.number_input("Min Sayı", 1, 1000, st.session_state.ayar_min)
     mx = st.sidebar.number_input("Max Sayı", 1, 2000, st.session_state.ayar_max)
@@ -283,12 +284,12 @@ if secim == "🎮 Oyun Modu":
     if st.sidebar.button("🎲 YENİ OYUN BAŞLAT (SIFIRLA)", use_container_width=True):
         yeni_oyun_baslat()
         st.rerun()
-
-    st.markdown("---")
     # ---------------------------------------------------------------------
 
+    st.markdown("---")
+
     if st.session_state.hedef_sayi != 0:
-        # OYUN BAŞLAMIŞ / DEVAM EDİYOR
+        # OYUN BAŞLADI / DEVAM EDİYOR
 
         # SKOR PANOSU
         c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
@@ -299,10 +300,8 @@ if secim == "🎮 Oyun Modu":
         with c4:
             st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
 
-        if st.session_state.oyun_aktif:
-            st.progress(progress_degeri, text="Kalan Süre")
-            time.sleep(0.5) 
-            st.rerun()
+        # Progress bar (Artık otomatik yenileme yok, kullanıcı etkileşimiyle güncellenir)
+        st.progress(progress_degeri, text="Kalan Süre")
 
         # OYUN BİTTİ EKRANI
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
@@ -340,7 +339,7 @@ if secim == "🎮 Oyun Modu":
     else:
         st.markdown("### Hazır mısın? Matematik Bilgini Test Etme Zamanı! 🧠")
         st.markdown("---")
-        st.info("Oyun başlamadan önce sol menüden süre ve sayı aralığı ayarlarını yapabilirsin.")
+        st.info("Oyun başlamadan önce sol menüden süre ve sayı aralığı ayarlarını kontrol edebilirsin.")
         
         col_start1, col_start2, col_start3 = st.columns([1, 2, 1])
         with col_start2:
