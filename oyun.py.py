@@ -269,8 +269,7 @@ if secim == "🎮 Oyun Modu":
             if progress_degeri < 0: progress_degeri = 0.0
             if progress_degeri > 1: progress_degeri = 1.0
 
-    # --- SIDEBAR AYARLARI (ARTIK BURADA - HER ZAMAN GÖRÜNÜR) ---
-    # Not: Bu kısım artık ana 'if' blok dışında olduğu için ilk açılışta görünecek.
+    # --- SIDEBAR AYARLARI (HER ZAMAN GÖRÜNÜR) ---
     st.sidebar.subheader("⚙️ Ayarlar")
     mn = st.sidebar.number_input("Min Sayı", 1, 1000, st.session_state.ayar_min)
     mx = st.sidebar.number_input("Max Sayı", 1, 2000, st.session_state.ayar_max)
@@ -284,9 +283,9 @@ if secim == "🎮 Oyun Modu":
     if st.sidebar.button("🎲 YENİ OYUN BAŞLAT (SIFIRLA)", use_container_width=True):
         yeni_oyun_baslat()
         st.rerun()
-    # ---------------------------------------------------------------------
 
     st.markdown("---")
+    # ---------------------------------------------------------------------
 
     if st.session_state.hedef_sayi != 0:
         # OYUN BAŞLADI / DEVAM EDİYOR
@@ -300,7 +299,7 @@ if secim == "🎮 Oyun Modu":
         with c4:
             st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
 
-        # Progress bar (Artık otomatik yenileme yok, kullanıcı etkileşimiyle güncellenir)
+        # Progress bar (Kullanıcı etkileşimiyle güncellenir)
         st.progress(progress_degeri, text="Kalan Süre")
 
         # OYUN BİTTİ EKRANI
@@ -348,7 +347,7 @@ if secim == "🎮 Oyun Modu":
                 yeni_oyun_baslat()
                 st.rerun()
 
-# --- MOD 2: SAYI DEDEKTÖRÜ ---
+# --- MOD 2: SAYI DEDEKTÖRÜ (DÜZELTİLDİ) ---
 elif secim == "🔍 Sayı Dedektörü":
     st.title("🔍 Master Class Dedektör")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -370,16 +369,28 @@ elif secim == "🔍 Sayı Dedektörü":
         idx = 0
         for ad, func, _, _, _, _ in OZELLIKLER:
             if "TEK" in ad: continue
-            kisa = ad.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
+            
+            # KISA ADI TEMİZLEME (SORU EKİ VE NOKTALAMAYI KALDIRDIK)
+            kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
+            kisa_temiz = kisa_temiz.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
+            kisa_temiz = kisa_temiz.replace("?", "").replace("yoksa", "").strip()
+
             if func(val):
                 hedef = c_sol if idx % 2 == 0 else c_sag
                 with hedef:
-                    st.success(f"✅ {kisa}")
-                    if "FIBONACCI" in kisa:
+                    # Düzeltilmiş, onay içeren çıktı
+                    st.success(f"✅ **{kisa_temiz}**") 
+                    
+                    if "FIBONACCI" in kisa_temiz:
                         with st.expander("Fibonacci Bilgisi"):
                             st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
                             st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
-                if "PALİNDROMİK" not in kisa or val > 10: ozel = True
+                            
+                    # RAMANUJAN İÇİN EKSTRA BİLGİ EKLENDİ
+                    if "RAMANUJAN" in kisa_temiz:
+                         st.info("Bu sayı çok özeldir! İki farklı şekilde iki küpün toplamı olarak yazılabilir (1729 = 1³+12³ ve 9³+10³).")
+
+                if "PALİNDROMİK" not in kisa_temiz or val > 10: ozel = True
             idx += 1
         st.divider()
         if ozel:
