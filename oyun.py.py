@@ -374,6 +374,10 @@ elif secim == "🔍 Sayı Dedektörü":
             kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
             kisa_temiz = kisa_temiz.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
             kisa_temiz = kisa_temiz.replace("?", "").replace("yoksa", "").strip()
+            
+            # YENİ DÜZELTME: Kalan tüm soru eklerini (mı, mi, mu, mü) agresifçe temizle
+            kisa_temiz = kisa_temiz.replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip()
+
 
             if func(val):
                 hedef = c_sol if idx % 2 == 0 else c_sag
@@ -426,7 +430,10 @@ elif secim == "📚 Bilgi Köşesi":
         * 5 + 8 = 13 (Kendinden önceki iki sayının toplamı)
         * Bu yüzden 13 bir Fibonacci sayısıdır.
         """)
-        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
+        
+
+[Image of Fibonacci sequence spiral]
+
 
     with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
         st.markdown("""
