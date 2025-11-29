@@ -52,4 +52,70 @@ st.markdown("""
         color: #ffffff; 
         font-weight: bold;
         font-size: 1.3rem;
-        font-family
+        font-family: 'Verdana', sans-serif;
+        padding: 15px;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, #0d2b5b 0%, #dc3545 100%);
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* 5. BUTONLAR */
+    .stButton>button {
+        font-weight: bold;
+        border-radius: 12px;
+        border: 2px solid #0d2b5b;
+        color: #0d2b5b;
+        background-color: #ffffff;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .stButton>button:hover {
+        background-color: #0d2b5b;
+        color: white;
+        border-color: #0d2b5b;
+        transform: translateY(-2px);
+    }
+    
+    /* 6. HEDEF SAYI KUTUSU */
+    .hedef-sayi-kutusu {
+        background-color: #ffffff;
+        border: 4px solid #dc3545;
+        padding: 10px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15);
+    }
+    
+    /* 7. BİLGİ KARTLARI STİLİ */
+    .streamlit-expanderHeader {
+        font-weight: bold;
+        color: #0d2b5b;
+        font-size: 1.1rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# =============================================================================
+# MATEMATİK FONKSİYONLARI
+# =============================================================================
+def is_tek(n): return n % 2 != 0
+def is_tam_kare(n): return n >= 0 and int(math.isqrt(n))**2 == n
+def is_tam_kup(n): return n >= 0 and round(n**(1/3))**3 == n
+def is_asal(n):
+    if n < 2: return False
+    if n == 2: return True
+    if n % 2 == 0: return False
+    for i in range(3, int(math.isqrt(n)) + 1, 2):
+        if n % i == 0: return False
+    return True
+def is_mukemmel(n):
+    if n < 2: return False
+    toplam = 1
+    for i in range(2, int(math.isqrt(n)) + 1):
+        if n % i == 0:
+            toplam += i
+            if i*i != n: toplam += n // i
+    return toplam
