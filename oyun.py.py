@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 # =============================================================================
-# TASARIM VE GÖRSELLİK (CSS KODLARI)
+# TASARIM VE GÖRSELLİK (CSS)
 # =============================================================================
 st.markdown("""
     <style>
@@ -98,6 +98,7 @@ def is_ramanujan(n):
         if b**3 == b3: ways += 1
     return ways >= 2
 
+# ÖZELLİK LİSTESİ
 OZELLIKLER = [
     ("Sayı TEK mi yoksa ÇİFT mi?", is_tek, 5, 5, "TEK", "ÇİFT"),
     ("Sayı ASAL mı?", is_asal, 20, 2, "EVET", "HAYIR"),
@@ -116,7 +117,46 @@ OZELLIKLER = [
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
 
 # =============================================================================
-# WEB ARAYÜZÜ
+# WEB ARAYÜZÜ İŞLEMLERİ (CALLBACK FUNCTION)
+# =============================================================================
+def cevap_ver(index, buton_tipi):
+    """
+    Bu fonksiyon butona basıldığı an çalışır ve doğru/yanlış kontrolü yapar.
+    index: Hangi soru?
+    buton_tipi: "sol" (Evet/Tek) mu "sag" (Hayır/Çift) mı?
+    """
+    # 1. Sorunun cevaplandığını işaretle
+    st.session_state.sorular_cevaplandi[index] = True
+    
+    # 2. Gerekli verileri al
+    soru_data = OZELLIKLER[index]
+    func = soru_data[1]
+    p_d = soru_data[2] # Doğru bilme puanı
+    p_y = soru_data[3] # Yanlışı bilme (Hayır deme) puanı
+    
+    # 3. Sayının özelliğini kontrol et
+    dogru_mu = func(st.session_state.hedef_sayi)
+    
+    # 4. Puanlama Mantığı
+    if buton_tipi == "sol": # Kullanıcı "EVET" veya "TEK" dedi
+        if dogru_mu:
+            st.session_state.puan += p_d
+            st.toast(f"{random.choice(OVGULER)} +{p_d} Puan", icon="✅")
+        else:
+            st.session_state.puan -= 5
+            st.toast("Yanlış! -5 Puan", icon="❌")
+            
+    elif buton_tipi == "sag": # Kullanıcı "HAYIR" veya "ÇİFT" dedi
+        if not dogru_mu:
+            st.session_state.puan += p_y
+            st.toast(f"{random.choice(OVGULER)} +{p_y} Puan", icon="✅")
+        else:
+            # Kullanıcı Hayır dedi ama sayı o özelliğe sahip
+            st.session_state.puan -= 5
+            st.toast("Yanlış! -5 Puan", icon="❌")
+
+# =============================================================================
+# ARAYÜZ BAŞLANGICI
 # =============================================================================
 
 # Yan menü
@@ -136,6 +176,7 @@ if secim == "🎮 Oyun Modu":
     st.title("🎮 Master Class Matematik")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
     
+    # Session State Başlatma
     if 'hedef_sayi' not in st.session_state:
         st.session_state.hedef_sayi = 0
         st.session_state.puan = 0
@@ -161,7 +202,7 @@ if secim == "🎮 Oyun Modu":
             st.session_state.oyun_aktif = False
             st.toast("⏰ SÜRE DOLDU!", icon="⚠️")
 
-    # SKOR PANOSU
+    # SKOR PANOSU (MOBİL UYUMLU)
     col_score1, col_score2, col_score3 = st.columns(3)
     col_score1.metric("PUAN", st.session_state.puan)
     col_score2.metric("SÜRE", f"{kalan_sure} sn")
@@ -180,7 +221,7 @@ if secim == "🎮 Oyun Modu":
             st.session_state.gizli = not st.session_state.gizli
             st.rerun()
 
-    # AYARLAR
+    # AYARLAR (YAN MENÜ)
     st.sidebar.subheader("⚙️ Oyun Ayarları")
     mn = st.sidebar.number_input("Min Sayı", 1, 1000, 1)
     mx = st.sidebar.number_input("Max Sayı", 1, 2000, 1000)
@@ -209,40 +250,25 @@ if secim == "🎮 Oyun Modu":
 
     st.markdown("---")
 
-    # OYUN ALANI
+    # OYUN ALANI (SORULAR)
     if st.session_state.hedef_sayi != 0:
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
             st.error("⏰ OYUN BİTTİ! Yeni oyun başlatın.")
         
         for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
+            # Cevaplanmamışsa Butonları Göster
             if not st.session_state.sorular_cevaplandi[i]:
                 with st.container():
                     st.info(f"**{soru}** (D: {p_d}p / Y: {p_y}p)")
                     col_btn1, col_btn2 = st.columns(2)
+                    
                     buton_aktif = st.session_state.oyun_aktif
                     
-                    if col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True):
-                        dogru_cevap = func(st.session_state.hedef_sayi)
-                        if dogru_cevap:
-                            st.session_state.puan += p_d
-                            st.toast(f"{random.choice(OVGULER)} +{p_d} Puan", icon="✅")
-                        else:
-                            st.session_state.puan -= 5
-                            st.toast("Yanlış! -5 Puan", icon="❌")
-                        st.session_state.sorular_cevaplandi[i] = True
-                        st.rerun()
-                        
-                    if col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True):
-                        dogru_cevap = func(st.session_state.hedef_sayi)
-                        if not dogru_cevap:
-                            st.session_state.puan += p_y
-                            st.toast(f"{random.choice(OVGULER)} +{p_y} Puan", icon="✅")
-                        else:
-                            st.session_state.puan -= 5
-                            st.toast("Yanlış! -5 Puan", icon="❌")
-                        st.session_state.sorular_cevaplandi[i] = True
-                        st.rerun()
+                    # CALLBACK YÖNTEMİ: on_click=cevap_ver
+                    col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sol"))
+                    col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sag"))
             
+            # Cevaplanmışsa Sonucu Göster (Renkli ve Akıllı Metin)
             else:
                 dogru_mu = func(st.session_state.hedef_sayi)
                 kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
@@ -302,6 +328,7 @@ elif secim == "🔍 Sayı Dedektörü":
                 if "PALİNDROMİK" not in kisa or val > 10:
                     ozel = True
             else:
+                # Dedektörde olmayan özellikleri boş geçiyoruz
                 pass
             idx += 1
 
