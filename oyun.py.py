@@ -10,12 +10,13 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- GİZLİ MENÜ VE ALT BİLGİ AYARLARI ---
+# --- MENÜ AYARLARI (MOBİL İÇİN DÜZELTİLDİ) ---
+# Üst header'ı gizlemiyoruz ki telefonda menü oku (>) görünsün.
+# Sadece alt bilgiyi (footer) ve hamburger menüsünü gizliyoruz.
 hide_streamlit_style = """
             <style>
             #MainMenu {visibility: hidden;}
             footer {visibility: hidden;}
-            header {visibility: hidden;}
             </style>
             """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
@@ -23,17 +24,9 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # =============================================================================
 # MATEMATİK FONKSİYONLARI
 # =============================================================================
-def is_tek(n):
-    return n % 2 != 0
-
-def is_tam_kare(n):
-    if n < 0: return False
-    return int(math.isqrt(n))**2 == n
-
-def is_tam_kup(n):
-    if n < 0: return False
-    return round(n**(1/3))**3 == n
-
+def is_tek(n): return n % 2 != 0
+def is_tam_kare(n): return n >= 0 and int(math.isqrt(n))**2 == n
+def is_tam_kup(n): return n >= 0 and round(n**(1/3))**3 == n
 def is_asal(n):
     if n < 2: return False
     if n == 2: return True
@@ -41,7 +34,6 @@ def is_asal(n):
     for i in range(3, int(math.isqrt(n)) + 1, 2):
         if n % i == 0: return False
     return True
-
 def is_mukemmel(n):
     if n < 2: return False
     toplam = 1
@@ -50,29 +42,16 @@ def is_mukemmel(n):
             toplam += i
             if i*i != n: toplam += n // i
     return toplam == n
-
 def is_fibonacci(n):
     def is_sq(x): return int(math.isqrt(x))**2 == x
     return is_sq(5*n*n + 4) or is_sq(5*n*n - 4)
-
-def is_palindromik(n):
-    return str(n) == str(n)[::-1]
-
-def is_harshad(n):
-    if n <= 0: return False
-    return n % sum(int(d) for d in str(n)) == 0
-
-def is_ucgensel(n):
-    if n < 0: return False
-    return is_tam_kare(8 * n + 1)
-
-def is_iki_kuvveti(n):
-    return n > 0 and (n & (n - 1)) == 0
-
+def is_palindromik(n): return str(n) == str(n)[::-1]
+def is_harshad(n): return n > 0 and n % sum(int(d) for d in str(n)) == 0
+def is_ucgensel(n): return n >= 0 and is_tam_kare(8 * n + 1)
+def is_iki_kuvveti(n): return n > 0 and (n & (n - 1)) == 0
 def is_armstrong(n): 
     s = str(n)
     return sum(int(d) ** len(s) for d in s) == n
-
 def is_ramanujan(n):
     if n < 1729: return False 
     ways = 0
@@ -104,13 +83,14 @@ OZELLIKLER = [
 # WEB ARAYÜZÜ
 # =============================================================================
 
+# Yan menü başlığı
 st.sidebar.title("🧮 Menü")
-secim = st.sidebar.radio("Mod:", ["🎮 Oyun Modu", "🔍 Sayı Dedektörü"])
+secim = st.sidebar.radio("Mod Seçiniz:", ["🎮 Oyun Modu", "🔍 Sayı Dedektörü"])
 st.sidebar.markdown("---")
 
-# --- KURUM İSMİ İÇİN ÖZEL HTML STİLİ ---
+# KURUM İSMİ (HTML)
 kurum_html = """
-    <h3 style='text-align: center; color: #dc3545; font-weight: bold; font-family: sans-serif; padding-bottom: 20px;'>
+    <h3 style='text-align: center; color: #dc3545; font-weight: bold; font-family: sans-serif; padding-bottom: 10px;'>
     (ANKARA KAHRAMANKAZAN BİLİM ve SANAT MERKEZİ)
     </h3>
     """
@@ -118,10 +98,9 @@ kurum_html = """
 # --- MOD 1: OYUN MODU ---
 if secim == "🎮 Oyun Modu":
     st.title("🎮 Master Class Matematik Oyunu")
-    # Kurum ismini renkli ve ortalı yazdırıyoruz
     st.markdown(kurum_html, unsafe_allow_html=True)
     
-    # Hafıza
+    # Session State
     if 'hedef_sayi' not in st.session_state:
         st.session_state.hedef_sayi = 0
         st.session_state.puan = 0
@@ -131,9 +110,7 @@ if secim == "🎮 Oyun Modu":
         st.session_state.oyun_suresi = 60
         st.session_state.oyun_aktif = False
 
-    # Skor Tablosu
-    st.sidebar.header("📊 SKOR")
-    
+    # --- ZAMANLAYICI ---
     kalan_sure = 0
     if st.session_state.oyun_aktif:
         gecen = time.time() - st.session_state.baslangic_zamani
@@ -142,41 +119,41 @@ if secim == "🎮 Oyun Modu":
             kalan_sure = 0
             st.session_state.oyun_aktif = False
             st.toast("⏰ SÜRE DOLDU!", icon="⚠️")
+
+    # --- MOBİL UYUMLU SKOR ALANI (ANA EKRANIN TEPESİNDE) ---
+    # Artık sidebar yerine ana ekranda duruyor, telefonda kaybolmaz.
+    col_score1, col_score2, col_score3 = st.columns(3)
+    col_score1.metric("PUAN", st.session_state.puan)
+    col_score2.metric("SÜRE", f"{kalan_sure} sn")
     
-    c1, c2 = st.sidebar.columns(2)
-    c1.metric("PUAN", st.session_state.puan)
-    c2.metric("SÜRE", f"{kalan_sure} sn")
-    
-    st.sidebar.subheader("Gizli Sayı")
     if st.session_state.gizli:
-        txt = "???"
+        gosterim = "???"
     else:
-        txt = str(st.session_state.hedef_sayi)
-    st.sidebar.code(txt)
+        gosterim = str(st.session_state.hedef_sayi)
+    col_score3.metric("GİZLİ SAYI", gosterim)
     
     if st.session_state.hedef_sayi != 0:
-        if st.sidebar.button("👁️ Göster/Gizle", use_container_width=True):
+        # Göster/Gizle butonu
+        if st.button("👁️ Gizli Sayıyı Göster/Gizle", use_container_width=True):
             st.session_state.gizli = not st.session_state.gizli
             st.rerun()
 
-    st.sidebar.markdown("---")
-    mn = st.sidebar.number_input("Min", 1, 1000, 1)
-    mx = st.sidebar.number_input("Max", 1, 2000, 1000)
-    sure = st.sidebar.selectbox("Süre", [60, 120, 180])
+    # --- YAN MENÜ (AYARLAR) ---
+    st.sidebar.subheader("⚙️ Oyun Ayarları")
+    mn = st.sidebar.number_input("Min Sayı", 1, 1000, 1)
+    mx = st.sidebar.number_input("Max Sayı", 1, 2000, 1000)
+    sure_secimi = st.sidebar.selectbox("Süre Seçin", [60, 120, 180])
     
-    if st.sidebar.button("🎲 YENİ OYUN", type="primary", use_container_width=True):
-        bulundu = False
-        deneme = 0
-        aday = 0
+    if st.sidebar.button("🎲 YENİ OYUN BAŞLAT", type="primary", use_container_width=True):
+        bulundu = False; deneme = 0; aday = 0
         while not bulundu and deneme < 200:
-            aday = random.randint(mn, mx)
-            sc = 0
-            if is_asal(aday): sc += 1
-            if is_tam_kare(aday): sc += 1
-            if is_fibonacci(aday): sc += 1
-            if is_mukemmel(aday): sc += 5
-            if is_ramanujan(aday): sc += 10
-            if sc > 0: bulundu = True
+            aday = random.randint(mn, mx); score = 0
+            if is_asal(aday): score += 1
+            if is_tam_kare(aday): score += 1
+            if is_fibonacci(aday): score += 1
+            if is_mukemmel(aday): score += 5
+            if is_ramanujan(aday): score += 10
+            if score > 0: bulundu = True
             else: deneme += 1
         
         st.session_state.hedef_sayi = aday
@@ -184,38 +161,40 @@ if secim == "🎮 Oyun Modu":
         st.session_state.gizli = True
         st.session_state.sorular_cevaplandi = [False] * len(OZELLIKLER)
         st.session_state.baslangic_zamani = time.time()
-        st.session_state.oyun_suresi = sure
+        st.session_state.oyun_suresi = sure_secimi
         st.session_state.oyun_aktif = True
         st.rerun()
 
+    st.markdown("---")
+
+    # --- OYUN ALANI ---
     if st.session_state.hedef_sayi != 0:
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
-            st.error("⏰ SÜRE DOLDU!")
+            st.error("⏰ OYUN BİTTİ! Süreniz doldu. Menüden (Sol Üst >) yeni oyun başlatın.")
         
-        st.write(f"### Sorular ({mn}-{mx} Arası)")
-        
-        for i, (soru, func, p_d, p_y, sol, sag) in enumerate(OZELLIKLER):
+        for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
             if not st.session_state.sorular_cevaplandi[i]:
                 with st.container():
-                    col_txt, col_b1, col_b2 = st.columns([5, 1, 1])
-                    col_txt.info(f"**{soru}**")
+                    # Mobil için butonları alt alta değil yan yana sıkıştırıyoruz
+                    st.info(f"**{soru}** (D: {p_d}p / Y: {p_y}p)")
+                    col_btn1, col_btn2 = st.columns(2)
                     
-                    aktif = st.session_state.oyun_aktif
+                    buton_aktif = st.session_state.oyun_aktif
                     
-                    if col_b1.button(sol, key=f"b1_{i}", disabled=not aktif):
-                        res = func(st.session_state.hedef_sayi)
-                        if res:
+                    if col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True):
+                        dogru_cevap = func(st.session_state.hedef_sayi)
+                        if dogru_cevap:
                             st.session_state.puan += p_d
-                            st.toast(f"Doğru! +{p_d}", icon="✅")
+                            st.toast(f"Mükemmel! +{p_d}", icon="✅")
                         else:
                             st.session_state.puan -= 5
                             st.toast("Yanlış! -5", icon="❌")
                         st.session_state.sorular_cevaplandi[i] = True
                         st.rerun()
                         
-                    if col_b2.button(sag, key=f"b2_{i}", disabled=not aktif):
-                        res = func(st.session_state.hedef_sayi)
-                        if not res:
+                    if col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True):
+                        dogru_cevap = func(st.session_state.hedef_sayi)
+                        if not dogru_cevap:
                             st.session_state.puan += p_y
                             st.toast(f"Doğru! +{p_y}", icon="✅")
                         else:
@@ -224,18 +203,16 @@ if secim == "🎮 Oyun Modu":
                         st.session_state.sorular_cevaplandi[i] = True
                         st.rerun()
             else:
-                res = func(st.session_state.hedef_sayi)
-                cevap = "EVET" if res else "HAYIR"
-                st.success(f"✅ {soru} -> **{cevap}**")
+                dogru_mu = func(st.session_state.hedef_sayi)
+                cevap_str = "EVET / TEK" if dogru_mu else "HAYIR / ÇİFT"
+                st.success(f"✅ {soru} -> **{cevap_str}**")
     else:
-        st.info("👈 Menüden 'YENİ OYUN' butonuna basın.")
+        st.info("👈 Oyuna başlamak için sol üstteki oku (>) açıp 'YENİ OYUN' butonuna basın.")
 
 # --- MOD 2: SAYI DEDEKTÖRÜ ---
 elif secim == "🔍 Sayı Dedektörü":
     st.title("🔍 Master Class Sayı Dedektörü")
-    # Kurum ismini burada da gösteriyoruz
     st.markdown(kurum_html, unsafe_allow_html=True)
-    
     st.markdown("Merak ettiğiniz bir sayıyı girin, **yapay zeka** özelliklerini bulsun!")
 
     col1, col2 = st.columns([3, 1])
@@ -265,7 +242,6 @@ elif secim == "🔍 Sayı Dedektörü":
                 hedef = c_sol if idx % 2 == 0 else c_sag
                 with hedef:
                     st.success(f"✅ {kisa}")
-                    
                     if "FIBONACCI" in kisa:
                         with st.expander("Fibonacci Bilgisi"):
                             st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
