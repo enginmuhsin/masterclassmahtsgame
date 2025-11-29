@@ -10,6 +10,16 @@ st.set_page_config(
     layout="wide"
 )
 
+# --- GİZLİ MENÜ VE ALT BİLGİ AYARLARI (TEMİZ GÖRÜNÜM) ---
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 # =============================================================================
 # MATEMATİK FONKSİYONLARI
 # =============================================================================
@@ -100,7 +110,9 @@ st.sidebar.markdown("---")
 
 # --- MOD 1: OYUN MODU ---
 if secim == "🎮 Oyun Modu":
+    # BAŞLIK VE KURUM İSMİ
     st.title("🎮 Master Class Matematik Oyunu")
+    st.markdown("##### (ANKARA KAHRAMANKAZAN BİLİM ve SANAT MERKEZİ)")
     
     # Hafıza
     if 'hedef_sayi' not in st.session_state:
@@ -115,12 +127,10 @@ if secim == "🎮 Oyun Modu":
     # Skor Tablosu
     st.sidebar.header("📊 SKOR")
     
-    # --- ZAMANLAYICI MANTIĞI (Hata burada çıkıyordu, düzelttim) ---
     kalan_sure = 0
     if st.session_state.oyun_aktif:
         gecen = time.time() - st.session_state.baslangic_zamani
         kalan_sure = int(st.session_state.oyun_suresi - gecen)
-        # Güvenli kontrol
         if kalan_sure <= 0:
             kalan_sure = 0
             st.session_state.oyun_aktif = False
@@ -215,8 +225,12 @@ if secim == "🎮 Oyun Modu":
 
 # --- MOD 2: SAYI DEDEKTÖRÜ ---
 elif secim == "🔍 Sayı Dedektörü":
+    # BAŞLIK VE KURUM İSMİ
     st.title("🔍 Master Class Sayı Dedektörü")
+    st.markdown("##### (ANKARA KAHRAMANKAZAN BİLİM ve SANAT MERKEZİ)")
     
+    st.markdown("Merak ettiğiniz bir sayıyı girin, **yapay zeka** özelliklerini bulsun!")
+
     col1, col2 = st.columns([3, 1])
     with col1:
         val = st.number_input("Sayı Girin:", 0, 1000000, 0, 1)
@@ -248,7 +262,6 @@ elif secim == "🔍 Sayı Dedektörü":
                     if "FIBONACCI" in kisa:
                         with st.expander("Fibonacci Bilgisi"):
                             st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
-                            # Görsel Linki
                             fibo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png"
                             st.image(fibo_url, caption="Fibonacci Sarmalı")
 
