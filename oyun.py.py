@@ -215,7 +215,6 @@ if secim == "🎮 Oyun Modu":
             st.error("⏰ OYUN BİTTİ! Yeni oyun başlatın.")
         
         for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
-            # Cevaplanmamış soru ise butonları göster
             if not st.session_state.sorular_cevaplandi[i]:
                 with st.container():
                     st.info(f"**{soru}** (D: {p_d}p / Y: {p_y}p)")
@@ -244,28 +243,18 @@ if secim == "🎮 Oyun Modu":
                         st.session_state.sorular_cevaplandi[i] = True
                         st.rerun()
             
-            # CEVAPLANMIŞ SORU (DÜZELTİLEN KISIM)
             else:
                 dogru_mu = func(st.session_state.hedef_sayi)
-                
-                # Metni Temizle (Örn: "Sayı ASAL mı?" -> "ASAL")
                 kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
                 kavram = kavram.replace("yoksa", "").strip()
 
-                # ÖZEL DURUM: TEK/ÇİFT
                 if "TEK" in soru:
                     cevap_metni = "TEK" if dogru_mu else "ÇİFT"
-                    # Tek/Çift için renk nötr kalabilir veya çift yeşil, tek yeşil yapılabilir.
-                    # Burada standart yeşil yapıyoruz.
                     st.success(f"✅ {soru} -> **{cevap_metni}**")
-                
-                # DİĞER DURUMLAR (ASAL, MÜKEMMEL VB.)
                 else:
                     if dogru_mu:
-                        # Sayı o özelliğe SAHİP (Yeşil)
                         st.success(f"✅ {soru} -> **EVET ({kavram})**")
                     else:
-                        # Sayı o özelliğe SAHİP DEĞİL (Kırmızı/Turuncu)
                         st.error(f"❌ {soru} -> **HAYIR ({kavram} DEĞİL)**")
 
     else:
@@ -297,34 +286,23 @@ elif secim == "🔍 Sayı Dedektörü":
         idx = 0
         for ad, func, _, _, _, _ in OZELLIKLER:
             if "TEK" in ad: continue
-            # İsim Temizleme
             kisa = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
             kisa = kisa.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
             
             if func(val):
                 hedef = c_sol if idx % 2 == 0 else c_sag
                 with hedef:
-                    # Özellik Var -> YEŞİL
                     st.success(f"✅ {kisa}")
                     if "FIBONACCI" in kisa:
                         with st.expander("Fibonacci Bilgisi"):
                             st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
-                            # 
-
-[Image of Fibonacci sequence spiral]
-
                             fibo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png"
                             st.image(fibo_url, caption="Fibonacci Sarmalı")
 
                 if "PALİNDROMİK" not in kisa or val > 10:
                     ozel = True
             else:
-                # Özellik Yok -> KIRMIZI (DEDEKTÖR MODUNDA DA GÖSTERELİM)
-                # Normalde dedektörde sadece "var olanlar" gösterilir ama 
-                # kırmızı görmek isterseniz burayı açabiliriz. 
-                # Şimdilik kalabalık olmasın diye sadece "var olanları" yeşil gösteriyorum.
                 pass
-                
             idx += 1
 
         st.divider()
