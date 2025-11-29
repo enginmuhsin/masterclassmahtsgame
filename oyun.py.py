@@ -5,21 +5,56 @@ import time
 
 # --- SAYFA AYARLARI ---
 st.set_page_config(
-    page_title="Master Class",
-    page_icon="∑",
+    page_title="Master Class Matematik",
+    page_icon="🎓",
     layout="wide"
 )
 
-# --- MENÜ AYARLARI (MOBİL İÇİN DÜZELTİLDİ) ---
-# Üst header'ı gizlemiyoruz ki telefonda menü oku (>) görünsün.
-# Sadece alt bilgiyi (footer) ve hamburger menüsünü gizliyoruz.
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+# =============================================================================
+# TASARIM VE GÖRSELLİK (CSS KODLARI)
+# =============================================================================
+st.markdown("""
+    <style>
+    /* Menü ve Alt Bilgi Gizleme */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Arka Plan Görseli */
+    .stApp {
+        background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
+        background-color: #0e1117;
+    }
+    
+    /* Kurum İsmi Stili */
+    .bilsem-header {
+        text-align: center;
+        color: #dc3545; /* BİLSEM Kırmızısı */
+        font-weight: 900;
+        font-size: 1.5rem;
+        font-family: 'Verdana', sans-serif;
+        padding: 15px;
+        border-bottom: 3px solid #dc3545;
+        margin-bottom: 20px;
+        background-color: rgba(220, 53, 69, 0.1);
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* Butonları Güzelleştirme */
+    .stButton>button {
+        font-weight: bold;
+        border-radius: 8px;
+        border: 1px solid #dc3545;
+        transition: all 0.3s;
+    }
+    .stButton>button:hover {
+        background-color: #dc3545;
+        color: white;
+        border-color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # =============================================================================
 # MATEMATİK FONKSİYONLARI
@@ -63,7 +98,6 @@ def is_ramanujan(n):
         if b**3 == b3: ways += 1
     return ways >= 2
 
-# ÖZELLİK LİSTESİ
 OZELLIKLER = [
     ("Sayı TEK mi yoksa ÇİFT mi?", is_tek, 5, 5, "TEK", "ÇİFT"),
     ("Sayı ASAL mı?", is_asal, 20, 2, "EVET", "HAYIR"),
@@ -79,28 +113,29 @@ OZELLIKLER = [
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
+OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
+
 # =============================================================================
 # WEB ARAYÜZÜ
 # =============================================================================
 
-# Yan menü başlığı
+# Yan menü
 st.sidebar.title("🧮 Menü")
 secim = st.sidebar.radio("Mod Seçiniz:", ["🎮 Oyun Modu", "🔍 Sayı Dedektörü"])
 st.sidebar.markdown("---")
 
-# KURUM İSMİ (HTML)
-kurum_html = """
-    <h3 style='text-align: center; color: #dc3545; font-weight: bold; font-family: sans-serif; padding-bottom: 10px;'>
-    (ANKARA KAHRAMANKAZAN BİLİM ve SANAT MERKEZİ)
-    </h3>
-    """
+# KURUM İSMİ (HTML KODU)
+kurum_kodu = """
+<div class="bilsem-header">
+    ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
+</div>
+"""
 
 # --- MOD 1: OYUN MODU ---
 if secim == "🎮 Oyun Modu":
-    st.title("🎮 Master Class Matematik Oyunu")
-    st.markdown(kurum_html, unsafe_allow_html=True)
+    st.title("🎮 Master Class Matematik")
+    st.markdown(kurum_kodu, unsafe_allow_html=True)
     
-    # Session State
     if 'hedef_sayi' not in st.session_state:
         st.session_state.hedef_sayi = 0
         st.session_state.puan = 0
@@ -110,18 +145,23 @@ if secim == "🎮 Oyun Modu":
         st.session_state.oyun_suresi = 60
         st.session_state.oyun_aktif = False
 
-    # --- ZAMANLAYICI ---
+    # ZAMANLAYICI VE PROGRESS BAR
     kalan_sure = 0
+    progress_degeri = 0.0
+    
     if st.session_state.oyun_aktif:
         gecen = time.time() - st.session_state.baslangic_zamani
         kalan_sure = int(st.session_state.oyun_suresi - gecen)
+        if st.session_state.oyun_suresi > 0:
+            progress_degeri = kalan_sure / st.session_state.oyun_suresi
+            if progress_degeri < 0: progress_degeri = 0.0
+            
         if kalan_sure <= 0:
             kalan_sure = 0
             st.session_state.oyun_aktif = False
             st.toast("⏰ SÜRE DOLDU!", icon="⚠️")
 
-    # --- MOBİL UYUMLU SKOR ALANI (ANA EKRANIN TEPESİNDE) ---
-    # Artık sidebar yerine ana ekranda duruyor, telefonda kaybolmaz.
+    # SKOR PANOSU
     col_score1, col_score2, col_score3 = st.columns(3)
     col_score1.metric("PUAN", st.session_state.puan)
     col_score2.metric("SÜRE", f"{kalan_sure} sn")
@@ -132,13 +172,15 @@ if secim == "🎮 Oyun Modu":
         gosterim = str(st.session_state.hedef_sayi)
     col_score3.metric("GİZLİ SAYI", gosterim)
     
+    if st.session_state.oyun_aktif:
+        st.progress(progress_degeri, text="Kalan Süre")
+
     if st.session_state.hedef_sayi != 0:
-        # Göster/Gizle butonu
         if st.button("👁️ Gizli Sayıyı Göster/Gizle", use_container_width=True):
             st.session_state.gizli = not st.session_state.gizli
             st.rerun()
 
-    # --- YAN MENÜ (AYARLAR) ---
+    # AYARLAR
     st.sidebar.subheader("⚙️ Oyun Ayarları")
     mn = st.sidebar.number_input("Min Sayı", 1, 1000, 1)
     mx = st.sidebar.number_input("Max Sayı", 1, 2000, 1000)
@@ -167,28 +209,27 @@ if secim == "🎮 Oyun Modu":
 
     st.markdown("---")
 
-    # --- OYUN ALANI ---
+    # OYUN ALANI
     if st.session_state.hedef_sayi != 0:
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
-            st.error("⏰ OYUN BİTTİ! Süreniz doldu. Menüden (Sol Üst >) yeni oyun başlatın.")
+            st.error("⏰ OYUN BİTTİ! Yeni oyun başlatın.")
         
         for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
+            # Cevaplanmamış soru ise butonları göster
             if not st.session_state.sorular_cevaplandi[i]:
                 with st.container():
-                    # Mobil için butonları alt alta değil yan yana sıkıştırıyoruz
                     st.info(f"**{soru}** (D: {p_d}p / Y: {p_y}p)")
                     col_btn1, col_btn2 = st.columns(2)
-                    
                     buton_aktif = st.session_state.oyun_aktif
                     
                     if col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True):
                         dogru_cevap = func(st.session_state.hedef_sayi)
                         if dogru_cevap:
                             st.session_state.puan += p_d
-                            st.toast(f"Mükemmel! +{p_d}", icon="✅")
+                            st.toast(f"{random.choice(OVGULER)} +{p_d} Puan", icon="✅")
                         else:
                             st.session_state.puan -= 5
-                            st.toast("Yanlış! -5", icon="❌")
+                            st.toast("Yanlış! -5 Puan", icon="❌")
                         st.session_state.sorular_cevaplandi[i] = True
                         st.rerun()
                         
@@ -196,65 +237,33 @@ if secim == "🎮 Oyun Modu":
                         dogru_cevap = func(st.session_state.hedef_sayi)
                         if not dogru_cevap:
                             st.session_state.puan += p_y
-                            st.toast(f"Doğru! +{p_y}", icon="✅")
+                            st.toast(f"{random.choice(OVGULER)} +{p_y} Puan", icon="✅")
                         else:
                             st.session_state.puan -= 5
-                            st.toast("Yanlış! -5", icon="❌")
+                            st.toast("Yanlış! -5 Puan", icon="❌")
                         st.session_state.sorular_cevaplandi[i] = True
                         st.rerun()
+            
+            # CEVAPLANMIŞ SORU (DÜZELTİLEN KISIM)
             else:
                 dogru_mu = func(st.session_state.hedef_sayi)
-                cevap_str = "EVET / TEK" if dogru_mu else "HAYIR / ÇİFT"
-                st.success(f"✅ {soru} -> **{cevap_str}**")
-    else:
-        st.info("👈 Oyuna başlamak için sol üstteki oku (>) açıp 'YENİ OYUN' butonuna basın.")
+                
+                # Metni Temizle (Örn: "Sayı ASAL mı?" -> "ASAL")
+                kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
+                kavram = kavram.replace("yoksa", "").strip()
 
-# --- MOD 2: SAYI DEDEKTÖRÜ ---
-elif secim == "🔍 Sayı Dedektörü":
-    st.title("🔍 Master Class Sayı Dedektörü")
-    st.markdown(kurum_html, unsafe_allow_html=True)
-    st.markdown("Merak ettiğiniz bir sayıyı girin, **yapay zeka** özelliklerini bulsun!")
-
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        val = st.number_input("Sayı Girin:", 0, 1000000, 0, 1)
-    with col2:
-        st.write(""); st.write("") 
-        btn = st.button("🚀 ANALİZ ET", use_container_width=True, type="primary")
-
-    if btn and val > 0:
-        st.divider()
-        st.subheader(f"📊 {val} Analiz Raporu")
-        
-        c_sol, c_sag = st.columns(2)
-        ozel = False
-        
-        d = "ÇİFT" if val % 2 == 0 else "TEK"
-        c_sol.info(f"👉 Bu sayı bir **{d}** sayıdır.")
-        
-        idx = 0
-        for ad, func, _, _, _, _ in OZELLIKLER:
-            if "TEK" in ad: continue
-            kisa = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
-            kisa = kisa.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
-            
-            if func(val):
-                hedef = c_sol if idx % 2 == 0 else c_sag
-                with hedef:
-                    st.success(f"✅ {kisa}")
-                    if "FIBONACCI" in kisa:
-                        with st.expander("Fibonacci Bilgisi"):
-                            st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
-                            fibo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png"
-                            st.image(fibo_url, caption="Fibonacci Sarmalı")
-
-                if "PALİNDROMİK" not in kisa or val > 10:
-                    ozel = True
-            idx += 1
-
-        st.divider()
-        if ozel:
-            st.balloons()
-            st.success("🌟 SONUÇ: **MASTER CLASS** (Özel) bir sayı! 🌟")
-        else:
-            st.warning("💡 SONUÇ: Sıradan bir sayı.")
+                # ÖZEL DURUM: TEK/ÇİFT
+                if "TEK" in soru:
+                    cevap_metni = "TEK" if dogru_mu else "ÇİFT"
+                    # Tek/Çift için renk nötr kalabilir veya çift yeşil, tek yeşil yapılabilir.
+                    # Burada standart yeşil yapıyoruz.
+                    st.success(f"✅ {soru} -> **{cevap_metni}**")
+                
+                # DİĞER DURUMLAR (ASAL, MÜKEMMEL VB.)
+                else:
+                    if dogru_mu:
+                        # Sayı o özelliğe SAHİP (Yeşil)
+                        st.success(f"✅ {soru} -> **EVET ({kavram})**")
+                    else:
+                        # Sayı o özelliğe SAHİP DEĞİL (Kırmızı/Turuncu)
+                        st.error(f"❌ {soru} -> **
