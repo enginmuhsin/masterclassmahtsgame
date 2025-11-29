@@ -347,7 +347,7 @@ if secim == "🎮 Oyun Modu":
                 yeni_oyun_baslat()
                 st.rerun()
 
-# --- MOD 2: SAYI DEDEKTÖRÜ (DÜZELTİLDİ) ---
+# --- MOD 2: SAYI DEDEKTÖRÜ (SON DÜZELTME UYGULANDI) ---
 elif secim == "🔍 Sayı Dedektörü":
     st.title("🔍 Master Class Dedektör")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -370,12 +370,12 @@ elif secim == "🔍 Sayı Dedektörü":
         for ad, func, _, _, _, _ in OZELLIKLER:
             if "TEK" in ad: continue
             
-            # KISA ADI TEMİZLEME (SORU EKİ VE NOKTALAMAYI KALDIRDIK)
+            # KISA ADI TEMİZLEME (SORU EKİ VE NOKTALAMAYI KALDIRIYORUZ)
             kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
             kisa_temiz = kisa_temiz.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
             kisa_temiz = kisa_temiz.replace("?", "").replace("yoksa", "").strip()
             
-            # YENİ DÜZELTME: Kalan tüm soru eklerini (mı, mi, mu, mü) agresifçe temizle
+            # KRİTİK DÜZELTME: Kalan tüm soru eklerini (mı, mi, mu, mü) agresifçe temizle
             kisa_temiz = kisa_temiz.replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip()
 
 
@@ -430,10 +430,7 @@ elif secim == "📚 Bilgi Köşesi":
         * 5 + 8 = 13 (Kendinden önceki iki sayının toplamı)
         * Bu yüzden 13 bir Fibonacci sayısıdır.
         """)
-        
-
-[Image of Fibonacci sequence spiral]
-
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
 
     with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
         st.markdown("""
