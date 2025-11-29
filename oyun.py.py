@@ -159,4 +159,126 @@ if secim == "🎮 Oyun Modu":
             st.session_state.gizli = not st.session_state.gizli
             st.rerun()
 
-    st.sidebar
+    st.sidebar.markdown("---")
+    mn = st.sidebar.number_input("Min", 1, 1000, 1)
+    mx = st.sidebar.number_input("Max", 1, 2000, 1000)
+    sure = st.sidebar.selectbox("Süre", [60, 120, 180])
+    
+    if st.sidebar.button("🎲 YENİ OYUN", type="primary", use_container_width=True):
+        bulundu = False
+        deneme = 0
+        aday = 0
+        while not bulundu and deneme < 200:
+            aday = random.randint(mn, mx)
+            sc = 0
+            if is_asal(aday): sc += 1
+            if is_tam_kare(aday): sc += 1
+            if is_fibonacci(aday): sc += 1
+            if is_mukemmel(aday): sc += 5
+            if is_ramanujan(aday): sc += 10
+            if sc > 0: bulundu = True
+            else: deneme += 1
+        
+        st.session_state.hedef_sayi = aday
+        st.session_state.puan = 0
+        st.session_state.gizli = True
+        st.session_state.sorular_cevaplandi = [False] * len(OZELLIKLER)
+        st.session_state.baslangic_zamani = time.time()
+        st.session_state.oyun_suresi = sure
+        st.session_state.oyun_aktif = True
+        st.rerun()
+
+    if st.session_state.hedef_sayi != 0:
+        if not st.session_state.oyun_aktif and kalan_sure <= 0:
+            st.error("⏰ SÜRE DOLDU!")
+        
+        st.write(f"### Sorular ({mn}-{mx} Arası)")
+        
+        for i, (soru, func, p_d, p_y, sol, sag) in enumerate(OZELLIKLER):
+            if not st.session_state.sorular_cevaplandi[i]:
+                with st.container():
+                    col_txt, col_b1, col_b2 = st.columns([5, 1, 1])
+                    col_txt.info(f"**{soru}**")
+                    
+                    aktif = st.session_state.oyun_aktif
+                    
+                    if col_b1.button(sol, key=f"b1_{i}", disabled=not aktif):
+                        res = func(st.session_state.hedef_sayi)
+                        if res:
+                            st.session_state.puan += p_d
+                            st.toast(f"Doğru! +{p_d}", icon="✅")
+                        else:
+                            st.session_state.puan -= 5
+                            st.toast("Yanlış! -5", icon="❌")
+                        st.session_state.sorular_cevaplandi[i] = True
+                        st.rerun()
+                        
+                    if col_b2.button(sag, key=f"b2_{i}", disabled=not aktif):
+                        res = func(st.session_state.hedef_sayi)
+                        if not res:
+                            st.session_state.puan += p_y
+                            st.toast(f"Doğru! +{p_y}", icon="✅")
+                        else:
+                            st.session_state.puan -= 5
+                            st.toast("Yanlış! -5", icon="❌")
+                        st.session_state.sorular_cevaplandi[i] = True
+                        st.rerun()
+            else:
+                res = func(st.session_state.hedef_sayi)
+                cevap = "EVET" if res else "HAYIR"
+                st.success(f"✅ {soru} -> **{cevap}**")
+    else:
+        st.info("👈 Menüden 'YENİ OYUN' butonuna basın.")
+
+# --- MOD 2: SAYI DEDEKTÖRÜ ---
+elif secim == "🔍 Sayı Dedektörü":
+    st.title("🔍 Master Class Sayı Dedektörü")
+    # Kurum ismini burada da gösteriyoruz
+    st.markdown(kurum_html, unsafe_allow_html=True)
+    
+    st.markdown("Merak ettiğiniz bir sayıyı girin, **yapay zeka** özelliklerini bulsun!")
+
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        val = st.number_input("Sayı Girin:", 0, 1000000, 0, 1)
+    with col2:
+        st.write(""); st.write("") 
+        btn = st.button("🚀 ANALİZ ET", use_container_width=True, type="primary")
+
+    if btn and val > 0:
+        st.divider()
+        st.subheader(f"📊 {val} Analiz Raporu")
+        
+        c_sol, c_sag = st.columns(2)
+        ozel = False
+        
+        d = "ÇİFT" if val % 2 == 0 else "TEK"
+        c_sol.info(f"👉 Bu sayı bir **{d}** sayıdır.")
+        
+        idx = 0
+        for ad, func, _, _, _, _ in OZELLIKLER:
+            if "TEK" in ad: continue
+            kisa = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
+            kisa = kisa.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
+            
+            if func(val):
+                hedef = c_sol if idx % 2 == 0 else c_sag
+                with hedef:
+                    st.success(f"✅ {kisa}")
+                    
+                    if "FIBONACCI" in kisa:
+                        with st.expander("Fibonacci Bilgisi"):
+                            st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
+                            fibo_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png"
+                            st.image(fibo_url, caption="Fibonacci Sarmalı")
+
+                if "PALİNDROMİK" not in kisa or val > 10:
+                    ozel = True
+            idx += 1
+
+        st.divider()
+        if ozel:
+            st.balloons()
+            st.success("🌟 SONUÇ: **MASTER CLASS** (Özel) bir sayı! 🌟")
+        else:
+            st.warning("💡 SONUÇ: Sıradan bir sayı.")
