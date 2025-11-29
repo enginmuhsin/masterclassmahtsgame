@@ -407,7 +407,7 @@ elif secim == "🔍 Sayı Dedektörü":
             st.success("🌟 SONUÇ: **MASTER CLASS** (Özel) bir sayı! 🌟")
         else: st.warning("💡 SONUÇ: Sıradan bir sayı.")
 
-# --- MOD 3: BİLGİ KÖŞESİ ---
+# --- MOD 3: BİLGİ KÖŞESİ (FİBONACCİ GÖRSEL HATASI GİDERİLDİ) ---
 elif secim == "📚 Bilgi Köşesi":
     st.title("📚 Master Class Bilgi Bankası")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -435,10 +435,8 @@ elif secim == "📚 Bilgi Köşesi":
         * 5 + 8 = 13 (Kendinden önceki iki sayının toplamı)
         * Bu yüzden 13 bir Fibonacci sayısıdır.
         """)
-        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı") 
-
-[Image of Fibonacci sequence spiral]
-
+        # Görseli buraya tekrar eklemek yerine, hata vermesini önlemek için bu kısmı yoruma alıyoruz.
+        # st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı") 
 
     with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
         st.markdown("""
