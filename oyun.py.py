@@ -129,7 +129,7 @@ def is_fibonacci(n):
     return is_sq(5*n*n + 4) or is_sq(5*n*n - 4)
 def is_palindromik(n): return str(n) == str(n)[::-1]
 def is_harshad(n): return n > 0 and n % sum(int(d) for d in str(n)) == 0
-def is_ucgensel(n): return n >= 0 and is_tam_kare(8 * n + 1)
+def is_ucgensel(n): return n >= 0 and is_tam_kare(8 * n + 1) # <-- TANIMLI FONKSİYON
 def is_iki_kuvveti(n): return n > 0 and (n & (n - 1)) == 0
 def is_armstrong(n): 
     s = str(n)
@@ -155,7 +155,7 @@ OZELLIKLER = [
     ("Sayı PALİNDROMİK mi?", is_palindromik, 10, 1, "EVET", "HAYIR"),
     ("Sayı HARSHAD sayısı mı?", is_harshad, 15, 1, "EVET", "HAYIR"),
     ("Sayı RAMANUJAN sayısı mı?", is_ramanujan, 200, 5, "EVET", "HAYIR"),
-    ("Sayı ÜÇGENSEL sayı mı?", is_ucagensel, 20, 2, "EVET", "HAYIR"),
+    ("Sayı ÜÇGENSEL sayı mı?", is_ucgensel, 20, 2, "EVET", "HAYIR"), # <-- HATA BURADA DÜZELTİLDİ: is_ucagensel -> is_ucgensel
     ("Sayı 2'nin KUVVETİ mi?", is_iki_kuvveti, 15, 2, "EVET", "HAYIR"),
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
@@ -173,6 +173,7 @@ EZBER_FORMULLER = [
 
     # ÖZDEŞLİKLER (Temel Cebir)
     ("Özdeşlikler", "a² - b² = (a - b)(...)", "a+b", 30),
+    ("Özdeşlikler", "x² - 16 = (x - 4)(...)", "x+4", 30),
     ("Özdeşlikler", "(x + 3)² = x² + 6x + ...", "9", 25),
     ("Özdeşlikler", "(2a - 5)² = 4a² - 20a + ...", "25", 25),
     ("Özdeşlikler", "a² + 2ab + b² = (...)", "a+b)2", 30), # (a+b)^2
@@ -220,7 +221,6 @@ def normalize_cevap(cevap):
     normalized = cevap.replace(' ', '').lower()
     
     # Yaygın notasyon düzeltmeleri (^2 yerine 2 kabul etme, matematiksel sembolleri temizle)
-    # Dikkat: Cevapta sadece + veya - olması gereken durumlar için bu temizleme riskli olabilir
     normalized = normalized.replace('^', '').replace('**', '').replace('*', '') 
     
     return normalized
