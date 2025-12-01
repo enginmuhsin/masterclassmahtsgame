@@ -332,7 +332,8 @@ def yeni_oyun_baslat():
     
     st.session_state.hedef_sayi = aday
     st.session_state.puan = 0
-    st.session_state.sorular_cevaplandi = [None] * len(OZELLIKLER)
+    # BURADA SIFIRLAMA YAPILDIĞI İÇİN SORULAR GERİ GELECEK
+    st.session_state.sorular_cevaplandi = [None] * len(OZELLIKLER) 
     
     simdi = time.time()
     st.session_state.baslangic_zamani = simdi
@@ -433,11 +434,21 @@ if secim == "🎮 Oyun Modu":
 
         st.progress(progress_degeri, text="Kalan Süre")
 
-        # +++++ ZAMANLAYICI DÜZELTMESİ (BU KISIM EKLENDİ) +++++
-        # Eğer oyun aktifse ve süre varsa, 1 saniye bekle ve sayfayı yenile
+        # +++++ ZAMANLAYICI DÜZELTMESİ (1 saniye bekleme ve yenileme) +++++
         if st.session_state.oyun_aktif and kalan_sure > 0:
             time.sleep(1)
             st.rerun()
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        # +++++ YENİ TUR KONTROLÜ (Tüm sorular cevaplandıysa yeni tur başlat) +++++
+        if st.session_state.oyun_aktif:
+            cevaplanan_soru_sayisi = sum(1 for d in st.session_state.sorular_cevaplandi if d is not None)
+            
+            if cevaplanan_soru_sayisi == len(OZELLIKLER):
+                st.toast("🎉 Tüm Sorular Cevaplandı! Yeni Tur Başlıyor...", icon="🥳")
+                time.sleep(1) 
+                yeni_oyun_baslat()
+                st.rerun()
         # +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
         # OYUN BİTTİ EKRANI
@@ -455,7 +466,7 @@ if secim == "🎮 Oyun Modu":
                     st.rerun()
             st.markdown("---")
 
-        # SORU ALANI
+        # SORU ALANI (Düzeltme sonrası, artık cevaplanmayan sorular buraya geri gelecek)
         for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
             durum = st.session_state.sorular_cevaplandi[i]
             if durum is None:
