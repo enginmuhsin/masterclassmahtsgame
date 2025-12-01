@@ -394,9 +394,9 @@ if secim == "🎮 Oyun Modu":
                 yeni_oyun_baslat()
                 st.rerun() # Hemen yenile ki sorular gelsin
         
-        # Eğer henüz başlatılmadıysa daha fazla kod çalıştırmayı durdur
+        # HATA DÜZELTMESİ YAPILAN YER: 'return' yerine 'st.stop()' kullanıldı.
         if st.session_state.hedef_sayi == 0:
-            return 
+            st.stop()
             
     # Eğer buraya geldiysek, HEFED SAYI ÜRETİLMİŞ demektir (Oyun aktif veya yeni bitmiş olabilir)
 
