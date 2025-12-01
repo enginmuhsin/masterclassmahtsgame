@@ -562,7 +562,7 @@ elif secim == "🔍 Sayı Dedektörü":
 elif secim == "📚 Bilgi Köşesi":
     st.title("📚 Master Class Bilgi Bankası")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
-    st.info("Bu bölümde oyunda geçen özel sayı türleri hakkında kısa ve anlaşılır bilgiler bulabilirsin.")
+    st.info("Bu bölümde oyunda geçen özel sayı türleri ve önemli matematiksel kavramlar hakkında kısa ve anlaşılır bilgiler bulabilirsin.")
     
     with st.expander("✨ MÜKEMMEL SAYI Nedir?"):
         st.markdown("""
@@ -571,20 +571,20 @@ elif secim == "📚 Bilgi Köşesi":
         **Örnek: 6**
         * 6'nın bölenleri: 1, 2, 3, 6
         * Kendisi hariç toplayalım: **1 + 2 + 3 = 6**
-        * Sonuç kendisine eşit olduğu için 6 Mükemmel Sayıdır.
+        * Sonuç kendisine eşit olduğu için 6 **Mükemmel Sayıdır**.
         
         *Diğer Mükemmel Sayılar: 28, 496, 8128...*
         """)
         
     with st.expander("🌀 FIBONACCI SAYISI Nedir?"):
         st.markdown("""
-        **Tanım:** Her sayının, kendinden önceki iki sayının toplamı olduğu sayı dizisidir. Doğadaki "Altın Oran" ile ilişkilidir.
+        **Tanım:** Her sayının, kendinden önceki iki sayının toplamı olduğu sayı dizisidir. Doğadaki "**Altın Oran**" ile ilişkilidir.
         
         **Dizi:** 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...
         
         **Örnek: 13**
         * 5 + 8 = 13 (Kendinden önceki iki sayının toplamı)
-        * Bu yüzden 13 bir Fibonacci sayısıdır.
+        * Bu yüzden 13 bir **Fibonacci sayısıdır**.
         """)
         # Görsel kaldırıldı.
 
@@ -600,21 +600,37 @@ elif secim == "📚 Bilgi Köşesi":
 
     with st.expander("🔢 HARSHAD SAYISI Nedir?"):
         st.markdown("""
-        **Tanım:** Rakamları toplamına tam bölünebilen sayıdır. (Sanskritçe'de 'Büyük Sevinç' demektir.)
+        **Tanım:** Rakamları toplamına tam bölünebilen sayıdır. (Sanskritçe'de '**Büyük Sevinç**' demektir.)
         
         **Örnek: 18**
         * Rakamları topla: 1 + 8 = **9**
         * 18 sayısı 9'a bölünür mü? **Evet!** (18 ÷ 9 = 2)
-        * O halde 18 bir Harshad sayısıdır.
+        * O halde 18 bir **Harshad sayısıdır**.
         """)
 
     with st.expander("🚕 RAMANUJAN (TAKSİ) SAYISI Nedir?"):
         st.markdown("""
-        **Tanım:** İki farklı şekilde, iki sayının küplerinin toplamı olarak yazılabilen en küçük sayı **1729**'dur. Bu sayıya Ramanujan sayısı denir.
+        **Tanım:** İki farklı şekilde, iki sayının küplerinin toplamı olarak yazılabilen sayılardır.
         
-        **Sihiri Şurada:**
-        * 1729 = 1³ + 12³ (1 + 1728)
-        * 1729 = 9³ + 10³ (729 + 1000)
+        Bu sayıların en küçüğü ve en meşhuru **1729**'dur. Hintli matematikçi Srinivasa Ramanujan ve G. H. Hardy'nin hikayesiyle meşhur olmuştur.
+        
+        ---
+        ### 🌟 İlk Üç Ramanujan Sayısı ve Küp Açılımları
+        
+        #### **1. Ramanujan Sayısı: 1729**
+        İki farklı şekilde:
+        * **1729 = 1³ + 12³** (1 + 1728)
+        * **1729 = 9³ + 10³** (729 + 1000)
+        
+        #### **2. Ramanujan Sayısı: 4104**
+        İki farklı şekilde:
+        * **4104 = 2³ + 16³** (8 + 4096)
+        * **4104 = 9³ + 15³** (729 + 3375)
+        
+        #### **3. Ramanujan Sayısı: 13832**
+        İki farklı şekilde:
+        * **13832 = 2³ + 24³** (8 + 13824)
+        * **13832 = 18³ + 20³** (5832 + 8000)
         """)
 
     with st.expander("💪 ARMSTRONG SAYISI Nedir?"):
