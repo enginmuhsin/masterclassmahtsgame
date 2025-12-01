@@ -155,35 +155,53 @@ OZELLIKLER = [
     ("Sayı PALİNDROMİK mi?", is_palindromik, 10, 1, "EVET", "HAYIR"),
     ("Sayı HARSHAD sayısı mı?", is_harshad, 15, 1, "EVET", "HAYIR"),
     ("Sayı RAMANUJAN sayısı mı?", is_ramanujan, 200, 5, "EVET", "HAYIR"),
-    ("Sayı ÜÇGENSEL sayı mı?", is_ucgensel, 20, 2, "EVET", "HAYIR"),
+    ("Sayı ÜÇGENSEL sayı mı?", is_ucagensel, 20, 2, "EVET", "HAYIR"),
     ("Sayı 2'nin KUVVETİ mi?", is_iki_kuvveti, 15, 2, "EVET", "HAYIR"),
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
-# YENİ EZBER MODU VERİ SETİ (Kategori eklendi)
+# YENİ EZBER MODU VERİ SETİ (Zenginleştirildi)
 EZBER_FORMULLER = [
     # (Kategori, Soru, Doğru Cevap, Puan)
-    # ÇARPIM TABLOSU
+    
+    # ÇARPIM TABLOSU (Basit Hafıza)
     ("Çarpım Tablosu", "7 x 9 = ...", "63", 5),
     ("Çarpım Tablosu", "12 x 12 = ...", "144", 5),
     ("Çarpım Tablosu", "8 x 7 = ...", "56", 5),
     ("Çarpım Tablosu", "11 x 6 = ...", "66", 5),
-    
-    # İKİ KARE FARKI / TAM KARE
+    ("Çarpım Tablosu", "13 x 5 = ...", "65", 5),
+
+    # ÖZDEŞLİKLER (Temel Cebir)
     ("Özdeşlikler", "a² - b² = (a - b)(...)", "a+b", 30),
-    ("Özdeşlikler", "x² - 16 = (x - 4)(...)", "x+4", 30),
     ("Özdeşlikler", "(x + 3)² = x² + 6x + ...", "9", 25),
     ("Özdeşlikler", "(2a - 5)² = 4a² - 20a + ...", "25", 25),
-    
-    # KÜP AÇILIMLARI
-    ("Özdeşlikler (Küp)", "(a + b)³ = a³ + 3a²b + 3ab² + ...", "b³", 80),
+    ("Özdeşlikler", "a² + 2ab + b² = (...)", "a+b)2", 30), # (a+b)^2
+
+    # ÖZDEŞLİKLER (Küp ve Üç Terimli)
+    ("Özdeşlikler (Küp)", "a³ + b³ = (a + b)(a² - ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80),
-    
-    # TRİGONOMETRİ
+    ("Özdeşlikler (Küp)", "(a + b)³ = a³ + 3a²b + 3ab² + ...", "b³", 80),
+    ("Özdeşlikler (Üç Terimli)", "(a+b+c)² = a²+b²+c²+2(ab+ac+...)", "bc", 90),
+
+    # TRİGONOMETRİ (Temel)
+    ("Trigonometri", "tanx = sinx / ...", "cosx", 40),
+    ("Trigonometri", "cotx = ... / sinx", "cosx", 40),
+    ("Trigonometri", "sin²x + cos²x = ...", "1", 50),
+    ("Trigonometri", "secx = 1 / ...", "cosx", 40),
+    ("Trigonometri", "cscx = 1 / ...", "sinx", 40),
+
+    # TRİGONOMETRİ (Toplam/Fark ve Yarım Açı)
     ("Trigonometri", "sin(x + y) = sinx cosy + ...", "cosx siny", 50),
     ("Trigonometri", "cos(a + b) = cosa cosb - ...", "sina sinb", 50),
+    ("Trigonometri", "sin(2x) = 2 sinx ...", "cosx", 70), # Yarım Açı Sinüs
+    ("Trigonometri", "cos(2x) = cos²x - ...", "sin²x", 70), # Yarım Açı Kosinüs
     ("Trigonometri", "tan(x + y) = (tanx + tany) / (1 - ...)", "tanx tany", 60),
+
+    # TRİGONOMETRİ (Dönüşüm)
+    ("Trigonometri", "sin(90 - x) = ...", "cosx", 60),
+    ("Trigonometri", "cos(270 + x) = ...", "sinx", 60),
 ]
+
 # Tüm kategorilerin listesi (Set yapısı ile benzersiz kategori isimleri alınır)
 EZBER_KATEGORILER = sorted(list(set([f[0] for f in EZBER_FORMULLER])))
 
@@ -202,7 +220,8 @@ def normalize_cevap(cevap):
     normalized = cevap.replace(' ', '').lower()
     
     # Yaygın notasyon düzeltmeleri (^2 yerine 2 kabul etme, matematiksel sembolleri temizle)
-    normalized = normalized.replace('^', '').replace('**', '').replace('+', '').replace('-', '').replace('*', '')
+    # Dikkat: Cevapta sadece + veya - olması gereken durumlar için bu temizleme riskli olabilir
+    normalized = normalized.replace('^', '').replace('**', '').replace('*', '') 
     
     return normalized
 
@@ -218,13 +237,12 @@ def sonraki_soru_ezber():
 
     st.session_state.ezber_soru_index = yeni_index
     st.session_state.ezber_geribildirim = None
-    st.session_state.cevap_girisi = "" 
+    st.session_state.cevap_girisi = "" # Input alanını temizle
     st.rerun()
 
 def kontrol_et_ezber(cevap_key):
     """Kullanıcının ezber formül cevabını kontrol eder."""
     
-    # Filtreleme yapılmadıysa kontrol etme
     if not st.session_state.ezber_filtreli_formuller:
         st.warning("Önce bir kategori seçmelisiniz!")
         return
@@ -232,10 +250,10 @@ def kontrol_et_ezber(cevap_key):
     kullanici_cevabi = st.session_state[cevap_key]
     soru_index = st.session_state.ezber_soru_index
     
-    # Filtreli listeyi kullan
     formuller = st.session_state.ezber_filtreli_formuller
     kategori, soru, dogru_cevap, puan = formuller[soru_index]
     
+    # Cevapları normalize et ve karşılaştır
     normalized_kullanici = normalize_cevap(kullanici_cevabi)
     normalized_dogru = normalize_cevap(dogru_cevap)
     
@@ -247,7 +265,6 @@ def kontrol_et_ezber(cevap_key):
         else:
             st.toast("Zaten doğru bildiniz. Sonraki soruya geçin.", icon="👍")
     else:
-        # Cevabın doğru halini normalize etmeden gösterelim
         st.session_state.ezber_geribildirim = f"yanlis | Doğrusu: {dogru_cevap}"
         st.toast("❌ Yanlış Cevap. Tekrar deneyin.", icon="🤔")
         
@@ -605,7 +622,7 @@ elif secim == "📚 Bilgi Köşesi":
         ```
         """)
 
-# --- MOD 4: FORMULA SPRİNT (YENİ EK) ---
+# --- MOD 4: FORMULA SPRİNT ---
 elif secim == "🧠 Formula Sprint":
     st.title("🧠 Formula Sprint: Hızlı Tekrar")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -635,7 +652,7 @@ elif secim == "🧠 Formula Sprint":
             cevap_girisi = st.text_input(
                 "Boşluğu Doldurun:", 
                 key="cevap_girisi", 
-                help="Matematiksel boşlukları doldurun (Örn: a+b, cosxsiny)."
+                help="Örn: a+b, cosxsiny. Boşluklar, üs işaretleri ve harf büyüklüğü önemsenmez."
             )
             
             col_cevap1, col_cevap2, col_cevap3 = st.columns([1, 1, 2])
@@ -661,7 +678,9 @@ elif secim == "🧠 Formula Sprint":
             st.success(f"✅ {random.choice(OVGULER)} Doğru bildiniz!")
         elif geribildirim and "yanlis" in geribildirim:
             _, dogru_cevap = geribildirim.split(" | ")
-            st.error(f"❌ Yanlış cevap. Doğrusu: **`{dogru_cevap.split(': ')[1]}`**")
+            # Kullanıcıya doğru cevabın sadeleştirilmemiş halini göster
+            gosterilen_cevap = dogru_cevap.split(': ')[1]
+            st.error(f"❌ Yanlış cevap. Doğrusu: **`{gosterilen_cevap}`**")
             st.info("İpucu: Cevabınızdaki boşlukları, küçük harfleri ve üs işaretlerini kod otomatik olarak temizler.")
             
         st.markdown("---")
