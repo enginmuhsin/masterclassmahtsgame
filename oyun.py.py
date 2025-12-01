@@ -503,4 +503,84 @@ elif secim == "🔍 Sayı Dedektörü":
         idx = 0
         TUM_KONTROL_FONKSIYONLARI = OZELLIKLER + [("Sayı RAMANUJAN sayısı mı?", is_ramanujan, 200, 5, "EVET", "HAYIR")]
         
-        for ad, func, _, _, _, _ in TUM_KONTROL_FONKSIYONLARI
+        for ad, func, _, _, _, _ in TUM_KONTROL_FONKSIYONLARI:
+            if "TEK" in ad: continue
+            kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("?", "").replace("yoksa", "").strip().replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip()
+
+            if func(val):
+                hedef = c_sol if idx % 2 == 0 else c_sag
+                with hedef:
+                    st.success(f"✅ **{kisa_temiz}**") 
+                    if "FIBONACCI" in kisa_temiz:
+                        with st.expander("Fibonacci Bilgisi"):
+                            st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
+                            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
+                    if "RAMANUJAN" in kisa_temiz:
+                         st.info("Bu sayı çok özeldir! İlk üç Ramanujan sayısı: **1729**, **4104**, **13832**'dir.")
+                if "PALİNDROMİK" not in kisa_temiz or val > 10: ozel = True
+            idx += 1
+        st.divider()
+        if ozel:
+            st.balloons()
+            st.success("🌟 SONUÇ: **MASTER CLASS** (Özel) bir sayı! 🌟")
+        else: st.warning("💡 SONUÇ: Sıradan bir sayı.")
+
+# --- MOD 3: BİLGİ KÖŞESİ ---
+elif secim == "📚 Bilgi Köşesi":
+    st.title("📚 Master Class Bilgi Bankası")
+    st.markdown(kurum_kodu, unsafe_allow_html=True)
+    st.info("Bu bölümde özel sayı türleri hakkında bilgiler bulabilirsin.")
+    
+    with st.expander("✨ MÜKEMMEL SAYI Nedir?"):
+        st.markdown("**Tanım:** Kendisi hariç pozitif bölenlerinin toplamı, kendisine eşit olan sayı. Örn: 6, 28.")
+    with st.expander("🌀 FIBONACCI SAYISI Nedir?"):
+        st.markdown("**Tanım:** Kendinden önceki iki sayının toplamı olan sayılar. 0, 1, 1, 2, 3, 5, 8...")
+    with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
+        st.markdown("**Tanım:** Tersten okunuşu aynı olan sayılar. Örn: 121, 4004.")
+    with st.expander("🔢 HARSHAD SAYISI Nedir?"):
+        st.markdown("**Tanım:** Rakamları toplamına tam bölünebilen sayı.")
+    with st.expander("🚕 RAMANUJAN (TAKSİ) SAYISI Nedir?"):
+        st.markdown("**Tanım:** İki farklı şekilde, iki sayının küplerinin toplamı olarak yazılabilen sayı. En küçüğü: 1729.")
+    with st.expander("💪 ARMSTRONG SAYISI Nedir?"):
+        st.markdown("**Tanım:** Basamak sayısını kuvvet olarak aldığımızda, rakamların kuvvetleri toplamı kendisine eşit olan sayı.")
+    with st.expander("🔺 ÜÇGENSEL SAYI Nedir?"):
+        st.markdown("**Tanım:** Noktalarla eşkenar üçgen oluşturabilen sayılar. 1, 3, 6, 10...")
+
+# --- MOD 4: FORMULA SPRINT ---
+elif secim == "🧠 Formula Sprint":
+    st.title("🧠 Formula Sprint: Hızlı Tekrar")
+    st.markdown(kurum_kodu, unsafe_allow_html=True)
+    st.metric("SPRINT PUANI", st.session_state.ezber_puan)
+    
+    if st.session_state.ezber_kategori_secildi:
+        soru_index = st.session_state.ezber_soru_index
+        formuller = st.session_state.ezber_filtreli_formuller
+        toplam_soru = len(formuller)
+        kategori_adi = st.session_state.ezber_kategori_secildi
+        st.subheader(f"🏷️ Kategori: {kategori_adi} ({toplam_soru} Formül)")
+
+        with st.form(key="ezber_form"):
+            kategori, soru_text, dogru_cevap, puan = formuller[soru_index]
+            st.markdown(f"### Soru {soru_index + 1}/{toplam_soru}: **`{soru_text}`**")
+            st.markdown(f"*(Puan: {puan})*")
+            cevap_girisi = st.text_input("Boşluğu Doldurun:", key="cevap_girisi", help="Örn: a+b, cosxsiny.")
+            col_cevap1, col_cevap2, col_cevap3 = st.columns([1, 1, 2])
+            col_cevap1.form_submit_button("✅ KONTROL ET", type="primary", on_click=kontrol_et_ezber, args=("cevap_girisi",))
+            col_cevap2.form_submit_button("⏭️ SONRAKİ FORMÜL", on_click=sonraki_soru_ezber)
+
+        geribildirim = st.session_state.ezber_geribildirim
+        if geribildirim == "dogru":
+            st.success(f"✅ {random.choice(OVGULER)} Doğru bildiniz!")
+        elif geribildirim and "yanlis" in geribildirim:
+            _, dogru_cevap = geribildirim.split(" | ")
+            gosterilen_cevap = dogru_cevap.split(': ')[1]
+            st.error(f"❌ Yanlış cevap. Doğrusu: **`{gosterilen_cevap}`**")
+            
+        st.markdown("---")
+        if st.button("⬅️ KATEGORİ SEÇİMİNE DÖN / PUANI SIFIRLA", use_container_width=True, on_click=sifirla_ezber_modu):
+            st.rerun()
+    else:
+        st.markdown("### 🎯 Hangi Konuda Hızlanmak İstersin?")
+        cols = st.columns(len(EZBER_KATEGORILER))
+        for i, kategori in enumerate(EZBER_KATEGORILER):
+            cols[i].button(f"📚 {kategori}", key=f"kategori_btn_{kategori}", on_click=kategori_sec, args=(kategori,), use_container_width=True)
