@@ -393,7 +393,7 @@ if secim == "🎮 Oyun Modu":
             if st.button("🚀 OYUNU BAŞLAT", key="main_start_button", type="primary", use_container_width=True):
                 yeni_oyun_baslat()
                 st.rerun()
-        st.stop()  # Oyun başlamadıysa burada dur
+        st.stop()
             
     # --- SKOR VE METRİK GÖSTERİMİ (HEDEF SAYI VARSA) ---
     # Buraya geldiysek hedef_sayi > 0 demektir
