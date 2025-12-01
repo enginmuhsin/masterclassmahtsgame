@@ -239,6 +239,7 @@ def kategori_sec(kategori):
 # =============================================================================
 def cevap_ver(index, buton_tipi):
     if not st.session_state.oyun_aktif:
+        # Süre bittiğinde veya oyun aktif değilken cevaplama engellenir.
         return
 
     soru_data = OZELLIKLER[index]
@@ -360,7 +361,6 @@ if secim == "🎮 Oyun Modu":
                 oyun_bitti_animasyonu = True 
         else:
             kalan_sure = int(fark)
-            # Hata düzeltildiği için artık burası çalışır.
             total_sure = st.session_state.oyun_sures 
             progress_degeri = fark / total_sure
             if progress_degeri < 0: progress_degeri = 0.0
@@ -382,25 +382,19 @@ if secim == "🎮 Oyun Modu":
 
     st.markdown("---")
     
-    # --- OYUN AKIŞ KONTROLÜ ---
-    
-    # 2. OYUN BAŞLANGIÇ EKRANI (Hedef sayı yoksa veya oyun bittiyse)
-    if st.session_state.hedef_sayi == 0 or (not st.session_state.oyun_aktif and kalan_sure <= 0):
-        if st.session_state.hedef_sayi == 0:
-            st.markdown("### Hazır mısın? Matematik Bilgini Test Etme Zamanı! 🧠")
-            st.markdown("---")
-            st.info("Oyun başlamadan önce sol menüden süre ve sayı aralığı ayarlarını kontrol edebilirsin.")
+    # --- OYUN AKIŞ KONTROLÜ (BAŞLANGIÇ EKRANI) ---
+    if st.session_state.hedef_sayi == 0:
+        st.markdown("### Hazır mısın? Matematik Bilgini Test Etme Zamanı! 🧠")
+        st.markdown("---")
+        st.info("Oyun başlamadan önce sol menüden süre ve sayı aralığı ayarlarını kontrol edebilirsin.")
         
         col_start1, col_start2, col_start3 = st.columns([1, 2, 1])
         with col_start2:
             st.markdown("#### Ayarları yaptıysan başlayalım!")
             if st.button("🚀 OYUNU BAŞLAT", key="main_start_button", type="primary", use_container_width=True):
                 yeni_oyun_baslat()
-                st.rerun() # Hemen yenile ki sorular gelsin
-        
-        # HATA DÜZELTMESİ YAPILAN YER: 'return' yerine 'st.stop()' kullanıldı.
-        if st.session_state.hedef_sayi == 0:
-            st.stop()
+                st.rerun() 
+        st.stop()
             
     # Eğer buraya geldiysek, HEFED SAYI ÜRETİLMİŞ demektir (Oyun aktif veya yeni bitmiş olabilir)
 
@@ -417,7 +411,7 @@ if secim == "🎮 Oyun Modu":
 
     st.progress(progress_degeri, text="Kalan Süre")
 
-    # ZAMANLAYICI DÜZELTMESİ (1 saniye bekleme ve yenileme)
+    # ZAMANLAYICI DÖNGÜSÜ
     if st.session_state.oyun_aktif and kalan_sure > 0:
         time.sleep(1)
         st.rerun()
@@ -433,12 +427,12 @@ if secim == "🎮 Oyun Modu":
             st.rerun()
 
     # 3. OYUN BİTTİ EKRANI
-    if not st.session_state.oyun_aktif and kalan_sure <= 0:
+    if not st.session_state.oyun_aktif and kalan_sure <= 0 and st.session_state.hedef_sayi != 0:
         if oyun_bitti_animasyonu:
             st.balloons()
             st.success(f"🏆 TEBRİKLER! YENİ REKOR KIRDINIZ: {st.session_state.puan} PUAN!")
         else:
-            st.error("⏰ SÜRE DOLDU!")
+            st.error("⏰ SÜRE DOLDU! Yeni bir oyuna başlamak için alttaki butonu kullanın.")
         st.markdown("---")
         col_tekrar1, col_tekrar2, col_tekrar3 = st.columns([1, 2, 1])
         with col_tekrar2:
@@ -448,26 +442,28 @@ if secim == "🎮 Oyun Modu":
         st.markdown("---")
         
     # 4. SORU ALANI (HEDEF SAYI OLDUĞU SÜRECE GÖRÜNÜR)
+    # SORULAR ARTIK OYUN BAŞLADIĞI AN GÖRÜNÜR OLACAK
     for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
         durum = st.session_state.sorular_cevaplandi[i]
         
-        # Sadece cevaplanmamış soruları göster
-        if durum is None:
+        # Sadece cevaplanmamış soruları göster VEYA süre bittiğinde bile geri bildirimi göster.
+        if durum is None or not st.session_state.oyun_aktif:
             with st.container():
                 st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
                 col_btn1, col_btn2 = st.columns(2)
                 
-                # Butonlar sadece oyun aktifken tıklanabilir. (Süre dolunca devre dışı kalır)
+                # KRİTİK KONTROL: Oyun aktifse butonlar etkin, değilse devre dışı (disabled=True).
                 buton_aktif = st.session_state.oyun_aktif 
-                col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sol"))
-                col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sag"))
-        else:
-            # Cevaplanmış soruların geri bildirimi
-            dogru_mu = func(st.session_state.hedef_sayi)
-            kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("yoksa", "").strip()
-            gercek_cevap_metni = ("TEK" if dogru_mu else "ÇİFT") if "TEK" in soru else (f"EVET ({kavram})" if dogru_mu else f"HAYIR ({kavram} DEĞİL)")
-            if durum == "dogru": st.success(f"✅ DOĞRU! -> **{gercek_cevap_metni}**")
-            else: st.error(f"❌ YANLIŞ! Doğrusu -> **{gercek_cevap_metni}**")
+                
+                if durum is None: # Cevaplanmamışsa butonları göster
+                    col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sol"))
+                    col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sag"))
+                else: # Cevaplanmışsa geri bildirimi göster
+                    dogru_mu = func(st.session_state.hedef_sayi)
+                    kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("yoksa", "").strip()
+                    gercek_cevap_metni = ("TEK" if dogru_mu else "ÇİFT") if "TEK" in soru else (f"EVET ({kavram})" if dogru_mu else f"HAYIR ({kavram} DEĞİL)")
+                    if durum == "dogru": st.success(f"✅ DOĞRU! -> **{gercek_cevap_metni}**")
+                    else: st.error(f"❌ YANLIŞ! Doğrusu -> **{gercek_cevap_metni}**")
 
 # --- MOD 2: SAYI DEDEKTÖRÜ ---
 elif secim == "🔍 Sayı Dedektörü":
