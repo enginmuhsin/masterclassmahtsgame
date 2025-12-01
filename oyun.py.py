@@ -159,7 +159,7 @@ OZELLIKLER = [
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
-# EZBER MODU VERİ SETİ (Kısaltıldı)
+# YENİ EZBER MODU VERİ SETİ (Kısaltıldı)
 EZBER_FORMULLER = [
     ("Çarpım Tablosu", "7 x 9 = ...", "63", 5),
     ("Özdeşlikler", "a² - b² = (a - b)(...)", "a+b", 30),
@@ -175,7 +175,7 @@ EZBER_KATEGORILER = sorted(list(set([f[0] for f in EZBER_FORMULLER])))
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası!🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
 
 # =============================================================================
-# EZBER MODU LOGİĞİ VE CALLBACK'LERİ (Değişmedi)
+# EZBER MODU LOGİĞİ VE CALLBACK'LERİ
 # =============================================================================
 def normalize_cevap(cevap):
     if not isinstance(cevap, str):
@@ -238,7 +238,6 @@ def kategori_sec(kategori):
 # OYUN MODU LOGİĞİ VE CALLBACK'LERİ
 # =============================================================================
 def cevap_ver(index, buton_tipi):
-    # Oyun aktif değilse cevap verilemez
     if not st.session_state.oyun_aktif:
         return
 
@@ -298,7 +297,7 @@ def yeni_oyun_baslat():
     st.session_state.baslangic_zamani = simdi
     st.session_state.bitis_zamani = simdi + sure
     st.session_state.oyun_suresi = sure
-    st.session_state.oyun_aktif = True # BURASI CRİTİK: Oyunu aktif olarak başlatıyoruz.
+    st.session_state.oyun_aktif = True
 
 # =============================================================================
 # ARAYÜZ
@@ -328,7 +327,7 @@ if 'hedef_sayi' not in st.session_state:
     st.session_state.baslangic_zamani = 0
     st.session_state.bitis_zamani = 0
     st.session_state.oyun_suresi = 60
-    st.session_state.oyun_aktif = False # OYUN BAŞLANGIÇTA PASİF
+    st.session_state.oyun_aktif = False
     st.session_state.ayar_min = 1
     st.session_state.ayar_max = 5000
     st.session_state.ayar_sure = 60
@@ -345,18 +344,20 @@ if secim == "🎮 Oyun Modu":
     progress_degeri = 0.0
     oyun_bitti_animasyonu = False
     
+    # 1. KRİTİK SÜRE KONTROLÜ
     if st.session_state.oyun_aktif:
         simdi = time.time()
         fark = st.session_state.bitis_zamani - simdi
         if fark <= 0:
             kalan_sure = 0
-            st.session_state.oyun_aktif = False # SÜRE BİTTİĞİNDE OYUN PASİF HALE GELİR
+            # SÜRE BİTTİĞİNDE OYUN PASİF HALE GELİR
+            st.session_state.oyun_aktif = False 
             if st.session_state.puan > st.session_state.en_yuksek_puan:
                 st.session_state.en_yuksek_puan = st.session_state.puan
                 oyun_bitti_animasyonu = True 
         else:
             kalan_sure = int(fark)
-            total_sure = st.session_state.bitis_zamani - st.session_state.baslangic_zamani
+            total_sure = st.session_state.oyun_sures 
             progress_degeri = fark / total_sure
             if progress_degeri < 0: progress_degeri = 0.0
             if progress_degeri > 1: progress_degeri = 1.0
@@ -376,99 +377,194 @@ if secim == "🎮 Oyun Modu":
         st.rerun()
 
     st.markdown("---")
-
-    if st.session_state.hedef_sayi != 0:
-        # OYUN DEVAM EDİYOR VEYA BİTTİ AMA PUAN GÖSTERİLİYOR
-        
-        c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
-        c1.metric("PUAN", st.session_state.puan)
-        with c2:
-            st.markdown(f"""<div style="text-align: center;"><p style="margin:0; font-weight:bold; color:#495057;">REKOR</p><p style="margin:0; font-size: 2.5rem; font-weight:900; color: #d4af37; text-shadow: 1px 1px 1px black;">{st.session_state.en_yuksek_puan}</p></div>""", unsafe_allow_html=True)
-        
-        # SÜRE GÖSTERGESİ 
-        c3.metric("SÜRE", f"{kalan_sure} sn")
-        
-        with c4:
-            st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
-
-        st.progress(progress_degeri, text="Kalan Süre")
-
-        # ZAMANLAYICI DÜZELTMESİ
-        if st.session_state.oyun_aktif and kalan_sure > 0:
-            time.sleep(1)
-            st.rerun()
-
-        # YENİ TUR KONTROLÜ (Tüm sorular cevaplandıysa yeni tur başlat)
-        if st.session_state.oyun_aktif:
-            cevaplanan_soru_sayisi = sum(1 for d in st.session_state.sorular_cevaplandi if d is not None)
-            
-            if cevaplanan_soru_sayisi == len(OZELLIKLER):
-                st.toast("🎉 Tüm Sorular Cevaplandı! Yeni Tur Başlıyor...", icon="🥳")
-                time.sleep(1) 
-                yeni_oyun_baslat()
-                st.rerun()
-
-        # OYUN BİTTİ EKRANI SADECE OYUN PASİFSE VE SÜRE SIFIRSA GÖRÜNÜR
-        if not st.session_state.oyun_aktif and kalan_sure <= 0:
-            if oyun_bitti_animasyonu:
-                st.balloons()
-                st.success(f"🏆 TEBRİKLER! YENİ REKOR KIRDINIZ: {st.session_state.puan} PUAN!")
-            else:
-                st.error("⏰ SÜRE DOLDU!")
-            st.markdown("---")
-            col_tekrar1, col_tekrar2, col_tekrar3 = st.columns([1, 2, 1])
-            with col_tekrar2:
-                if st.button("🔄 TEKRAR OYNA (YENİ SORU)", type="primary", use_container_width=True):
-                    yeni_oyun_baslat()
-                    st.rerun()
-            st.markdown("---")
-            
-        # SORU ALANI (BU ALAN ARTİK SÜRE BİTMEDİĞİ İÇİN HEMEN GÖRÜNÜR)
-        for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
-            durum = st.session_state.sorular_cevaplandi[i]
-            if durum is None:
-                with st.container():
-                    st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
-                    col_btn1, col_btn2 = st.columns(2)
-                    
-                    # BUTONLAR SADECE OYUN AKTİFKEN ÇALIŞIR
-                    buton_aktif = st.session_state.oyun_aktif 
-                    col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sol"))
-                    col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sag"))
-            else:
-                dogru_mu = func(st.session_state.hedef_sayi)
-                kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("yoksa", "").strip()
-                gercek_cevap_metni = ("TEK" if dogru_mu else "ÇİFT") if "TEK" in soru else (f"EVET ({kavram})" if dogru_mu else f"HAYIR ({kavram} DEĞİL)")
-                if durum == "dogru": st.success(f"✅ DOĞRU! -> **{gercek_cevap_metni}**")
-                else: st.error(f"❌ YANLIŞ! Doğrusu -> **{gercek_cevap_metni}**")
     
-    else:
-        # OYUN HİÇ BAŞLATILMADIYSA BU EKRAN GÖRÜNÜR
-        st.markdown("### Hazır mısın? Matematik Bilgini Test Etme Zamanı! 🧠")
-        st.markdown("---")
-        st.info("Oyun başlamadan önce sol menüden süre ve sayı aralığı ayarlarını kontrol edebilirsin.")
+    # --- OYUN AKIŞ KONTROLÜ ---
+    
+    # 2. OYUN BAŞLANGIÇ EKRANI (Hedef sayı yoksa veya oyun bittiyse)
+    if st.session_state.hedef_sayi == 0 or (not st.session_state.oyun_aktif and kalan_sure <= 0):
+        if st.session_state.hedef_sayi == 0:
+            st.markdown("### Hazır mısın? Matematik Bilgini Test Etme Zamanı! 🧠")
+            st.markdown("---")
+            st.info("Oyun başlamadan önce sol menüden süre ve sayı aralığı ayarlarını kontrol edebilirsin.")
         
         col_start1, col_start2, col_start3 = st.columns([1, 2, 1])
         with col_start2:
             st.markdown("#### Ayarları yaptıysan başlayalım!")
             if st.button("🚀 OYUNU BAŞLAT", key="main_start_button", type="primary", use_container_width=True):
                 yeni_oyun_baslat()
+                st.rerun() # Hemen yenile ki sorular gelsin
+        
+        # Eğer henüz başlatılmadıysa daha fazla kod çalıştırmayı durdur
+        if st.session_state.hedef_sayi == 0:
+            return 
+            
+    # Eğer buraya geldiysek, HEFED SAYI ÜRETİLMİŞ demektir (Oyun aktif veya yeni bitmiş olabilir)
+
+    # --- SKOR VE METRİK GÖSTERİMİ ---
+    c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
+    c1.metric("PUAN", st.session_state.puan)
+    with c2:
+        st.markdown(f"""<div style="text-align: center;"><p style="margin:0; font-weight:bold; color:#495057;">REKOR</p><p style="margin:0; font-size: 2.5rem; font-weight:900; color: #d4af37; text-shadow: 1px 1px 1px black;">{st.session_state.en_yuksek_puan}</p></div>""", unsafe_allow_html=True)
+    
+    c3.metric("SÜRE", f"{kalan_sure} sn")
+    
+    with c4:
+        st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
+
+    st.progress(progress_degeri, text="Kalan Süre")
+
+    # ZAMANLAYICI DÜZELTMESİ (1 saniye bekleme ve yenileme)
+    if st.session_state.oyun_aktif and kalan_sure > 0:
+        time.sleep(1)
+        st.rerun()
+
+    # YENİ TUR KONTROLÜ (Tüm sorular cevaplandıysa yeni tur başlat)
+    if st.session_state.oyun_aktif:
+        cevaplanan_soru_sayisi = sum(1 for d in st.session_state.sorular_cevaplandi if d is not None)
+        
+        if cevaplanan_soru_sayisi == len(OZELLIKLER):
+            st.toast("🎉 Tüm Sorular Cevaplandı! Yeni Tur Başlıyor...", icon="🥳")
+            time.sleep(1) 
+            yeni_oyun_baslat()
+            st.rerun()
+
+    # 3. OYUN BİTTİ EKRANI
+    if not st.session_state.oyun_aktif and kalan_sure <= 0:
+        if oyun_bitti_animasyonu:
+            st.balloons()
+            st.success(f"🏆 TEBRİKLER! YENİ REKOR KIRDINIZ: {st.session_state.puan} PUAN!")
+        else:
+            st.error("⏰ SÜRE DOLDU!")
+        st.markdown("---")
+        col_tekrar1, col_tekrar2, col_tekrar3 = st.columns([1, 2, 1])
+        with col_tekrar2:
+            if st.button("🔄 TEKRAR OYNA (YENİ SORU)", type="primary", use_container_width=True):
+                yeni_oyun_baslat()
                 st.rerun()
+        st.markdown("---")
+        
+    # 4. SORU ALANI (HEDEF SAYI OLDUĞU SÜRECE GÖRÜNÜR)
+    for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
+        durum = st.session_state.sorular_cevaplandi[i]
+        
+        # Sadece cevaplanmamış soruları göster
+        if durum is None:
+            with st.container():
+                st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
+                col_btn1, col_btn2 = st.columns(2)
+                
+                # Butonlar sadece oyun aktifken tıklanabilir. (Süre dolunca devre dışı kalır)
+                buton_aktif = st.session_state.oyun_aktif 
+                col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sol"))
+                col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sag"))
+        else:
+            # Cevaplanmış soruların geri bildirimi
+            dogru_mu = func(st.session_state.hedef_sayi)
+            kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("yoksa", "").strip()
+            gercek_cevap_metni = ("TEK" if dogru_mu else "ÇİFT") if "TEK" in soru else (f"EVET ({kavram})" if dogru_mu else f"HAYIR ({kavram} DEĞİL)")
+            if durum == "dogru": st.success(f"✅ DOĞRU! -> **{gercek_cevap_metni}**")
+            else: st.error(f"❌ YANLIŞ! Doğrusu -> **{gercek_cevap_metni}**")
 
-# --- MOD 2, 3, 4 (Değişmedi, kısaltıldı) ---
-
+# --- MOD 2: SAYI DEDEKTÖRÜ ---
 elif secim == "🔍 Sayı Dedektörü":
     st.title("🔍 Master Class Dedektör")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
     st.markdown("Merak ettiğiniz bir sayıyı girin, **yapay zeka** özelliklerini bulsun!")
-    # ... (Dedektör mantığı devam eder)
-    
+
+    col1, col2 = st.columns([3, 1])
+    with col1: val = st.number_input("Sayı Girin:", 0, 1000000, 0, 1)
+    with col2:
+        st.write(""); st.write("") 
+        btn = st.button("🚀 ANALİZ ET", use_container_width=True, type="primary")
+
+    if btn and val > 0:
+        st.divider()
+        st.subheader(f"📊 {val} Analiz Raporu")
+        c_sol, c_sag = st.columns(2)
+        ozel = False
+        d = "ÇİFT" if val % 2 == 0 else "TEK"
+        c_sol.info(f"👉 Bu sayı bir **{d}** sayıdır.")
+        idx = 0
+        TUM_KONTROL_FONKSIYONLARI = OZELLIKLER + [("Sayı RAMANUJAN sayısı mı?", is_ramanujan, 200, 5, "EVET", "HAYIR")]
+        
+        for ad, func, _, _, _, _ in TUM_KONTROL_FONKSIYONLARI:
+            if "TEK" in ad: continue
+            kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("?", "").replace("yoksa", "").strip().replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip()
+
+            if func(val):
+                hedef = c_sol if idx % 2 == 0 else c_sag
+                with hedef:
+                    st.success(f"✅ **{kisa_temiz}**") 
+                    if "FIBONACCI" in kisa_temiz:
+                        with st.expander("Fibonacci Bilgisi"):
+                            st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
+                            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
+                    if "RAMANUJAN" in kisa_temiz:
+                         st.info("Bu sayı çok özeldir! İlk üç Ramanujan sayısı: **1729**, **4104**, **13832**'dir.")
+                if "PALİNDROMİK" not in kisa_temiz or val > 10: ozel = True
+            idx += 1
+        st.divider()
+        if ozel:
+            st.balloons()
+            st.success("🌟 SONUÇ: **MASTER CLASS** (Özel) bir sayı! 🌟")
+        else: st.warning("💡 SONUÇ: Sıradan bir sayı.")
+
+# --- MOD 3: BİLGİ KÖŞESİ ---
 elif secim == "📚 Bilgi Köşesi":
     st.title("📚 Master Class Bilgi Bankası")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
-    # ... (Bilgi Köşesi mantığı devam eder)
+    st.info("Bu bölümde özel sayı türleri hakkında bilgiler bulabilirsin.")
+    
+    with st.expander("✨ MÜKEMMEL SAYI Nedir?"):
+        st.markdown("**Tanım:** Kendisi hariç pozitif bölenlerinin toplamı, kendisine eşit olan sayı. Örn: 6, 28.")
+    with st.expander("🌀 FIBONACCI SAYISI Nedir?"):
+        st.markdown("**Tanım:** Kendinden önceki iki sayının toplamı olan sayılar. 0, 1, 1, 2, 3, 5, 8...")
+    with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
+        st.markdown("**Tanım:** Tersten okunuşu aynı olan sayılar. Örn: 121, 4004.")
+    with st.expander("🔢 HARSHAD SAYISI Nedir?"):
+        st.markdown("**Tanım:** Rakamları toplamına tam bölünebilen sayı.")
+    with st.expander("🚕 RAMANUJAN (TAKSİ) SAYISI Nedir?"):
+        st.markdown("**Tanım:** İki farklı şekilde, iki sayının küplerinin toplamı olarak yazılabilen sayı. En küçüğü: 1729.")
+    with st.expander("💪 ARMSTRONG SAYISI Nedir?"):
+        st.markdown("**Tanım:** Basamak sayısını kuvvet olarak aldığımızda, rakamların kuvvetleri toplamı kendisine eşit olan sayı.")
+    with st.expander("🔺 ÜÇGENSEL SAYI Nedir?"):
+        st.markdown("**Tanım:** Noktalarla eşkenar üçgen oluşturabilen sayılar. 1, 3, 6, 10...")
 
+# --- MOD 4: FORMULA SPRINT ---
 elif secim == "🧠 Formula Sprint":
     st.title("🧠 Formula Sprint: Hızlı Tekrar")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
-    # ... (Formula Sprint mantığı devam eder)
+    st.metric("SPRINT PUANI", st.session_state.ezber_puan)
+    
+    if st.session_state.ezber_kategori_secildi:
+        soru_index = st.session_state.ezber_soru_index
+        formuller = st.session_state.ezber_filtreli_formuller
+        toplam_soru = len(formuller)
+        kategori_adi = st.session_state.ezber_kategori_secildi
+        st.subheader(f"🏷️ Kategori: {kategori_adi} ({toplam_soru} Formül)")
+
+        with st.form(key="ezber_form"):
+            kategori, soru_text, dogru_cevap, puan = formuller[soru_index]
+            st.markdown(f"### Soru {soru_index + 1}/{toplam_soru}: **`{soru_text}`**")
+            st.markdown(f"*(Puan: {puan})*")
+            cevap_girisi = st.text_input("Boşluğu Doldurun:", key="cevap_girisi", help="Örn: a+b, cosxsiny.")
+            col_cevap1, col_cevap2, col_cevap3 = st.columns([1, 1, 2])
+            col_cevap1.form_submit_button("✅ KONTROL ET", type="primary", on_click=kontrol_et_ezber, args=("cevap_girisi",))
+            col_cevap2.form_submit_button("⏭️ SONRAKİ FORMÜL", on_click=sonraki_soru_ezber)
+
+        geribildirim = st.session_state.ezber_geribildirim
+        if geribildirim == "dogru":
+            st.success(f"✅ {random.choice(OVGULER)} Doğru bildiniz!")
+        elif geribildirim and "yanlis" in geribildirim:
+            _, dogru_cevap = geribildirim.split(" | ")
+            gosterilen_cevap = dogru_cevap.split(': ')[1]
+            st.error(f"❌ Yanlış cevap. Doğrusu: **`{gosterilen_cevap}`**")
+            
+        st.markdown("---")
+        if st.button("⬅️ KATEGORİ SEÇİMİNE DÖN / PUANI SIFIRLA", use_container_width=True, on_click=sifirla_ezber_modu):
+            st.rerun()
+    else:
+        st.markdown("### 🎯 Hangi Konuda Hızlanmak İstersin?")
+        cols = st.columns(len(EZBER_KATEGORILER))
+        for i, kategori in enumerate(EZBER_KATEGORILER):
+            cols[i].button(f"📚 {kategori}", key=f"kategori_btn_{kategori}", on_click=kategori_sec, args=(kategori,), use_container_width=True)
