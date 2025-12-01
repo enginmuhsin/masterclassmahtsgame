@@ -104,7 +104,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # =============================================================================
-# MATEMATİK FONKSİYONLARI
+# MATEMATİK FONKSİYONLARI VE VERİ YAPILARI
 # =============================================================================
 def is_tek(n): return n % 2 != 0
 def is_tam_kare(n): return n >= 0 and int(math.isqrt(n))**2 == n
@@ -160,10 +160,89 @@ OZELLIKLER = [
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
+# YENİ EZBER MODU VERİ SETİ
+EZBER_FORMULLER = [
+    # Çarpım Tablosu (Kolay)
+    ("7 x 9 = ...", "63", 5),
+    ("12 x 12 = ...", "144", 5),
+    ("8 x 7 = ...", "56", 5),
+    
+    # İki Kare Farkı
+    ("a² - b² = (a - b)(...)", "a+b", 30),
+    ("x² - 16 = (x - 4)(...)", "x+4", 30),
+    
+    # Tam Kare Özdeşlikleri
+    ("(x + 3)² = x² + 6x + ...", "9", 25),
+    ("(2a - 5)² = 4a² - 20a + ...", "25", 25),
+    
+    # Toplam Formülleri (Trigonometri)
+    ("sin(x + y) = sinx cosy + ...", "cosx siny", 50),
+    ("cos(a + b) = cosa cosb - ...", "sina sinb", 50),
+    
+    # Küp Açılımları (Zor)
+    ("(a + b)³ = a³ + 3a²b + 3ab² + ...", "b³", 80),
+    ("a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80),
+]
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
 
 # =============================================================================
-# CALLBACK
+# EZBER MODU LOGİĞİ VE CALLBACK'LERİ
+# =============================================================================
+
+def normalize_cevap(cevap):
+    """Cevaptaki boşlukları kaldırır, tüm harfleri küçültür ve yaygın notasyonları düzeltir."""
+    if not isinstance(cevap, str):
+        cevap = str(cevap)
+    
+    # Boşlukları kaldır ve küçük harfe çevir
+    normalized = cevap.replace(' ', '').lower()
+    
+    # Yaygın notasyon düzeltmeleri (Örn: ^2 yerine 2 kabul etme)
+    normalized = normalized.replace('^', '').replace('**', '')
+    
+    return normalized
+
+def sonraki_soru_ezber():
+    """Ezber modunda bir sonraki soruya geçer."""
+    yeni_index = st.session_state.ezber_soru_index + 1
+    if yeni_index >= len(EZBER_FORMULLER):
+        # Tüm soruları tamamladı, başa dön
+        yeni_index = 0 
+        st.toast("🎉 Tüm Formülleri Tamamladın! Baştan Başlıyoruz.", icon="🥳")
+
+    st.session_state.ezber_soru_index = yeni_index
+    st.session_state.ezber_geribildirim = None
+    st.session_state.cevap_girisi = "" # Input alanını temizle
+    st.rerun()
+
+def kontrol_et_ezber(cevap_key):
+    """Kullanıcının ezber formül cevabını kontrol eder."""
+    # Form'dan gelen cevabı al
+    kullanici_cevabi = st.session_state[cevap_key]
+    soru_index = st.session_state.ezber_soru_index
+    
+    # Soru verisini çek
+    soru, dogru_cevap, puan = EZBER_FORMULLER[soru_index]
+    
+    # Cevapları normalize et ve karşılaştır
+    normalized_kullanici = normalize_cevap(kullanici_cevabi)
+    normalized_dogru = normalize_cevap(dogru_cevap)
+    
+    if normalized_kullanici == normalized_dogru:
+        if st.session_state.ezber_geribildirim != "dogru":
+            # Puanı sadece ilk doğru denemede ekle
+            st.session_state.ezber_puan += puan
+            st.session_state.ezber_geribildirim = "dogru"
+            st.toast(f"✅ Doğru! +{puan} Puan! Harika!", icon="🧠")
+        else:
+            st.toast("Zaten doğru bildiniz. Sonraki soruya geçin.", icon="👍")
+    else:
+        st.session_state.ezber_geribildirim = f"yanlis | Doğrusu: {dogru_cevap}"
+        st.toast("❌ Yanlış Cevap. Tekrar deneyin.", icon="🤔")
+
+
+# =============================================================================
+# OYUN MODU LOGİĞİ VE CALLBACK'LERİ
 # =============================================================================
 def cevap_ver(index, buton_tipi):
     if not st.session_state.oyun_aktif:
@@ -192,9 +271,6 @@ def cevap_ver(index, buton_tipi):
         st.session_state.puan -= 5
         st.toast("Yanlış! -5 Puan", icon="❌")
 
-# =============================================================================
-# YENİ OYUN BAŞLATMA
-# =============================================================================
 def yeni_oyun_baslat():
     mn = st.session_state.get('ayar_min', 1)
     mx = st.session_state.get('ayar_max', 1000)
@@ -226,7 +302,8 @@ def yeni_oyun_baslat():
 # =============================================================================
 
 st.sidebar.title("🧮 Menü")
-secim = st.sidebar.radio("Seçim Yapınız:", ["🎮 Oyun Modu", "🔍 Sayı Dedektörü", "📚 Bilgi Köşesi"])
+# YENİ MOD EKLENDİ
+secim = st.sidebar.radio("Seçim Yapınız:", ["🎮 Oyun Modu", "🔍 Sayı Dedektörü", "📚 Bilgi Köşesi", "🧠 Ezber Modu"])
 st.sidebar.markdown("---")
 
 kurum_kodu = """
@@ -235,23 +312,31 @@ kurum_kodu = """
 </div>
 """
 
+# --- ORTAK SESSION STATE BAŞLANGICI ---
+# (Ezber moduna ait değişkenler eklendi)
+if 'en_yuksek_puan' not in st.session_state: st.session_state.en_yuksek_puan = 0
+if 'ezber_puan' not in st.session_state: st.session_state.ezber_puan = 0
+if 'ezber_soru_index' not in st.session_state: st.session_state.ezber_soru_index = 0
+if 'ezber_geribildirim' not in st.session_state: st.session_state.ezber_geribildirim = None
+# Diğer oyun state'leri:
+if 'hedef_sayi' not in st.session_state:
+    st.session_state.hedef_sayi = 0
+    st.session_state.puan = 0
+    st.session_state.sorular_cevaplandi = [None] * len(OZELLIKLER)
+    st.session_state.baslangic_zamani = 0
+    st.session_state.bitis_zamani = 0
+    st.session_state.oyun_suresi = 60
+    st.session_state.oyun_aktif = False
+    st.session_state.ayar_min = 1
+    st.session_state.ayar_max = 1000
+    st.session_state.ayar_sure = 60
+# --- ORTAK SESSION STATE SONU ---
+
+
 # --- MOD 1: OYUN MODU ---
 if secim == "🎮 Oyun Modu":
     st.title("🎮 Master Class Matematik")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
-    
-    if 'en_yuksek_puan' not in st.session_state: st.session_state.en_yuksek_puan = 0
-    if 'hedef_sayi' not in st.session_state:
-        st.session_state.hedef_sayi = 0
-        st.session_state.puan = 0
-        st.session_state.sorular_cevaplandi = [None] * len(OZELLIKLER)
-        st.session_state.baslangic_zamani = 0
-        st.session_state.bitis_zamani = 0
-        st.session_state.oyun_suresi = 60
-        st.session_state.oyun_aktif = False
-        st.session_state.ayar_min = 1
-        st.session_state.ayar_max = 1000
-        st.session_state.ayar_sure = 60
         
     # --- SÜRE VE PUAN HESAPLAMA ---
     kalan_sure = 0
@@ -407,7 +492,7 @@ elif secim == "🔍 Sayı Dedektörü":
             st.success("🌟 SONUÇ: **MASTER CLASS** (Özel) bir sayı! 🌟")
         else: st.warning("💡 SONUÇ: Sıradan bir sayı.")
 
-# --- MOD 3: BİLGİ KÖŞESİ (FİBONACCİ GÖRSEL HATASI GİDERİLDİ) ---
+# --- MOD 3: BİLGİ KÖŞESİ ---
 elif secim == "📚 Bilgi Köşesi":
     st.title("📚 Master Class Bilgi Bankası")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -435,8 +520,6 @@ elif secim == "📚 Bilgi Köşesi":
         * 5 + 8 = 13 (Kendinden önceki iki sayının toplamı)
         * Bu yüzden 13 bir Fibonacci sayısıdır.
         """)
-        # Görseli buraya tekrar eklemek yerine, hata vermesini önlemek için bu kısmı yoruma alıyoruz.
-        # st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı") 
 
     with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
         st.markdown("""
@@ -490,3 +573,55 @@ elif secim == "📚 Bilgi Köşesi":
         . . .  (Toplam 6 nokta, bir üçgen oluşturur)
         ```
         """)
+
+# --- MOD 4: EZBER MODU (YENİ EK) ---
+elif secim == "🧠 Ezber Modu":
+    st.title("🧠 Ezber Modu: Hızlı Tekrar")
+    st.markdown(kurum_kodu, unsafe_allow_html=True)
+    st.info("Önemli matematik formüllerini ve özdeşliklerini boşluk doldurarak ezberleyin. Cevaplarınızdaki **boşluklar, büyük/küçük harfler ve ^ işaretleri** otomatik temizlenir.")
+    
+    # Mevcut soru ve puanı göster
+    st.metric("EZBER PUANI", st.session_state.ezber_puan)
+    st.markdown("---")
+
+    soru_index = st.session_state.ezber_soru_index
+    toplam_soru = len(EZBER_FORMULLER)
+    
+    # --- SORU VE KONTROL ALANI ---
+    # st.form kullanılarak sadece butona basıldığında RERUN tetiklenir
+    with st.form(key="ezber_form"):
+        soru_text = EZBER_FORMULLER[soru_index][0]
+        st.markdown(f"### Soru {soru_index + 1}/{toplam_soru}: `{soru_text}`")
+        
+        # Kullanıcı Girişi
+        cevap_girisi = st.text_input(
+            "Boşluğu Doldurun:", 
+            key="cevap_girisi", 
+            help="Örn: 'a+b', 'sinxcosy' gibi."
+        )
+        
+        col_cevap1, col_cevap2, col_cevap3 = st.columns([1, 1, 2])
+        
+        # Kontrol Butonu
+        col_cevap1.form_submit_button(
+            "✅ KONTROL ET", 
+            type="primary",
+            on_click=kontrol_et_ezber, 
+            args=("cevap_girisi",)
+        )
+        
+        # Sonraki Soru Butonu (Kontrolden bağımsız, formu resetlemez)
+        col_cevap2.form_submit_button(
+            "⏭️ SONRAKİ FORMÜL", 
+            on_click=sonraki_soru_ezber
+        )
+
+    # --- GERİ BİLDİRİM SONUÇLARI ---
+    geribildirim = st.session_state.ezber_geribildirim
+    
+    if geribildirim == "dogru":
+        st.success(f"{random.choice(OVGULER)} Doğru bildiniz!")
+    elif geribildirim and "yanlis" in geribildirim:
+        _, dogru_cevap = geribildirim.split(" | ")
+        st.error(f"Yanlış cevap. Doğrusu: **`{dogru_cevap.split(': ')[1]}`**")
+        st.info("Tekrar denemeden önce **Bilgi Köşesi**'ndeki ilgili bölüme bakabilirsiniz.")
