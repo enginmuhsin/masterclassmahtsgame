@@ -326,7 +326,10 @@ if 'hedef_sayi' not in st.session_state:
     st.session_state.sorular_cevaplandi = [None] * len(OZELLIKLER)
     st.session_state.baslangic_zamani = 0
     st.session_state.bitis_zamani = 0
-    st.session_state.oyun_suresi = 60
+    
+    # 💥 HATA DÜZELTME: oyun_sures değişkeni ilk başlangıçta tanımlanıyor.
+    st.session_state.oyun_sures = 60 
+    
     st.session_state.oyun_aktif = False
     st.session_state.ayar_min = 1
     st.session_state.ayar_max = 5000
@@ -357,6 +360,7 @@ if secim == "🎮 Oyun Modu":
                 oyun_bitti_animasyonu = True 
         else:
             kalan_sure = int(fark)
+            # Hata düzeltildiği için artık burası çalışır.
             total_sure = st.session_state.oyun_sures 
             progress_degeri = fark / total_sure
             if progress_degeri < 0: progress_degeri = 0.0
