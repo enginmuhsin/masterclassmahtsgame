@@ -57,7 +57,6 @@ st.markdown("""
         color: #ffffff; 
         font-weight: bold;
         font-size: 1.3rem;
-        font-family: 'Verdana', sans-serif;
         padding: 15px;
         margin-bottom: 20px;
         background: linear-gradient(90deg, #0d2b5b 0%, #dc3545 100%);
@@ -129,7 +128,7 @@ def is_fibonacci(n):
     return is_sq(5*n*n + 4) or is_sq(5*n*n - 4)
 def is_palindromik(n): return str(n) == str(n)[::-1]
 def is_harshad(n): return n > 0 and n % sum(int(d) for d in str(n)) == 0
-def is_ucgensel(n): return n >= 0 and is_tam_kare(8 * n + 1) # <-- TANIMLI FONKSİYON
+def is_ucgensel(n): return n >= 0 and is_tam_kare(8 * n + 1)
 def is_iki_kuvveti(n): return n > 0 and (n & (n - 1)) == 0
 def is_armstrong(n): 
     s = str(n)
@@ -145,6 +144,7 @@ def is_ramanujan(n):
         if b**3 == b3: ways += 1
     return ways >= 2
 
+# OYUN MODU ÖZELLİKLERİ (Ramanujan çıkarıldı)
 OZELLIKLER = [
     ("Sayı TEK mi yoksa ÇİFT mi?", is_tek, 5, 5, "TEK", "ÇİFT"),
     ("Sayı ASAL mı?", is_asal, 20, 2, "EVET", "HAYIR"),
@@ -154,11 +154,13 @@ OZELLIKLER = [
     ("Sayı FIBONACCI dizisinde mi?", is_fibonacci, 25, 2, "EVET", "HAYIR"),
     ("Sayı PALİNDROMİK mi?", is_palindromik, 10, 1, "EVET", "HAYIR"),
     ("Sayı HARSHAD sayısı mı?", is_harshad, 15, 1, "EVET", "HAYIR"),
-    ("Sayı RAMANUJAN sayısı mı?", is_ramanujan, 200, 5, "EVET", "HAYIR"),
-    ("Sayı ÜÇGENSEL sayı mı?", is_ucgensel, 20, 2, "EVET", "HAYIR"), # <-- HATA BURADA DÜZELTİLDİ: is_ucagensel -> is_ucgensel
+    ("Sayı ÜÇGENSEL sayı mı?", is_ucgensel, 20, 2, "EVET", "HAYIR"),
     ("Sayı 2'nin KUVVETİ mi?", is_iki_kuvveti, 15, 2, "EVET", "HAYIR"),
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
+# Ramanujan sayılarını analiz kısmında kullanmak için ayrı tutuyoruz
+RAMANUJAN_FUNCTIONS = [is_ramanujan]
+
 
 # YENİ EZBER MODU VERİ SETİ (Zenginleştirildi)
 EZBER_FORMULLER = [
@@ -206,7 +208,7 @@ EZBER_FORMULLER = [
 # Tüm kategorilerin listesi (Set yapısı ile benzersiz kategori isimleri alınır)
 EZBER_KATEGORILER = sorted(list(set([f[0] for f in EZBER_FORMULLER])))
 
-OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
+OVGULER = ["Harikasın! 🚀", "Matematik Dehası!🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
 
 # =============================================================================
 # EZBER MODU LOGİĞİ VE CALLBACK'LERİ
@@ -319,19 +321,33 @@ def cevap_ver(index, buton_tipi):
 
 def yeni_oyun_baslat():
     mn = st.session_state.get('ayar_min', 1)
-    mx = st.session_state.get('ayar_max', 1000)
+    mx = st.session_state.get('ayar_max', 5000) # Varsayılan Max 5000
     sure = st.session_state.get('ayar_sure', 60)
+    
+    # Oyun Modu için kontrol edilecek fonksiyonlar (Ramanujan hariç)
+    CHECK_FUNCTIONS = [is_asal, is_tam_kare, is_fibonacci, is_mukemmel, is_harshad, is_ucgensel, is_iki_kuvveti, is_armstrong]
     
     bulundu = False; deneme = 0; aday = 0
     while not bulundu and deneme < 200:
-        aday = random.randint(mn, mx); score = 0
-        if is_asal(aday): score += 1
-        if is_tam_kare(aday): score += 1
-        if is_fibonacci(aday): score += 1
-        if is_mukemmel(aday): score += 5
-        if is_ramanujan(aday): score += 10
-        if score > 0: bulundu = True
-        else: deneme += 1
+        
+        # Sayı aralığı geniş olduğu için, küçük asal sayı biasını azaltmak için üst aralığı tercih et
+        if mx > 1000:
+            min_val = min(100, mx) # En az 100'den başla, max'tan küçük olsun
+            aday = random.randint(min_val, mx)
+        else:
+            aday = random.randint(mn, mx)
+
+        # Sayının herhangi bir özel özelliği var mı kontrol et
+        has_property = any(func(aday) for func in CHECK_FUNCTIONS)
+
+        if has_property: 
+            bulundu = True
+        else: 
+            deneme += 1
+            
+    # Eğer 200 denemeden sonra bile özel sayılı bir sayı bulunamazsa, rastgele bir sayı ile devam et (fail-safe)
+    if not bulundu:
+        aday = random.randint(mn, mx)
     
     st.session_state.hedef_sayi = aday
     st.session_state.puan = 0
@@ -375,7 +391,7 @@ if 'hedef_sayi' not in st.session_state:
     st.session_state.oyun_suresi = 60
     st.session_state.oyun_aktif = False
     st.session_state.ayar_min = 1
-    st.session_state.ayar_max = 1000
+    st.session_state.ayar_max = 5000 # Default max 5000 olarak güncellendi
     st.session_state.ayar_sure = 60
 # --- ORTAK SESSION STATE SONU ---
 
@@ -408,8 +424,8 @@ if secim == "🎮 Oyun Modu":
 
     # --- SIDEBAR AYARLARI (HER ZAMAN GÖRÜNÜR) ---
     st.sidebar.subheader("⚙️ Ayarlar")
-    mn = st.sidebar.number_input("Min Sayı", 1, 1000, st.session_state.ayar_min)
-    mx = st.sidebar.number_input("Max Sayı", 1, 2000, st.session_state.ayar_max)
+    mn = st.sidebar.number_input("Min Sayı", 1, 5000, st.session_state.ayar_min)
+    mx = st.sidebar.number_input("Max Sayı", 1, 10000, st.session_state.ayar_max) # Max limit 10000 yapıldı
     sure_secimi = st.sidebar.selectbox("Süre Seçin", [60, 120, 180], index=[60, 120, 180].index(st.session_state.ayar_sure))
     
     # Ayarları session state'e kaydet
@@ -508,7 +524,11 @@ elif secim == "🔍 Sayı Dedektörü":
         d = "ÇİFT" if val % 2 == 0 else "TEK"
         c_sol.info(f"👉 Bu sayı bir **{d}** sayıdır.")
         idx = 0
-        for ad, func, _, _, _, _ in OZELLIKLER:
+        
+        # OZELLIKLER ve RAMANUJAN_FUNCTIONS listelerini birleştirerek tüm kontrol fonksiyonlarını tanımla
+        TUM_KONTROL_FONKSIYONLARI = OZELLIKLER + [("Sayı RAMANUJAN sayısı mı?", is_ramanujan, 200, 5, "EVET", "HAYIR")]
+        
+        for ad, func, _, _, _, _ in TUM_KONTROL_FONKSIYONLARI:
             if "TEK" in ad: continue
             
             # KISA ADI TEMİZLEME
@@ -516,7 +536,6 @@ elif secim == "🔍 Sayı Dedektörü":
             kisa_temiz = kisa_temiz.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
             kisa_temiz = kisa_temiz.replace("?", "").replace("yoksa", "").strip()
             kisa_temiz = kisa_temiz.replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip() # Soru eklerini temizle
-
 
             if func(val):
                 hedef = c_sol if idx % 2 == 0 else c_sag
@@ -529,7 +548,7 @@ elif secim == "🔍 Sayı Dedektörü":
                             st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
                             
                     if "RAMANUJAN" in kisa_temiz:
-                         st.info("Bu sayı çok özeldir! İki farklı şekilde iki küpün toplamı olarak yazılabilir (1729 = 1³+12³ ve 9³+10³).")
+                         st.info("Bu sayı çok özeldir! İlk üç Ramanujan sayısı: **1729**, **4104**, **13832**'dir. (İki küp toplamı olarak iki farklı şekilde yazılabilir.)")
 
                 if "PALİNDROMİK" not in kisa_temiz or val > 10: ozel = True
             idx += 1
