@@ -393,9 +393,94 @@ if secim == "🎮 Oyun Modu":
             if st.button("🚀 OYUNU BAŞLAT", key="main_start_button", type="primary", use_container_width=True):
                 yeni_oyun_baslat()
                 st.rerun()
+        st.stop()  # Oyun başlamadıysa burada dur
             
     # --- SKOR VE METRİK GÖSTERİMİ (HEDEF SAYI VARSA) ---
-    if st.session_state.hedef_sayi > 0:
+    # Buraya geldiysek hedef_sayi > 0 demektir
+    c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
+    c1.metric("PUAN", st.session_state.puan)
+    with c2:
+        st.markdown(f"""<div style="text-align: center;"><p style="margin:0; font-weight:bold; color:#495057;">REKOR</p><p style="margin:0; font-size: 2.5rem; font-weight:900; color: #d4af37; text-shadow: 1px 1px 1px black;">{st.session_state.en_yuksek_puan}</p></div>""", unsafe_allow_html=True)
+    
+    c3.metric("SÜRE", f"{kalan_sure} sn")
+    
+    with c4:
+        st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
+
+    st.progress(progress_degeri, text="Kalan Süre")
+
+    # ZAMANLAYICI DÖNGÜSÜ
+    if st.session_state.oyun_aktif and kalan_sure > 0:
+        time.sleep(1)
+        st.rerun()
+
+    # YENİ TUR KONTROLÜ (Tüm sorular cevaplandıysa yeni tur başlat)
+    if st.session_state.oyun_aktif:
+        cevaplanan_soru_sayisi = sum(1 for d in st.session_state.sorular_cevaplandi if d is not None)
+        
+        if cevaplanan_soru_sayisi == len(OZELLIKLER):
+            st.toast("🎉 Tüm Sorular Cevaplandı! Yeni Tur Başlıyor...", icon="🥳")
+            time.sleep(1) 
+            yeni_oyun_baslat()
+            st.rerun()
+
+    # 3. OYUN BİTTİ EKRANI
+    if not st.session_state.oyun_aktif and kalan_sure <= 0:
+        if oyun_bitti_animasyonu:
+            st.balloons()
+            st.success(f"🏆 TEBRİKLER! YENİ REKOR KIRDINIZ: {st.session_state.puan} PUAN!")
+        else:
+            st.error("⏰ SÜRE DOLDU! Yeni bir oyuna başlamak için alttaki butonu kullanın.")
+        st.markdown("---")
+        col_tekrar1, col_tekrar2, col_tekrar3 = st.columns([1, 2, 1])
+        with col_tekrar2:
+            if st.button("🔄 TEKRAR OYNA (YENİ SORU)", type="primary", use_container_width=True):
+                yeni_oyun_baslat()
+                st.rerun()
+        st.markdown("---")
+    
+    # 4. SORU ALANI (HEDEF SAYI OLDUĞU SÜRECE GÖRÜNSİN)
+    st.markdown("---")
+    st.markdown("### 🎯 Soruları Yanıtla")
+    
+    for i, (soru, func, p_d, p_y, sol_txt, sag_txt) in enumerate(OZELLIKLER):
+        durum = st.session_state.sorular_cevaplandi[i]
+        
+        with st.container():
+            st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(Doğru: +{p_d}p / Yanlış: -{p_y}p)</span>", unsafe_allow_html=True)
+            col_btn1, col_btn2 = st.columns(2)
+            
+            # KRİTİK: Butonlar sadece oyun aktifken VE cevap verilmemişse çalışır
+            buton_etkin = st.session_state.oyun_aktif and durum is None
+            
+            if durum is None:  # Henüz cevaplanmamış
+                col_btn1.button(
+                    sol_txt, 
+                    key=f"btn_sol_{i}", 
+                    disabled=not buton_etkin,
+                    use_container_width=True, 
+                    on_click=cevap_ver, 
+                    args=(i, "sol")
+                )
+                col_btn2.button(
+                    sag_txt, 
+                    key=f"btn_sag_{i}", 
+                    disabled=not buton_etkin,
+                    use_container_width=True, 
+                    on_click=cevap_ver, 
+                    args=(i, "sag")
+                )
+            else:  # Cevaplanmış - geri bildirimi göster
+                dogru_mu = func(st.session_state.hedef_sayi)
+                kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("yoksa", "").strip()
+                gercek_cevap_metni = ("TEK" if dogru_mu else "ÇİFT") if "TEK" in soru else (f"EVET ({kavram})" if dogru_mu else f"HAYIR ({kavram} DEĞİL)")
+                
+                if durum == "dogru": 
+                    st.success(f"✅ DOĞRU! → **{gercek_cevap_metni}**")
+                else: 
+                    st.error(f"❌ YANLIŞ! Doğrusu → **{gercek_cevap_metni}**")
+            
+            st.markdown("")
         c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
         c1.metric("PUAN", st.session_state.puan)
         with c2:
