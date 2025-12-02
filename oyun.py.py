@@ -658,19 +658,19 @@ elif secim == "📚 Bilgi Köşesi":
         """)
     with st.expander("📐 FERMAT SAYISI Nedir?"):
         st.markdown("""
-         **Tanım:** Fermat sayıları, özel bir formülle tanımlanır:  
-         **Fₙ = 2^(2^n) + 1**
+        **Tanım:** Fermat sayıları özel bir formülle tanımlanır:  
+        **Fₙ = 2^(2^n) + 1**
 
-         **Örnekler:**  
-        * F₀ = 2^(2^0) + 1 = 3  
-         * F₁ = 2^(2^1) + 1 = 5  
-         * F₂ = 2^(2^2) + 1 = 17  
-         * F₃ = 2^(2^3) + 1 = 257  
-         * F₄ = 2^(2^4) + 1 = 65537  
+        **Örnekler (Alternatif Gösterim):**  
+        * F₀ = 3 → (2¹ + 1)  
+        * F₁ = 5 → (2² + 1)  
+        * F₂ = 17 → (2⁴ + 1)  
+        * F₃ = 257 → (2⁸ + 1)  
+        * F₄ = 65537 → (2¹⁶ + 1)
 
-         Bu sayılardan bazıları asaldır (örneğin 3, 5, 17, 257, 65537).  
-         Fermat sayıları özellikle **geometri ve asal sayı teorisi** ile ilgilidir.
-          """)
+        Burada üstleri küp gibi yazmak yerine, **kuvvetleri açıkça göstererek**  
+        Fermat sayılarının nasıl büyüdüğünü daha görsel hale getirebilirsin.
+        """)
         
     with st.expander("🔀 LASA SAYISI Nedir?"):
         st.markdown("""
@@ -767,5 +767,6 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
