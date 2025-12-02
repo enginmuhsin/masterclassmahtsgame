@@ -656,6 +656,35 @@ elif secim == "📚 Bilgi Köşesi":
         . . .  (Toplam 6 nokta, bir üçgen oluşturur)
         ```
         """)
+        with st.expander("📐 FERMAT SAYISI Nedir?"):
+            st.markdown("""
+            **Tanım:** Fermat sayıları, özel bir formülle tanımlanır:  
+            **Fₙ = 2^(2^n) + 1**
+
+            **Örnekler:**  
+            * F₀ = 2^(2^0) + 1 = 3  
+            * F₁ = 2^(2^1) + 1 = 5  
+            * F₂ = 2^(2^2) + 1 = 17  
+            * F₃ = 2^(2^3) + 1 = 257  
+            * F₄ = 2^(2^4) + 1 = 65537  
+
+            Bu sayılardan bazıları asaldır (örneğin 3, 5, 17, 257, 65537).  
+            Fermat sayıları özellikle **geometri ve asal sayı teorisi** ile ilgilidir.
+            """)
+        
+        with st.expander("🔀 LASA SAYISI Nedir?"):
+            st.markdown("""
+            **Tanım:** Lasa sayıları, hem düzden okunuşu hem de ters çevrilmiş hali asal olan sayılardır.  
+            Yani sayı asal olacak, aynı zamanda ters çevrilmiş hali de asal çıkacak.
+
+            **Örnekler:**  
+            * **13** → Tersi: **31** → İkisi de asal ✅  
+            * **17** → Tersi: **71** → İkisi de asal ✅  
+            * **37** → Tersi: **73** → İkisi de asal ✅  
+            * **79** → Tersi: **97** → İkisi de asal ✅  
+
+        Bu özel sayı türü, asal sayıların simetrik bir özelliğini gösterir ve matematikte ilginç bir kategori oluşturur.
+        """)
 
 # --- MOD 4: FORMULA SPRİNT ---
 elif secim == "🧠 Formula Sprint":
@@ -738,3 +767,4 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
