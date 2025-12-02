@@ -659,9 +659,9 @@ elif secim == "📚 Bilgi Köşesi":
     
     with st.expander("⚡ MERSENNE ASALI Nedir?"):
         st.markdown("""
-        **Tanım:** Mersenne asalları, özel bir formülle tanımlanır:
-        ** 2 üzeri n eksi 1 şeklinde tanımlanır;
-        **Mₙ = 2^n - 1**
+        **Tanım:** Mersenne asalları, özel bir formülle tanımlanır:                                            
+        ** 2 üzeri n eksi 1 şeklinde tanımlanır;                               
+        **Mₙ = 2^n - 1**                 
 
         Yani n bir asal sayı olduğunda, bazen **2^n - 1** de asal çıkar.  
         Bu özel asal sayılar matematikte çok önemlidir ve büyük asal sayıların keşfinde kullanılır.
@@ -789,6 +789,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
