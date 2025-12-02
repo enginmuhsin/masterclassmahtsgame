@@ -656,10 +656,31 @@ elif secim == "📚 Bilgi Köşesi":
         . . .  (Toplam 6 nokta, bir üçgen oluşturur)
         ```
         """)
+    
+    with st.expander("⚡ MERSENNE ASALI Nedir?"):
+        st.markdown("""
+        **Tanım:** Mersenne asalları, özel bir formülle tanımlanır:
+        ** 2 üzeri n eksi 1 şeklinde tanımlanır;
+        **Mₙ = 2^n - 1**
+
+        Yani n bir asal sayı olduğunda, bazen **2^n - 1** de asal çıkar.  
+        Bu özel asal sayılar matematikte çok önemlidir ve büyük asal sayıların keşfinde kullanılır.
+
+        **Örnekler:**  
+        * n = 2 → 2² - 1 = **3** (asal)  
+        * n = 3 → 2³ - 1 = **7** (asal)  
+        * n = 5 → 2⁵ - 1 = **31** (asal)  
+        * n = 7 → 2⁷ - 1 = **127** (asal)  
+        * n = 13 → 2¹³ - 1 = **8191** (asal)
+
+        🔎 Not: Tüm n değerleri asal olsa bile, **2^n - 1** her zaman asal çıkmaz.  
+        Örneğin n = 11 → 2¹¹ - 1 = 2047 (bileşik, çünkü 23 × 89).
+        """)
+        
     with st.expander("📐 FERMAT SAYISI Nedir?"):
         st.markdown("""
         **Tanım:** Fermat sayıları özel bir formülle tanımlanır:  
-        2 üzeri 2n artı 1 şeklinde tanımlanır;
+        **2 üzeri 2n artı 1 şeklinde tanımlanır;
         **Fₙ = 2^(2^n) + 1** 
 
         **Örnekler (Alternatif Gösterim):**  
@@ -686,7 +707,7 @@ elif secim == "📚 Bilgi Köşesi":
 
         Bu özel sayı türü, asal sayıların simetrik bir özelliğini gösterir ve matematikte ilginç bir kategori oluşturur.
         """)
-
+        
 # --- MOD 4: FORMULA SPRİNT ---
 elif secim == "🧠 Formula Sprint":
     st.title("🧠 Formula Sprint: Hızlı Tekrar")
@@ -768,6 +789,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
