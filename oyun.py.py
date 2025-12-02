@@ -659,7 +659,8 @@ elif secim == "📚 Bilgi Köşesi":
     with st.expander("📐 FERMAT SAYISI Nedir?"):
         st.markdown("""
         **Tanım:** Fermat sayıları özel bir formülle tanımlanır:  
-        **Fₙ = 2^(2^n) + 1**
+        2 üzeri 2n artı 1 şeklinde tanımlanır;
+        **Fₙ = 2^(2^n) + 1** 
 
         **Örnekler (Alternatif Gösterim):**  
         * F₀ = 3 → (2¹ + 1)  
@@ -767,6 +768,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
