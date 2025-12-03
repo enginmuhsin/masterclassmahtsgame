@@ -659,9 +659,8 @@ elif secim == "📚 Bilgi Köşesi":
     
     with st.expander("⚡ MERSENNE ASALI Nedir?"):
         st.markdown("""
-        **Tanım:** Mersenne asalları, özel bir formülle tanımlanır:                                            
-        ** 2 üzeri n eksi 1 şeklinde tanımlanır;                               
-        **Mₙ = 2^n - 1**                 
+        **Tanım:** Mersenne asalları, özel bir formülle tanımlanır:  
+        **Mₙ = 2^n - 1**
 
         Yani n bir asal sayı olduğunda, bazen **2^n - 1** de asal çıkar.  
         Bu özel asal sayılar matematikte çok önemlidir ve büyük asal sayıların keşfinde kullanılır.
@@ -672,6 +671,12 @@ elif secim == "📚 Bilgi Köşesi":
         * n = 5 → 2⁵ - 1 = **31** (asal)  
         * n = 7 → 2⁷ - 1 = **127** (asal)  
         * n = 13 → 2¹³ - 1 = **8191** (asal)
+
+        🔎 İlginç Bilgi:  
+        Şu ana kadar keşfedilen **en büyük Mersenne asalı**  
+        **2^136,279,841 - 1** formundadır ve tam **41.024.320 basamak** içerir!  
+        Bu sayı 2018 yılında GIMPS projesi kapsamında bulunmuştur.
+        """)
 
         🔎 Not: Tüm n değerleri asal olsa bile, **2^n - 1** her zaman asal çıkmaz.  
         Örneğin n = 11 → 2¹¹ - 1 = 2047 (bileşik, çünkü 23 × 89).
@@ -704,7 +709,20 @@ elif secim == "📚 Bilgi Köşesi":
           * **17** → Tersi: **71** → İkisi de asal ✅  
           * **37** → Tersi: **73** → İkisi de asal ✅  
           * **79** → Tersi: **97** → İkisi de asal ✅  
+        with st.expander("🔗 YARIM ASAL SAYI Nedir?"):
+        st.markdown("""
+        **Tanım:** Yarım asal sayılar, iki asal sayının çarpımı şeklinde yazılabilen pozitif tam sayılardır.  
+        Yani ya bir asalın karesi, ya da iki farklı asalın çarpımıdır.
 
+        **Örnekler:**  
+        * 4 = 2 × 2  
+        * 6 = 2 × 3  
+        * 9 = 3 × 3  
+        * 15 = 3 × 5  
+        * 21 = 3 × 7  
+
+        🔎 Kriptoloji (RSA algoritması) gibi alanlarda çok önemli bir rol oynarlar.
+        """)
         Bu özel sayı türü, asal sayıların simetrik bir özelliğini gösterir ve matematikte ilginç bir kategori oluşturur.
         """)
         
@@ -789,6 +807,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
