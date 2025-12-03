@@ -54,19 +54,10 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
 }
 
 /* KRİTİK İÇERİK KAYDIRMA: Ana içeriği, sabitlenen panonun altına it */
-/* Pano yüksekliği yaklaşık 170px'ten 180px'e çıkarıldı (Daha güvenli) */
+/* Bu, sabit panonun arkasından sarkan BOŞLUĞU yok eden ayardır. */
 .stApp > div:first-child > div:nth-child(2) {
+    /* Sabit panonun tahmini yüksekliği 170-180px civarındadır. 180px güvenli bir değerdir. */
     margin-top: 180px !important; 
-}
-
-/* Mobil görünümde (sidebar kapalıyken) pano genişliğini düzeltmeye gerek kalmadı (width: 100% ile çözüldü) */
-@media (max-width: 768px) {
-    .fixed-scoreboard {
-        width: 100%; /* Mobil cihazda tam genişlik */
-    }
-    .stApp > div:first-child > div:nth-child(2) {
-        margin-top: 180px !important; 
-    }
 }
 
 
@@ -79,7 +70,7 @@ h1 { color: #0d2b5b !important; text-shadow: 1px 1px 2px #b0b0b0; font-weight: 9
 .stButton>button:hover { background-color: #0d2b5b; color: white; border-color: #0d2b5b; transform: translateY(-2px); }
 .hedef-sayi-kutusu { background-color: #ffffff; border: 4px solid #dc3545; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15); }
 .streamlit-expanderHeader { font-weight: bold; color: #0d2b5b; font-size: 1.1rem; }
-.cevap-form-container { border: 2px solid #0d2b5b; border-radius: 10px; padding: 10px; margin-top: 20px; } /* Formula Sprint için yeni stil */
+.cevap-form-container { border: 2px solid #0d2b5b; border-radius: 10px; padding: 10px; margin-top: 20px; } 
 
 </style>
 """, unsafe_allow_html=True)
@@ -432,7 +423,6 @@ INITIAL_STATE = {
     'oyun_suresi': 60, 
     
     # Ek form değişkeni (Formula Sprint için)
-    # st.session_state.cevap_girisi yerine doğrudan st.session_state['cevap_girisi'] kullanıldı
 }
 
 # Başlatma döngüsü
@@ -519,7 +509,7 @@ if secim == "🎮 Oyun Modu":
         # Progress bar
         st.progress(progress_degeri, text="Kalan Süre")
 
-        # SABİT KAPSAYICIYI KAPAT
+        # SABİT KAPSAYICINI KAPAT
         st.markdown('</div>', unsafe_allow_html=True)
 
         # OYUN BİTTİ EKRANI
