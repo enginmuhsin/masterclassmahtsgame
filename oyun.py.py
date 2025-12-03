@@ -11,11 +11,11 @@ st.set_page_config(
 )
 
 # =============================================================================
-# TASARIM: SABİT PANO (FIXED HEADER) VE MOBİL UYUMLULUK DÜZELTMELERİ
+# TASARIM: SABİT PANO (FIXED HEADER) VE KRİTİK CSS DÜZELTMESİ
 # =============================================================================
 st.markdown("""
 <style>
-/* Streamlit'in varsayılan alt ve yan menülerini gizle */
+/* Streamlit'in varsayılan alt menülerini gizle */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 
@@ -34,24 +34,21 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
 /* 8. SABİT PUAN TABLOSU STİLİ (position: fixed ile sabitleme) */
 .fixed-scoreboard {
     position: fixed; /* Ekran pozisyonunu sabitle */
-    /* KRİTİK DÜZELTME: Streamlit'in kendi üst menüsünün (yaklaşık 50px) altına yerleş */
-    top: 50px; 
+    top: 50px; /* Streamlit'in kendi sabit başlığının altına yerleş */
     left: 0; 
     right: 0; 
     z-index: 999999; /* En üstte olmasını garantiler */
     background-color: #f8f9fa; /* Arka plan rengi */
     padding: 10px 10px 0 10px; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Daha belirgin gölge */
-    /* Sidebar'dan kalan boşluğu hesapla (Genişlik hesabı) */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+    /* Streamlit'in içeriğinin genişliği ile hizala */
     width: calc(100% - 300px); 
 }
 
-/* 9. Streamlit'in Ana İçeriğini Kaydırma (Kritik: Sabit panonun altında kalmasını sağlar) */
-/* Ana içerik (sorular vs.) için üst boşluk ekle. 
-   Boşluk = Streamlit Header (50px) + Pano Yüksekliği (~170px) = ~220px */
+/* KRİTİK DÜZELTME: Streamlit'in ana içeriğini, iki sabit elemanın toplam yüksekliği kadar aşağı it. */
+/* ~220px = Streamlit Header (50px) + Pano Yüksekliği (~170px) */
 .stApp > div:first-child > div:nth-child(2) {
-    /* Bu selektör ana Streamlit içerik div'ini hedefler */
-    margin-top: 220px !important; /* YENİ BOŞLUK MİKTARI */
+    margin-top: 220px !important; 
 }
 
 /* Mobil görünümde (sidebar kapalıyken) pano genişliğini düzelt */
@@ -62,63 +59,14 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
 }
 
 /* Diğer Stil Kodları */
-h1 {
-    color: #0d2b5b !important;
-    text-shadow: 1px 1px 2px #b0b0b0;
-    font-weight: 900 !important;
-    font-family: 'Helvetica', sans-serif;
-}
-[data-testid="stMetricLabel"] {
-    color: #495057 !important;
-    font-size: 1.1rem !important;
-    font-weight: bold !important;
-}
-[data-testid="stMetricValue"] {
-    color: #dc3545 !important;
-    font-size: 2.5rem !important;
-    font-weight: 900 !important;
-}
-.bilsem-header {
-    text-align: center;
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 1.3rem;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: linear-gradient(90deg, #0d2b5b 0%, #dc3545 100%);
-    border-radius: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.stButton>button {
-    font-weight: bold;
-    border-radius: 12px;
-    border: 2px solid #0d2b5b;
-    color: #0d2b5b;
-    background-color: #ffffff;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.stButton>button:hover {
-    background-color: #0d2b5b;
-    color: white;
-    border-color: #0d2b5b;
-    transform: translateY(-2px);
-}
-.hedef-sayi-kutusu {
-    background-color: #ffffff;
-    border: 4px solid #dc3545;
-    padding: 10px;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15);
-}
-.streamlit-expanderHeader {
-    font-weight: bold;
-    color: #0d2b5b;
-    font-size: 1.1rem;
-}
+h1 { color: #0d2b5b !important; text-shadow: 1px 1px 2px #b0b0b0; font-weight: 900 !important; font-family: 'Helvetica', sans-serif; }
+[data-testid="stMetricLabel"] { color: #495057 !important; font-size: 1.1rem !important; font-weight: bold !important; }
+[data-testid="stMetricValue"] { color: #dc3545 !important; font-size: 2.5rem !important; font-weight: 900 !important; }
+.bilsem-header { text-align: center; color: #ffffff; font-weight: bold; font-size: 1.3rem; padding: 15px; margin-bottom: 20px; background: linear-gradient(90deg, #0d2b5b 0%, #dc3545 100%); border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-transform: uppercase; letter-spacing: 1px; }
+.stButton>button { font-weight: bold; border-radius: 12px; border: 2px solid #0d2b5b; color: #0d2b5b; background-color: #ffffff; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.stButton>button:hover { background-color: #0d2b5b; color: white; border-color: #0d2b5b; transform: translateY(-2px); }
+.hedef-sayi-kutusu { background-color: #ffffff; border: 4px solid #dc3545; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15); }
+.streamlit-expanderHeader { font-weight: bold; color: #0d2b5b; font-size: 1.1rem; }
 </style>
 """, unsafe_allow_html=True)
 # =============================================================================
