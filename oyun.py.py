@@ -672,13 +672,13 @@ elif secim == "📚 Bilgi Köşesi":
         * n = 7 → 2⁷ - 1 = **127** (asal)  
         * n = 13 → 2¹³ - 1 = **8191** (asal)
 
-        🔎 İlginç Bilgi:  
+        İlginç Bilgi:  
         Şu ana kadar keşfedilen **en büyük Mersenne asalı**  
         **2^136,279,841 - 1** formundadır ve tam **41.024.320 basamak** içerir!  
         Bu sayı 2018 yılında GIMPS projesi kapsamında bulunmuştur.
         """)
 
-        🔎 Not: Tüm n değerleri asal olsa bile, **2^n - 1** her zaman asal çıkmaz.  
+        Not: Tüm n değerleri asal olsa bile, **2^n - 1** her zaman asal çıkmaz.  
         Örneğin n = 11 → 2¹¹ - 1 = 2047 (bileşik, çünkü 23 × 89).
         """)
         
@@ -807,6 +807,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
