@@ -11,13 +11,21 @@ st.set_page_config(
 )
 
 # =============================================================================
-# TASARIM: SABİT PANO (FIXED HEADER) VE KRİTİK CSS DÜZELTMESİ
+# TASARIM: KRİTİK CSS ÇÖZÜMÜ (SİYAH ÜST ÇUBUĞU GİZLEME VE PANO SABİTLEME)
 # =============================================================================
 st.markdown("""
 <style>
-/* Streamlit'in varsayılan alt menülerini gizle */
+/* Menü ve Alt Bilgi Gizleme */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+
+/* KRİTİK ÇÖZÜM: Streamlit'in SİYAH ÜST ÇUBUĞUNU (Header) TAMAMEN GİZLE */
+.stApp > header {
+    visibility: hidden; /* Görünmez yap */
+    height: 0 !important; /* Yüksekliğini sıfırla */
+    padding: 0 !important; /* İç boşluğu sıfırla */
+    display: none !important; /* Gerekirse tamamen DOM'dan çıkar */
+}
 
 /* 1. ARKA PLAN */
 .stApp {
@@ -34,29 +42,34 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
 /* 8. SABİT PUAN TABLOSU STİLİ (position: fixed ile sabitleme) */
 .fixed-scoreboard {
     position: fixed; /* Ekran pozisyonunu sabitle */
-    top: 50px; /* Streamlit'in kendi sabit başlığının altına yerleş */
+    top: 0; /* KRİTİK: Artık ekranın en üstü (siyah çubuk yok) */
     left: 0; 
     right: 0; 
-    z-index: 999999; /* En üstte olmasını garantiler */
+    z-index: 1000; /* En üstte olmasını garantiler */
     background-color: #f8f9fa; /* Arka plan rengi */
     padding: 10px 10px 0 10px; 
     box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
-    /* Streamlit'in içeriğinin genişliği ile hizala */
-    width: calc(100% - 300px); 
+    /* Yan menü (Sidebar) açıldığında içeriğin genişliğini doğru ayarla */
+    width: calc(100% - 300px); /* st.set_page_config(layout="wide") varsayılan genişlik ayarı ile uyumlu */
 }
 
-/* KRİTİK DÜZELTME: Streamlit'in ana içeriğini, iki sabit elemanın toplam yüksekliği kadar aşağı it. */
-/* ~220px = Streamlit Header (50px) + Pano Yüksekliği (~170px) */
+/* KRİTİK İÇERİK KAYDIRMA: Ana içeriği, sabitlenen panonun altına it */
+/* Pano yüksekliği yaklaşık 170px kabul edilmiştir. */
 .stApp > div:first-child > div:nth-child(2) {
-    margin-top: 220px !important; 
+    margin-top: 170px !important; 
 }
 
 /* Mobil görünümde (sidebar kapalıyken) pano genişliğini düzelt */
 @media (max-width: 768px) {
     .fixed-scoreboard {
-        width: 100%; /* Tam genişlik */
+        width: 100%; /* Mobil cihazda tam genişlik */
+    }
+    /* Mobil görünümde sidebar kapalı olduğundan boşluk/padding ayarlarına gerek kalmaz */
+    .stApp > div:first-child > div:nth-child(2) {
+        margin-top: 170px !important; /* Aynı marjini koru */
     }
 }
+
 
 /* Diğer Stil Kodları */
 h1 { color: #0d2b5b !important; text-shadow: 1px 1px 2px #b0b0b0; font-weight: 900 !important; font-family: 'Helvetica', sans-serif; }
@@ -67,6 +80,7 @@ h1 { color: #0d2b5b !important; text-shadow: 1px 1px 2px #b0b0b0; font-weight: 9
 .stButton>button:hover { background-color: #0d2b5b; color: white; border-color: #0d2b5b; transform: translateY(-2px); }
 .hedef-sayi-kutusu { background-color: #ffffff; border: 4px solid #dc3545; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15); }
 .streamlit-expanderHeader { font-weight: bold; color: #0d2b5b; font-size: 1.1rem; }
+
 </style>
 """, unsafe_allow_html=True)
 # =============================================================================
@@ -140,6 +154,7 @@ def is_ramanujan(n):
     return ways >= 2
 
 def is_yarim_asal(n):
+    # Yarım asal (semiprime) → tam iki asalın çarpımı (aynı olabilir)
     if n < 4:
         return False
     for i in range(2, int(math.isqrt(n)) + 1):
@@ -148,15 +163,18 @@ def is_yarim_asal(n):
     return False
 
 def is_mersenne_asali(n):
+    # Mersenne asalı = 2^p - 1 ve kendisi asal
     if n <= 1:
         return False
     p = math.log2(n + 1)
-    return p.is_integer() and is_asal(int(p))
+    return p.is_integer() and is_asal(int(p)) # p'nin tam sayı (üs) ve asal olması gerekir
 
 def is_fermat_sayisi(n):
+    # Fermat sayıları = 2^(2^k) + 1 (k = 0,1,2,3,4)
     fermatlar = [3, 5, 17, 257, 65537]
     return n in fermatlar
 
+# OYUN MODU ÖZELLİKLERİ (Ramanujan çıkarıldı)
 OZELLIKLER = [
     ("Sayı TEK mi yoksa ÇİFT mi?", is_tek, 5, 5, "TEK", "ÇİFT"),
     ("Sayı ASAL mı?", is_asal, 10, 10, "EVET", "HAYIR"),
@@ -174,37 +192,47 @@ OZELLIKLER = [
     ("Sayı FERMAT SAYISI mı?", is_fermat_sayisi, 50, 50, "EVET", "HAYIR"),
 ]
 
+# Ramanujan sayılarını analiz kısmında kullanmak için ayrı tutuyoruz
 RAMANUJAN_FUNCTIONS = [is_ramanujan]
 
+# YENİ EZBER MODU VERİ SETİ (Zenginleştirildi)
 EZBER_FORMULLER = [
+    # (Kategori, Soru, Doğru Cevap, Puan)
+    # ÇARPIM TABLOSU (Basit Hafıza)
     ("Çarpım Tablosu", "7 x 9 = ...", "63", 5),
     ("Çarpım Tablosu", "12 x 12 = ...", "144", 5),
     ("Çarpım Tablosu", "8 x 7 = ...", "56", 5),
     ("Çarpım Tablosu", "11 x 6 = ...", "66", 5),
     ("Çarpım Tablosu", "13 x 5 = ...", "65", 5),
+    # ÖZDEŞLİKLER (Temel Cebir)
     ("Özdeşlikler", "a² - b² = (a - b)(...)", "a+b", 30),
     ("Özdeşlikler", "x² - 16 = (x - 4)(...)", "x+4", 30),
     ("Özdeşlikler", "(x + 3)² = x² + 6x + ...", "9", 25),
     ("Özdeşlikler", "(2a - 5)² = 4a² - 20a + ...", "25", 25),
-    ("Özdeşlikler", "a² + 2ab + b² = (...)", "a+b)2", 30),
+    ("Özdeşlikler", "a² + 2ab + b² = (...)", "a+b)2", 30), # (a+b)^2
+    # ÖZDEŞLİKLER (Küp ve Üç Terimli)
     ("Özdeşlikler (Küp)", "a³ + b³ = (a + b)(a² - ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "(a + b)³ = a³ + 3a²b + 3ab² + ...", "b³", 80),
     ("Özdeşlikler (Üç Terimli)", "(a+b+c)² = a²+b²+c²+2(ab+ac+...)", "bc", 90),
+    # TRİGONOMETRİ (Temel)
     ("Trigonometri", "tanx = sinx / ...", "cosx", 40),
     ("Trigonometri", "cotx = ... / sinx", "cosx", 40),
     ("Trigonometri", "sin²x + cos²x = ...", "1", 50),
     ("Trigonometri", "secx = 1 / ...", "cosx", 40),
     ("Trigonometri", "cscx = 1 / ...", "sinx", 40),
+    # TRİGONOMETRİ (Toplam/Fark ve Yarım Açı)
     ("Trigonometri", "sin(x + y) = sinx cosy + ...", "cosx siny", 50),
     ("Trigonometri", "cos(a + b) = cosa cosb - ...", "sina sinb", 50),
-    ("Trigonometri", "sin(2x) = 2 sinx ...", "cosx", 70),
-    ("Trigonometri", "cos(2x) = cos²x - ...", "sin²x", 70),
+    ("Trigonometri", "sin(2x) = 2 sinx ...", "cosx", 70), # Yarım Açı Sinüs
+    ("Trigonometri", "cos(2x) = cos²x - ...", "sin²x", 70), # Yarım Açı Kosinüs
     ("Trigonometri", "tan(x + y) = (tanx + tany) / (1 - ...)", "tanx tany", 60),
+    # TRİGONOMETRİ (Dönüşüm)
     ("Trigonometri", "sin(90 - x) = ...", "cosx", 60),
     ("Trigonometri", "cos(270 + x) = ...", "sinx", 60),
 ]
 
+# Tüm kategorilerin listesi (Set yapısı ile benzersiz kategori isimleri alınır)
 EZBER_KATEGORILER = sorted(list(set([f[0] for f in EZBER_FORMULLER])))
 
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası!🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
@@ -213,25 +241,31 @@ OVGULER = ["Harikasın! 🚀", "Matematik Dehası!🧠", "BİLSEM Yıldızı! �
 # EZBER MODU LOGİĞİ VE CALLBACK'LERİ
 # =============================================================================
 def normalize_cevap(cevap):
+    """Cevaptaki boşlukları kaldırır, tüm harfleri küçültür ve yaygın notasyonları düzeltir."""
     if not isinstance(cevap, str):
         cevap = str(cevap)
+    # Boşlukları kaldır ve küçük harfe çevir
     normalized = cevap.replace(' ', '').lower()
+    # Yaygın notasyon düzeltmeleri (^2 yerine 2 kabul etme, matematiksel sembolleri temizle)
     normalized = normalized.replace('^', '').replace('**', '').replace('*', '')
     return normalized
 
 def sonraki_soru_ezber():
+    """Ezber modunda bir sonraki soruya geçer."""
+    # Mevcut filtreli soru listesini al
     formuller = st.session_state.ezber_filtreli_formuller
     yeni_index = st.session_state.ezber_soru_index + 1
     if yeni_index >= len(formuller):
-        yeni_index = 0
+        yeni_index = 0 # Başa dön
         st.toast("🎉 Seçilen Kategorideki Tüm Formülleri Tamamladın! Baştan Başlıyoruz.", icon="🥳")
     
     st.session_state.ezber_soru_index = yeni_index
     st.session_state.ezber_geribildirim = None
-    st.session_state.cevap_girisi = ""
+    st.session_state.cevap_girisi = "" # Input alanını temizle
     st.rerun()
 
 def kontrol_et_ezber(cevap_key):
+    """Kullanıcının ezber formül cevabını kontrol eder."""
     if not st.session_state.ezber_filtreli_formuller:
         st.warning("Önce bir kategori seçmelisiniz!")
         return
@@ -241,6 +275,7 @@ def kontrol_et_ezber(cevap_key):
     formuller = st.session_state.ezber_filtreli_formuller
     kategori, soru, dogru_cevap, puan = formuller[soru_index]
 
+    # Cevapları normalize et ve karşılaştır
     normalized_kullanici = normalize_cevap(kullanici_cevabi)
     normalized_dogru = normalize_cevap(dogru_cevap)
 
@@ -256,6 +291,7 @@ def kontrol_et_ezber(cevap_key):
         st.toast("❌ Yanlış Cevap. Tekrar deneyin.", icon="🤔")
 
 def sifirla_ezber_modu():
+    """Ezber modunu sıfırlar ve kategori seçimine geri döner."""
     st.session_state.ezber_puan = 0
     st.session_state.ezber_soru_index = 0
     st.session_state.ezber_geribildirim = None
@@ -264,6 +300,7 @@ def sifirla_ezber_modu():
     st.session_state.cevap_girisi = ""
 
 def kategori_sec(kategori):
+    """Seçilen kategoriye göre formül listesini filtreler ve modu başlatır."""
     if kategori:
         st.session_state.ezber_filtreli_formuller = [f for f in EZBER_FORMULLER if f[0] == kategori]
         st.session_state.ezber_kategori_secildi = kategori
@@ -305,10 +342,12 @@ def cevap_ver(index, buton_tipi):
         st.toast("Yanlış! -5 Puan", icon="❌")
 
 def yeni_oyun_baslat():
+    # Session state'ten ayarları güvenle çek
     mn = st.session_state.get('ayar_min', 1)
     mx = st.session_state.get('ayar_max', 5000) 
     sure = st.session_state.get('ayar_sure', 60)
 
+    # Oyun Modu için kontrol edilecek fonksiyonlar (Ramanujan hariç)
     CHECK_FUNCTIONS = [is_asal, is_tam_kare, is_fibonacci, is_mukemmel, is_harshad, is_ucgensel, is_iki_kuvveti, is_armstrong]
     
     bulundu = False
@@ -338,6 +377,7 @@ def yeni_oyun_baslat():
     st.session_state.baslangic_zamani = simdi
     st.session_state.bitis_zamani = simdi + sure
     
+    # Hata veren değişkenin (oyun_suresi) bu fonksiyon içinde set edildiğinden emin olunur.
     st.session_state.oyun_suresi = sure 
     st.session_state.oyun_aktif = True
 
@@ -355,37 +395,54 @@ ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
 </div>
 """
 
+# =============================================================================
+# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI
+# =============================================================================
+
 INITIAL_STATE = {
+    # Rekor
     'en_yuksek_puan': 0,
+    
+    # Ezber Modu
     'ezber_puan': 0,
     'ezber_soru_index': 0,
     'ezber_geribildirim': None,
     'ezber_kategori_secildi': None,
     'ezber_filtreli_formuller': [],
+    
+    # Oyun Modu Verileri
     'hedef_sayi': 0,
     'puan': 0,
     'sorular_cevaplandi': [None] * len(OZELLIKLER),
     'baslangic_zamani': 0,
     'bitis_zamani': 0,
     'oyun_aktif': False,
+    
+    # Ayarlar (oyun_suresi, ayar_sure, ayar_min, ayar_max)
     'ayar_min': 1,
     'ayar_max': 5000, 
     'ayar_sure': 60,
-    'oyun_suresi': 60, 
+    'oyun_suresi': 60, # KRİTİK DEĞİŞKEN
+    
+    # Ek form değişkeni
     'cevap_girisi': ''
 }
 
+# Başlatma döngüsü
 for key, default_value in INITIAL_STATE.items():
     if key not in st.session_state:
         st.session_state[key] = default_value
 
 # =============================================================================
-# MOD 1: OYUN MODU
+# GÜVENLİ ORTAK SESSION STATE SONU
 # =============================================================================
+
+# --- MOD 1: OYUN MODU ---
 if secim == "🎮 Oyun Modu":
     st.title("🎮 Master Class Matematik")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
 
+    # --- SÜRE VE PUAN HESAPLAMA ---
     kalan_sure = 0
     progress_degeri = 0.0
     oyun_bitti_animasyonu = False
@@ -402,19 +459,24 @@ if secim == "🎮 Oyun Modu":
                 oyun_bitti_animasyonu = True
         else:
             kalan_sure = int(fark)
+            
+            # KRİTİK ÇÖZÜM: st.session_state.get() ile güvenli erişim
             total_sure = st.session_state.get('oyun_suresi', 60) 
+            
             progress_degeri = fark / total_sure
             if progress_degeri < 0: progress_degeri = 0.0
             if progress_degeri > 1: progress_degeri = 1.0
 
-    # --- SIDEBAR AYARLARI ---
+    # --- SIDEBAR AYARLARI (HER ZAMAN GÖRÜNÜR) ---
     st.sidebar.subheader("⚙️ Ayarlar")
     mn = st.sidebar.number_input("Min Sayı", 1, 5000, st.session_state.ayar_min)
     mx = st.sidebar.number_input("Max Sayı", 1, 10000, st.session_state.ayar_max) 
+    # ayar_sure değerini güvenle alıp, options içinde index'i buluyoruz
     sure_options = [60, 120, 180]
     default_index = sure_options.index(st.session_state.ayar_sure) if st.session_state.ayar_sure in sure_options else 0
     sure_secimi = st.sidebar.selectbox("Süre Seçin", sure_options, index=default_index)
     
+    # Ayarları session state'e kaydet
     st.session_state.ayar_min = mn
     st.session_state.ayar_max = mx
     st.session_state.ayar_sure = sure_secimi
@@ -443,10 +505,10 @@ if secim == "🎮 Oyun Modu":
         with c4:
             st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
         
-        # Progress bar
+        # Progress bar (Kullanıcı etkileşimiyle güncellenir)
         st.progress(progress_degeri, text="Kalan Süre")
 
-        # SABİT KAPSAYICINI KAPAT
+        # SABİT KAPSAYICIYI KAPAT
         st.markdown('</div>', unsafe_allow_html=True)
 
         # OYUN BİTTİ EKRANI
@@ -471,17 +533,21 @@ if secim == "🎮 Oyun Modu":
 
             if durum is None:
                 with st.container():
+                    # MOBİL UYUMLULUK İÇİN SORUYU TEK BİR WİDGET'TA TUTUYORUZ
                     st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
                     
+                    # Butonları ayırmak için 2 sütun kullanıyoruz
                     col_btn1, col_btn2 = st.columns(2)
                     buton_aktif = st.session_state.oyun_aktif
                     
                     col_btn1.button(sol_txt, key=f"btn_sol_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sol"))
                     col_btn2.button(sag_txt, key=f"btn_sag_{i}", disabled=not buton_aktif, use_container_width=True, on_click=cevap_ver, args=(i, "sag"))
             else:
+                # CEVAP GÖRÜNÜMÜ
                 dogru_mu = func(st.session_state.hedef_sayi)
                 kavram = soru.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("yoksa", "").strip()
                 
+                # Gerçek cevabı metin olarak hazırla
                 if "TEK" in soru:
                     gercek_cevap_metni = ("TEK" if dogru_mu else "ÇİFT")
                 else:
@@ -492,7 +558,7 @@ if secim == "🎮 Oyun Modu":
                 else:
                     st.error(f"❌ YANLIŞ! Doğrusu -> **{gercek_cevap_metni}**")
 
-    # --- KARŞILAMA EKRANI ---
+    # --- KARŞILAMA EKRANI (OYUN BAŞLAMAMIŞ) ---
     else:
         st.markdown("### Hazır mısın? Matematik Bilgini Test Etme Zamanı! 🧠")
         st.markdown("---")
@@ -513,15 +579,15 @@ if secim == "🎮 Oyun Modu":
         kalan_sure_kontrol = int(fark)
 
         if kalan_sure_kontrol > 0:
+            # Sadece 1 saniye bekleyip yeniden çalıştır
             time.sleep(1) 
             st.rerun() 
         else:
+            # Süre dolduysa, oyunun bitmesi için yeniden çalıştır
             if st.session_state.oyun_aktif:
                 st.rerun()
 
-# =============================================================================
-# MOD 2: SAYI DEDEKTÖRÜ
-# =============================================================================
+# --- MOD 2: SAYI DEDEKTÖRÜ ---
 elif secim == "🔍 Sayı Dedektörü":
     st.title("🔍 Master Class Dedektör")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -544,13 +610,17 @@ elif secim == "🔍 Sayı Dedektörü":
         c_sol.info(f"👉 Bu sayı bir **{d}** sayıdır.")
         idx = 0
 
+        # OZELLIKLER ve RAMANUJAN_FUNCTIONS listelerini birleştirerek tüm kontrol fonksiyonlarını tanımla
         TUM_KONTROL_FONKSIYONLARI = OZELLIKLER + [("Sayı RAMANUJAN sayısı mı?", is_ramanujan, 200, 5, "EVET", "HAYIR")]
 
         for ad, func, _, _, _, _ in TUM_KONTROL_FONKSIYONLARI:
-            if "TEK" in ad: continue
+            if "TEK" in ad: continue # Tek/Çift bilgisi zaten verildi
 
-            kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "").replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "").replace("?", "").replace("yoksa", "").strip()
-            kisa_temiz = kisa_temiz.replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip()
+            # KISA ADI TEMİZLEME
+            kisa_temiz = ad.replace("Sayı ", "").replace(" sayısı mı?", "")
+            kisa_temiz = kisa_temiz.replace(" dizisinde mi?", "").replace(" mü?", "").replace(" mi?", "")
+            kisa_temiz = kisa_temiz.replace("?", "").replace("yoksa", "").strip()
+            kisa_temiz = kisa_temiz.replace(" mı", "").replace(" mi", "").replace(" mu", "").replace(" mü", "").strip() # Soru eklerini temizle
 
             if func(val):
                 hedef = c_sol if idx % 2 == 0 else c_sag
@@ -561,7 +631,7 @@ elif secim == "🔍 Sayı Dedektörü":
                         with st.expander("Fibonacci Bilgisi"):
                             st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
                     if "RAMANUJAN" in kisa_temiz:
-                        st.info("Bu sayı çok özeldir! İlk üç Ramanujan sayısı: **1729**, **4104**, **13832**'dir.")
+                        st.info("Bu sayı çok özeldir! İlk üç Ramanujan sayısı: **1729**, **4104**, **13832**'dir. (İki küp toplamı olarak iki farklı şekilde yazılabilir.)")
                 
                 if "PALİNDROMİK" not in kisa_temiz or val > 10:
                     ozel = True
@@ -574,9 +644,7 @@ elif secim == "🔍 Sayı Dedektörü":
         else:
             st.warning("💡 SONUÇ: Sıradan bir sayı.")
 
-# =============================================================================
-# MOD 3: BİLGİ KÖŞESİ
-# =============================================================================
+# --- MOD 3: BİLGİ KÖŞESİ ---
 elif secim == "📚 Bilgi Köşesi":
     st.title("📚 Master Class Bilgi Bankası")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -585,121 +653,24 @@ elif secim == "📚 Bilgi Köşesi":
     with st.expander("✨ MÜKEMMEL SAYI Nedir?"):
         st.markdown("""
         **Tanım:** Kendisi hariç pozitif bölenlerinin toplamı, kendisine eşit olan sayıya denir.
-        **Örnek: 6** ($1 + 2 + 3 = 6$)
+        **Örnek: 6**
+        * 6'nın bölenleri: 1, 2, 3, 6
+        * Kendisi hariç toplayalım: **$1 + 2 + 3 = 6$**
+        * Sonuç kendisine eşit olduğu için 6 **Mükemmel Sayıdır**.
+        *Diğer Mükemmel Sayılar: 28, 496, 8128...*
         """)
 
     with st.expander("🌀 FIBONACCI SAYISI Nedir?"):
         st.markdown("""
-        **Tanım:** Her sayının, kendinden önceki iki sayının toplamı olduğu sayı dizisidir. (0, 1, 1, 2, 3, 5, 8, 13...)
+        **Tanım:** Her sayının, kendinden önceki iki sayının toplamı olduğu sayı dizisidir. Doğadaki "**Altın Oran**" ile ilişkilidir.
+        **Dizi:** 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...
+        **Örnek: 13**
+        * $5 + 8 = 13$ (Kendinden önceki iki sayının toplamı)
+        * Bu yüzden 13 bir **Fibonacci sayısıdır**.
         """)
 
     with st.expander("🔁 PALİNDROMİK SAYI Nedir?"):
         st.markdown("""
-        **Tanım:** Baştan sona ve sondan başa okunuşu aynı olan sayılardır. (Örn: 121, 4004)
-        """)
-
-    with st.expander("🔢 HARSHAD SAYISI Nedir?"):
-        st.markdown("""
-        **Tanım:** Rakamları toplamına tam bölünebilen sayıdır. (Örn: 18 $\rightarrow$ $1+8=9$, $18 \div 9 = 2$)
-        """)
-
-    with st.expander("🚕 RAMANUJAN (TAKSİ) SAYISI Nedir?"):
-        st.markdown("""
-        **Tanım:** İki farklı şekilde, iki sayının küplerinin toplamı olarak yazılabilen sayılardır. En küçüğü: **1729** ($1^3 + 12^3$ ve $9^3 + 10^3$).
-        """)
-
-    with st.expander("💪 ARMSTRONG SAYISI Nedir?"):
-        st.markdown("""
-        **Tanım:** Basamak sayısını kuvvet olarak aldığımızda, rakamların kuvvetleri toplamı sayının kendisine eşit olan sayıdır. (Örn: 153 $\rightarrow$ $1^3 + 5^3 + 3^3 = 153$)
-        """)
-
-    with st.expander("🔺 ÜÇGENSEL SAYI Nedir?"):
-        st.markdown("""
-        **Tanım:** 1'den n'e kadar olan sayıların toplamıdır. (1, 3, 6, 10...)
-        """)
-
-    with st.expander("⚡ MERSENNE ASALI Nedir?"):
-        st.markdown("""
-        **Tanım:** **$2^n - 1$** formundaki asal sayılardır. ($2^2-1=3$, $2^3-1=7$)
-        """)
-
-    with st.expander("📐 FERMAT SAYISI Nedir?"):
-        st.markdown("""
-        **Tanım:** **$2^{(2^n)} + 1$** formundaki sayılardır. (3, 5, 17, 257, 65537)
-        """)
-
-    with st.expander("🔗 YARIM ASAL SAYI Nedir?"):
-        st.markdown("""
-        **Tanım:** İki asal sayının çarpımı şeklinde yazılabilen sayılardır. (Örn: $4=2\times2$, $6=2\times3$)
-        """)
-
-# =============================================================================
-# MOD 4: FORMULA SPRİNT
-# =============================================================================
-elif secim == "🧠 Formula Sprint":
-    st.title("🧠 Formula Sprint: Hızlı Tekrar")
-    st.markdown(kurum_kodu, unsafe_allow_html=True)
-
-    st.metric("SPRINT PUANI", st.session_state.ezber_puan)
-
-    if st.session_state.ezber_kategori_secildi:
-        soru_index = st.session_state.ezber_soru_index
-        formuller = st.session_state.ezber_filtreli_formuller
-        toplam_soru = len(formuller)
-        kategori_adi = st.session_state.ezber_kategori_secildi
-        
-        st.subheader(f"🏷️ Kategori: {kategori_adi} ({toplam_soru} Formül)")
-
-        with st.form(key="ezber_form"):
-            kategori, soru_text, dogru_cevap, puan = formuller[soru_index]
-            
-            st.markdown(f"### Soru {soru_index + 1}/{toplam_soru}: **{soru_text}**")
-            st.markdown(f"*(Puan: {puan})*")
-
-            cevap_girisi = st.text_input(
-                "Boşluğu Doldurun:",
-                key="cevap_girisi",
-                help="Örn: a+b, cosxsiny. Boşluklar, üs işaretleri ve harf büyüklüğü önemsenmez."
-            )
-            
-            col_cevap1, col_cevap2, col_cevap3 = st.columns([1, 1, 2])
-            
-            col_cevap1.form_submit_button(
-                "✅ KONTROL ET",
-                type="primary",
-                on_click=kontrol_et_ezber,
-                args=("cevap_girisi",)
-            )
-
-            col_cevap2.form_submit_button(
-                "⏭️ SONRAKİ FORMÜL",
-                on_click=sonraki_soru_ezber
-            )
-
-        geribildirim = st.session_state.ezber_geribildirim
-        if geribildirim == "dogru":
-            st.success(f"✅ {random.choice(OVGULER)} Doğru bildiniz!")
-        elif geribildirim and "yanlis" in geribildirim:
-            _, dogru_cevap_metin = geribildirim.split(" | ")
-            gosterilen_cevap = dogru_cevap_metin.split(': ')[1]
-            st.error(f"❌ Yanlış cevap. Doğrusu: **{gosterilen_cevap}**")
-            st.info("İpucu: Cevabınızdaki boşlukları, küçük harfleri ve üs işaretlerini kod otomatik olarak temizler.")
-
-        st.markdown("---")
-        
-        if st.button("⬅️ KATEGORİ SEÇİMİNE DÖN / PUANI SIFIRLA", use_container_width=True, on_click=sifirla_ezber_modu):
-            st.rerun()
-
-    else:
-        st.markdown("### 🎯 Hangi Konuda Hızlanmak İstersin?")
-        st.warning("Lütfen pratik yapmak istediğiniz kategoriye tıklayın.")
-        
-        cols = st.columns(len(EZBER_KATEGORILER))
-        for i, kategori in enumerate(EZBER_KATEGORILER):
-            cols[i].button(
-                f"📚 {kategori}",
-                key=f"kategori_btn_{kategori}",
-                on_click=kategori_sec,
-                args=(kategori,),
-                use_container_width=True
-            )
+        **Tanım:** Baştan sona ve sondan başa okunuşu aynı olan sayılardır.
+        **Örnekler:**
+        * **121**
