@@ -15,7 +15,7 @@ st.set_page_config(
 # =============================================================================
 st.markdown("""
 <style>
-/* Streamlit'in varsayılan başlık ve menüsünü gizle */
+/* Streamlit'in varsayılan alt ve yan menülerini gizle */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 
@@ -34,27 +34,24 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
 /* 8. SABİT PUAN TABLOSU STİLİ (position: fixed ile sabitleme) */
 .fixed-scoreboard {
     position: fixed; /* Ekran pozisyonunu sabitle */
-    top: 0; 
+    /* KRİTİK DÜZELTME: Streamlit'in kendi üst menüsünün (yaklaşık 50px) altına yerleş */
+    top: 50px; 
     left: 0; 
     right: 0; 
     z-index: 999999; /* En üstte olmasını garantiler */
     background-color: #f8f9fa; /* Arka plan rengi */
     padding: 10px 10px 0 10px; 
     box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Daha belirgin gölge */
-    /* Mobil cihazlarda genişliği tam kullan */
-    width: calc(100% - 300px); /* Sidebar genişliğini çıkar (varsayılan) */
+    /* Sidebar'dan kalan boşluğu hesapla (Genişlik hesabı) */
+    width: calc(100% - 300px); 
 }
 
 /* 9. Streamlit'in Ana İçeriğini Kaydırma (Kritik: Sabit panonun altında kalmasını sağlar) */
-/* stApp > header Streamlit'in kendi üst bandı */
-.stApp > header {
-    visibility: hidden; /* Streamlit'in kendi başlık çubuğunu gizler */
-}
-
-/* Ana içerik (sorular vs.) için üst boşluk ekle, böylece sabit panonun altına gizlenmez */
+/* Ana içerik (sorular vs.) için üst boşluk ekle. 
+   Boşluk = Streamlit Header (50px) + Pano Yüksekliği (~170px) = ~220px */
 .stApp > div:first-child > div:nth-child(2) {
     /* Bu selektör ana Streamlit içerik div'ini hedefler */
-    margin-top: 170px !important; /* SABİT PANO yüksekliği kadar boşluk bırakır */
+    margin-top: 220px !important; /* YENİ BOŞLUK MİKTARI */
 }
 
 /* Mobil görünümde (sidebar kapalıyken) pano genişliğini düzelt */
