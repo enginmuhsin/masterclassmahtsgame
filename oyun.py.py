@@ -676,10 +676,9 @@ elif secim == "📚 Bilgi Köşesi":
         Şu ana kadar keşfedilen **en büyük Mersenne asalı**  
         **2^136,279,841 - 1** formundadır ve tam **41.024.320 basamak** içerir!  
         Bu sayı 2018 yılında GIMPS projesi kapsamında bulunmuştur.
-        """)
 
         Not: Tüm n değerleri asal olsa bile, **2^n - 1** her zaman asal çıkmaz.  
-        Örneğin n = 11 -> 2^11 - 1 = 2047 (bileşik, çünkü 23 x 89).
+        Örneğin n = 11 → 2¹¹ - 1 = 2047 (bileşik, çünkü 23 × 89).
         """)
         
     with st.expander("📐 FERMAT SAYISI Nedir?"):
@@ -807,6 +806,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
