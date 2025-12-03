@@ -50,7 +50,7 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
     padding: 10px 10px 0 10px; 
     box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
     /* Yan menü (Sidebar) açıldığında içeriğin genişliğini doğru ayarla */
-    width: calc(100% - 300px); /* st.set_page_config(layout="wide") varsayılan genişlik ayarı ile uyumlu */
+    /* width: calc(100% - 300px); Streamlit genişliği kendisi ayarlayacaktır, burayı kaldırıyoruz */
 }
 
 /* KRİTİK İÇERİK KAYDIRMA: Ana içeriği, sabitlenen panonun altına it */
@@ -80,6 +80,7 @@ h1 { color: #0d2b5b !important; text-shadow: 1px 1px 2px #b0b0b0; font-weight: 9
 .stButton>button:hover { background-color: #0d2b5b; color: white; border-color: #0d2b5b; transform: translateY(-2px); }
 .hedef-sayi-kutusu { background-color: #ffffff; border: 4px solid #dc3545; padding: 10px; border-radius: 15px; text-align: center; box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15); }
 .streamlit-expanderHeader { font-weight: bold; color: #0d2b5b; font-size: 1.1rem; }
+.cevap-form-container { border: 2px solid #0d2b5b; border-radius: 10px; padding: 10px; margin-top: 20px; }
 
 </style>
 """, unsafe_allow_html=True)
@@ -174,7 +175,7 @@ def is_fermat_sayisi(n):
     fermatlar = [3, 5, 17, 257, 65537]
     return n in fermatlar
 
-# OYUN MODU ÖZELLİKLERİ (Ramanujan çıkarıldı)
+# OYUN MODU ÖZELLİKLERİ
 OZELLIKLER = [
     ("Sayı TEK mi yoksa ÇİFT mi?", is_tek, 5, 5, "TEK", "ÇİFT"),
     ("Sayı ASAL mı?", is_asal, 10, 10, "EVET", "HAYIR"),
@@ -192,13 +193,11 @@ OZELLIKLER = [
     ("Sayı FERMAT SAYISI mı?", is_fermat_sayisi, 50, 50, "EVET", "HAYIR"),
 ]
 
-# Ramanujan sayılarını analiz kısmında kullanmak için ayrı tutuyoruz
 RAMANUJAN_FUNCTIONS = [is_ramanujan]
 
-# YENİ EZBER MODU VERİ SETİ (Zenginleştirildi)
+# YENİ EZBER MODU VERİ SETİ
 EZBER_FORMULLER = [
     # (Kategori, Soru, Doğru Cevap, Puan)
-    # ÇARPIM TABLOSU (Basit Hafıza)
     ("Çarpım Tablosu", "7 x 9 = ...", "63", 5),
     ("Çarpım Tablosu", "12 x 12 = ...", "144", 5),
     ("Çarpım Tablosu", "8 x 7 = ...", "56", 5),
@@ -209,7 +208,7 @@ EZBER_FORMULLER = [
     ("Özdeşlikler", "x² - 16 = (x - 4)(...)", "x+4", 30),
     ("Özdeşlikler", "(x + 3)² = x² + 6x + ...", "9", 25),
     ("Özdeşlikler", "(2a - 5)² = 4a² - 20a + ...", "25", 25),
-    ("Özdeşlikler", "a² + 2ab + b² = (...)", "a+b)2", 30), # (a+b)^2
+    ("Özdeşlikler", "a² + 2ab + b² = (...)", "(a+b)2", 30), # (a+b)^2
     # ÖZDEŞLİKLER (Küp ve Üç Terimli)
     ("Özdeşlikler (Küp)", "a³ + b³ = (a + b)(a² - ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80),
@@ -248,11 +247,12 @@ def normalize_cevap(cevap):
     normalized = cevap.replace(' ', '').lower()
     # Yaygın notasyon düzeltmeleri (^2 yerine 2 kabul etme, matematiksel sembolleri temizle)
     normalized = normalized.replace('^', '').replace('**', '').replace('*', '')
+    # Parantezleri ve basit matematik işaretlerini temizle (Sadece formül içeriği için)
+    normalized = normalized.replace('(', '').replace(')', '').replace('+', '').replace('-', '').replace('/', '').replace('\\', '')
     return normalized
 
 def sonraki_soru_ezber():
     """Ezber modunda bir sonraki soruya geçer."""
-    # Mevcut filtreli soru listesini al
     formuller = st.session_state.ezber_filtreli_formuller
     yeni_index = st.session_state.ezber_soru_index + 1
     if yeni_index >= len(formuller):
@@ -287,7 +287,8 @@ def kontrol_et_ezber(cevap_key):
         else:
             st.toast("Zaten doğru bildiniz. Sonraki soruya geçin.", icon="👍")
     else:
-        st.session_state.ezber_geribildirim = f"yanlis | Doğrusu: {dogru_cevap}"
+        # Hata mesajını doğru cevabı içerecek şekilde ayarla
+        st.session_state.ezber_geribildirim = f"yanlis|Doğrusu: **{dogru_cevap}**" 
         st.toast("❌ Yanlış Cevap. Tekrar deneyin.", icon="🤔")
 
 def sifirla_ezber_modu():
@@ -298,11 +299,16 @@ def sifirla_ezber_modu():
     st.session_state.ezber_kategori_secildi = None
     st.session_state.ezber_filtreli_formuller = []
     st.session_state.cevap_girisi = ""
+    st.rerun()
 
 def kategori_sec(kategori):
     """Seçilen kategoriye göre formül listesini filtreler ve modu başlatır."""
     if kategori:
-        st.session_state.ezber_filtreli_formuller = [f for f in EZBER_FORMULLER if f[0] == kategori]
+        # Seçimi yaptıktan sonra listeyi karıştır
+        filtreli_formuller = [f for f in EZBER_FORMULLER if f[0] == kategori]
+        random.shuffle(filtreli_formuller)
+
+        st.session_state.ezber_filtreli_formuller = filtreli_formuller
         st.session_state.ezber_kategori_secildi = kategori
         st.session_state.ezber_soru_index = 0
         st.session_state.ezber_geribildirim = None
@@ -377,7 +383,6 @@ def yeni_oyun_baslat():
     st.session_state.baslangic_zamani = simdi
     st.session_state.bitis_zamani = simdi + sure
     
-    # Hata veren değişkenin (oyun_suresi) bu fonksiyon içinde set edildiğinden emin olunur.
     st.session_state.oyun_suresi = sure 
     st.session_state.oyun_aktif = True
 
@@ -418,11 +423,11 @@ INITIAL_STATE = {
     'bitis_zamani': 0,
     'oyun_aktif': False,
     
-    # Ayarlar (oyun_suresi, ayar_sure, ayar_min, ayar_max)
+    # Ayarlar
     'ayar_min': 1,
     'ayar_max': 5000, 
     'ayar_sure': 60,
-    'oyun_suresi': 60, # KRİTİK DEĞİŞKEN
+    'oyun_suresi': 60, 
     
     # Ek form değişkeni
     'cevap_girisi': ''
@@ -460,7 +465,6 @@ if secim == "🎮 Oyun Modu":
         else:
             kalan_sure = int(fark)
             
-            # KRİTİK ÇÖZÜM: st.session_state.get() ile güvenli erişim
             total_sure = st.session_state.get('oyun_suresi', 60) 
             
             progress_degeri = fark / total_sure
@@ -469,19 +473,19 @@ if secim == "🎮 Oyun Modu":
 
     # --- SIDEBAR AYARLARI (HER ZAMAN GÖRÜNÜR) ---
     st.sidebar.subheader("⚙️ Ayarlar")
-    mn = st.sidebar.number_input("Min Sayı", 1, 5000, st.session_state.ayar_min)
-    mx = st.sidebar.number_input("Max Sayı", 1, 10000, st.session_state.ayar_max) 
-    # ayar_sure değerini güvenle alıp, options içinde index'i buluyoruz
+    mn = st.sidebar.number_input("Min Sayı", 1, 5000, st.session_state.ayar_min, key='ayar_min_input')
+    mx = st.sidebar.number_input("Max Sayı", 1, 10000, st.session_state.ayar_max, key='ayar_max_input') 
+    
     sure_options = [60, 120, 180]
     default_index = sure_options.index(st.session_state.ayar_sure) if st.session_state.ayar_sure in sure_options else 0
-    sure_secimi = st.sidebar.selectbox("Süre Seçin", sure_options, index=default_index)
+    sure_secimi = st.sidebar.selectbox("Süre Seçin", sure_options, index=default_index, key='ayar_sure_select')
     
     # Ayarları session state'e kaydet
     st.session_state.ayar_min = mn
     st.session_state.ayar_max = mx
     st.session_state.ayar_sure = sure_secimi
 
-    if st.sidebar.button("🎲 YENİ OYUN BAŞLAT (SIFIRLA)", use_container_width=True):
+    if st.sidebar.button("🎲 YENİ OYUN BAŞLAT (SIFIRLA)", use_container_width=True, key='sidebar_start_btn'):
         yeni_oyun_baslat()
         st.rerun()
     st.sidebar.markdown("---")
@@ -522,7 +526,7 @@ if secim == "🎮 Oyun Modu":
             st.markdown("---")
             col_tekrar1, col_tekrar2, col_tekrar3 = st.columns([1, 2, 1])
             with col_tekrar2:
-                if st.button("🔄 TEKRAR OYNA (YENİ SORU)", type="primary", use_container_width=True):
+                if st.button("🔄 TEKRAR OYNA (YENİ SORU)", type="primary", use_container_width=True, key='tekrar_oyna_btn'):
                     yeni_oyun_baslat()
                     st.rerun()
             st.markdown("---")
@@ -533,10 +537,8 @@ if secim == "🎮 Oyun Modu":
 
             if durum is None:
                 with st.container():
-                    # MOBİL UYUMLULUK İÇİN SORUYU TEK BİR WİDGET'TA TUTUYORUZ
                     st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
                     
-                    # Butonları ayırmak için 2 sütun kullanıyoruz
                     col_btn1, col_btn2 = st.columns(2)
                     buton_aktif = st.session_state.oyun_aktif
                     
@@ -579,11 +581,9 @@ if secim == "🎮 Oyun Modu":
         kalan_sure_kontrol = int(fark)
 
         if kalan_sure_kontrol > 0:
-            # Sadece 1 saniye bekleyip yeniden çalıştır
             time.sleep(1) 
             st.rerun() 
         else:
-            # Süre dolduysa, oyunun bitmesi için yeniden çalıştır
             if st.session_state.oyun_aktif:
                 st.rerun()
 
@@ -595,14 +595,14 @@ elif secim == "🔍 Sayı Dedektörü":
 
     col1, col2 = st.columns([3, 1])
     with col1:
-        val = st.number_input("Sayı Girin:", 0, 1000000, 0, 1)
+        val = st.number_input("Sayı Girin:", 0, 1000000, 0, 1, key='dedektor_input')
     with col2:
         st.write(""); st.write("")
-        btn = st.button("🚀 ANALİZ ET", use_container_width=True, type="primary")
+        btn = st.button("🚀 ANALİZ ET", use_container_width=True, type="primary", key='analiz_et_btn')
 
     if btn and val > 0:
         st.divider()
-        st.subheader(f"📊 {val} Analiz Raporu")
+        st.subheader(f"📊 **{val}** Analiz Raporu")
         
         c_sol, c_sag = st.columns(2)
         ozel = False
@@ -673,4 +673,131 @@ elif secim == "📚 Bilgi Köşesi":
         st.markdown("""
         **Tanım:** Baştan sona ve sondan başa okunuşu aynı olan sayılardır.
         **Örnekler:**
-        * **121**
+        * **121** (Sağdan ve soldan okunuşu aynı)
+        * **34543**
+        """)
+        
+    with st.expander("⭐ ASAL SAYI Nedir?"):
+        st.markdown("""
+        **Tanım:** 1'den büyük, 1 ve kendisinden başka pozitif tam böleni olmayan doğal sayılardır.
+        **Örnekler:** 2, 3, 5, 7, 11, 13, 17...
+        """)
+
+    with st.expander("🔺 ÜÇGENSEL SAYI Nedir?"):
+        st.markdown("""
+        **Tanım:** Ardışık doğal sayıların toplamı olarak elde edilen sayılardır. (Üçgen şeklinde noktalarla gösterilebilir.)
+        **Örnekler:**
+        * 1 = 1
+        * 3 = 1 + 2
+        * 6 = 1 + 2 + 3
+        * 10 = 1 + 2 + 3 + 4
+        """)
+        
+    with st.expander("🧠 RAMANUJAN SAYISI (Taxi-cab) Nedir?"):
+        st.markdown("""
+        **Tanım:** İki farklı pozitif tam sayının küplerinin toplamı şeklinde yazılabilen en küçük sayı 1729'dur. Bu sayılar Hindistanlı dahi matematikçi S. Ramanujan'a atfedilmiştir.
+        **Örnek:**
+        * **$1729 = 1^3 + 12^3$**
+        * **$1729 = 9^3 + 10^3$**
+        """)
+    st.markdown("---") # Bilgi Köşesi sonu
+
+# --- MOD 4: FORMULA SPRINT (EZBER MODU) ---
+elif secim == "🧠 Formula Sprint":
+    st.title("🧠 Formula Sprint: Hızlı Tekrar")
+    st.markdown(kurum_kodu, unsafe_allow_html=True)
+    st.subheader("📚 Matematik Formüllerini ve Bilgilerini Hızla Ezberle!")
+    
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🔄 Sprint Modunu Sıfırla", use_container_width=True, key='sprint_sifirla_btn'):
+        sifirla_ezber_modu()
+        st.rerun()
+
+    # Sprint Puan Paneli
+    st.metric("SPRINT PUANI", st.session_state.ezber_puan)
+    st.markdown("---")
+    
+    # Kategori Seçimi Kontrolü
+    kategori_adi = st.session_state.ezber_kategori_secildi
+
+    if kategori_adi:
+        # KATEGORİ SEÇİLDİ, OYUN BAŞLADI
+        
+        formuller = st.session_state.ezber_filtreli_formuller
+        index = st.session_state.ezber_soru_index
+        
+        if not formuller:
+            st.error("Hata: Seçilen kategoriye ait formül bulunamadı. Lütfen başka bir kategori seçin.")
+            if st.button("Başka Bir Kategori Seç", key='hata_kategori_btn'):
+                st.session_state.ezber_kategori_secildi = None
+                st.rerun()
+        else:
+            kategori, soru, dogru_cevap, puan = formuller[index]
+
+            st.markdown(f"### Kategori: **{kategori}** <span style='font-size: 0.9em; color: #dc3545;'>({index + 1}/{len(formuller)})</span>", unsafe_allow_html=True)
+            st.markdown(f"## Soru: **{soru}**")
+            st.markdown(f"**Puan Değeri:** +{puan} Puan")
+            
+            st.markdown('<div class="cevap-form-container">', unsafe_allow_html=True)
+            
+            # Cevap Giriş Formu
+            with st.form(key='ezber_cevap_form'):
+                st.text_input(
+                    "Cevabın Nedir? (Sadece eksik kısmı yaz!)", 
+                    key='cevap_girisi', 
+                    placeholder=f"Örn: {dogru_cevap} yerine sadece cevabı yazın...",
+                    on_change=kontrol_et_ezber,
+                    args=('cevap_girisi',),
+                    label_visibility="hidden"
+                )
+                
+                # Geribildirim ve Butonlar
+                col_geribildirim, col_kontrol, col_sonraki = st.columns([2, 1, 1])
+                
+                # Geribildirim Mesajı
+                if st.session_state.ezber_geribildirim and 'yanlis' in st.session_state.ezber_geribildirim:
+                    mesaj = st.session_state.ezber_geribildirim.split('|')[1]
+                    col_geribildirim.error(f"❌ {mesaj}", icon="💡")
+                elif st.session_state.ezber_geribildirim == 'dogru':
+                    col_geribildirim.success(f"✅ BİLİNDİ! Devam edebilirsin.", icon="👍")
+                else:
+                    col_geribildirim.info("Cevabını yazdıktan sonra **KONTROL ET** butonuna bas!")
+                
+                # Kontrol Et Butonu
+                col_kontrol.form_submit_button(
+                    "KONTROL ET", 
+                    type="primary", 
+                    use_container_width=True,
+                    on_click=kontrol_et_ezber,
+                    args=('cevap_girisi',) # Bu butona basıldığında da kontrol fonksiyonu çalışır
+                )
+
+                # Sonraki Soru Butonu
+                col_sonraki.form_submit_button(
+                    "SONRAKİ SORU >>", 
+                    use_container_width=True,
+                    on_click=sonraki_soru_ezber
+                )
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+
+    else:
+        # KATEGORİ SEÇİM EKRANI
+        st.markdown("### 🎯 Hangi Matematik Alanında Hızlanmak İstersin?")
+        st.warning("Lütfen pratik yapmak istediğiniz kategoriye tıklayın.")
+        
+        # Kategorileri kartlar/butonlar halinde göster
+        cols_per_row = 3
+        rows = [EZBER_KATEGORILER[i:i + cols_per_row] for i in range(0, len(EZBER_KATEGORILER), cols_per_row)]
+
+        for row in rows:
+            cols = st.columns(len(row))
+            for i, kategori in enumerate(row):
+                cols[i].button(
+                    f"📚 {kategori}",
+                    key=f"kategori_btn_{kategori}",
+                    on_click=kategori_sec,
+                    args=(kategori,),
+                    use_container_width=True
+                )
