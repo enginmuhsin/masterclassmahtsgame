@@ -11,11 +11,11 @@ st.set_page_config(
 )
 
 # =============================================================================
-# TASARIM: MOBİL UYUMLU CSS DÜZELTMELERİ VE SABİT PANO STİLİ
+# TASARIM: MOBİL UYUMLU CSS DÜZELTMELERİ VE SABİT PANO STİLİ (FIXED HEADER FIX)
 # =============================================================================
 st.markdown("""
 <style>
-/* Menü ve Alt Bilgi Gizleme */
+/* Streamlit'in varsayılan başlık ve menüsünü gizle */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 
@@ -26,20 +26,41 @@ footer {visibility: hidden;}
     background-size: 20px 20px;
 }
 
-/* 2. ANA BAŞLIK */
+/* KRİTİK MOBİL/GENEL METİN GÖRÜNÜRLÜK FIXİ */
+body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > div {
+    color: #31333F !important; /* Koyu gri/siyah metin rengini zorla */
+}
+
+/* 8. SABİT PUAN TABLOSU STİLİ (ÇÖZÜM: position: fixed) */
+/* Streamlit'in kendi sardığı elementlerin üzerine çıkmasını sağlar */
+.fixed-scoreboard {
+    position: fixed; /* Ekran pozisyonunu sabitle */
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    z-index: 999999; /* En üstte olmasını garantiler */
+    background-color: #f8f9fa; /* Arka plan rengi */
+    padding: 10px 10px 0 10px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Daha belirgin gölge */
+}
+
+/* 9. Streamlit'in Ana İçeriğini Kaydırma (Kritik: Sabit panonun altında kalmasını sağlar) */
+/* stApp > header Streamlit'in üst bandıdır, stApp > div Streamlit'in ana içeriğidir */
+.stApp > header {
+    visibility: hidden; /* Streamlit'in kendi başlık çubuğunu gizler */
+}
+.stApp > div:first-child > div:nth-child(2) {
+    /* Bu selektör ana Streamlit içerik div'ini hedefler */
+    margin-top: 170px !important; /* SABİT PANO kadar boşluk bırakır */
+}
+
+/* Diğer Stil Kodları (Değişmedi) */
 h1 {
     color: #0d2b5b !important;
     text-shadow: 1px 1px 2px #b0b0b0;
     font-weight: 900 !important;
     font-family: 'Helvetica', sans-serif;
 }
-
-/* KRİTİK MOBİL/GENEL METİN GÖRÜNÜRLÜK FIXİ */
-body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > div {
-    color: #31333F !important; /* Koyu gri/siyah metin rengini zorla */
-}
-
-/* 3. SKOR TABLOSU YAZILARI */
 [data-testid="stMetricLabel"] {
     color: #495057 !important;
     font-size: 1.1rem !important;
@@ -50,8 +71,6 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
     font-size: 2.5rem !important;
     font-weight: 900 !important;
 }
-
-/* 4. KURUM İSMİ KUTUSU */
 .bilsem-header {
     text-align: center;
     color: #ffffff;
@@ -65,8 +84,6 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
     text-transform: uppercase;
     letter-spacing: 1px;
 }
-
-/* 5. BUTONLAR */
 .stButton>button {
     font-weight: bold;
     border-radius: 12px;
@@ -82,8 +99,6 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
     border-color: #0d2b5b;
     transform: translateY(-2px);
 }
-
-/* 6. HEDEF SAYI KUTUSU */
 .hedef-sayi-kutusu {
     background-color: #ffffff;
     border: 4px solid #dc3545;
@@ -92,31 +107,15 @@ body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > di
     text-align: center;
     box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15);
 }
-
-/* 7. BİLGİ KARTLARI STİLİ */
 .streamlit-expanderHeader {
     font-weight: bold;
     color: #0d2b5b;
     font-size: 1.1rem;
 }
-
-/* 8. YENİ EKLENEN SABİT PUAN TABLOSU STİLİ */
-.fixed-scoreboard {
-    position: fixed; /* Ekran pozisyonunu sabitle */
-    top: 0; /* Ekranın en üstüne hizala */
-    left: 0; /* Sol kenara hizala */
-    right: 0; /* Sağ kenara hizala */
-    z-index: 1000; /* Diğer elementlerin üstünde görünmesini sağla */
-    background-color: #f8f9fa; /* Arka plan rengi */
-    padding: 10px 10px 0 10px; /* Üst, sağ, sol iç boşluk */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Hafif gölge */
-}
-
-/* Sabitlenen element altındaki içeriğin üzerine gelmesini engeller */
+/* Ekstra mobil uyumluluk ayarı (artık gerekmeyebilir ancak kalsın) */
 @media (max-width: 768px) {
-    /* Mobil görünümde başlık ve kurum kodu için bir miktar boşluk ayarı */
     .stApp > header {
-        padding-top: 50px; /* Başlık çubuğunun altında kalması için */
+        padding-top: 0px; 
     }
 }
 </style>
@@ -218,7 +217,7 @@ OZELLIKLER = [
     ("Sayı ASAL mı?", is_asal, 10, 10, "EVET", "HAYIR"),
     ("Sayı TAM KARE mi?", is_tam_kare, 15, 15, "EVET", "HAYIR"),
     ("Sayı TAM KÜP mü?", is_tam_kup, 20, 20, "EVET", "HAYIR"),
-    ("Sayı MÜKEMMEL sayı mı?", is_mukemmel, 100, 100, "EVET", "HAYIR"),
+    ("Sayı MÜKEMMEL sayı mı?", is_mukemmel, 80, 80, "EVET", "HAYIR"),
     ("Sayı FIBONACCI dizisinde mi?", is_fibonacci, 75, 75, "EVET", "HAYIR"),
     ("Sayı PALİNDROMİK mi?", is_palindromik, 10, 10, "EVET", "HAYIR"),
     ("Sayı HARSHAD sayısı mı?", is_harshad, 25, 25, "EVET", "HAYIR"),
@@ -434,8 +433,7 @@ ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
 """
 
 # =============================================================================
-# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI (AttributeError Çözümü)
-# Streamlit'in Session State değişkenlerini uygulama başlangıcında kesin olarak tanımlar.
+# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI
 # =============================================================================
 
 INITIAL_STATE = {
@@ -461,7 +459,7 @@ INITIAL_STATE = {
     'ayar_min': 1,
     'ayar_max': 5000, 
     'ayar_sure': 60,
-    'oyun_suresi': 60, # KRİTİK DEĞİŞKEN
+    'oyun_suresi': 60, 
     
     # Ek form değişkeni
     'cevap_girisi': ''
@@ -499,7 +497,7 @@ if secim == "🎮 Oyun Modu":
         else:
             kalan_sure = int(fark)
             
-            # KRİTİK ÇÖZÜM: st.session_state.get() ile güvenli erişim
+            # st.session_state.get() ile güvenli erişim
             total_sure = st.session_state.get('oyun_suresi', 60) 
             
             progress_degeri = fark / total_sure
@@ -523,13 +521,16 @@ if secim == "🎮 Oyun Modu":
     if st.sidebar.button("🎲 YENİ OYUN BAŞLAT (SIFIRLA)", use_container_width=True):
         yeni_oyun_baslat()
         st.rerun()
-    st.markdown("---")
+    st.sidebar.markdown("---")
     # ---------------------------------------------------------------------
 
     if st.session_state.hedef_sayi != 0:
         # OYUN BAŞLADI / DEVAM EDİYOR
 
+        # =========================================================================
         # SABİT PANO KAPSAYICISI BAŞLANGICI
+        # Bu kısım artık Streamlit'in ana akışını bozmayacak şekilde sabitlenmiştir.
+        # =========================================================================
         st.markdown('<div class="fixed-scoreboard">', unsafe_allow_html=True)
 
         # SKOR PANOSU
@@ -544,14 +545,13 @@ if secim == "🎮 Oyun Modu":
         with c4:
             st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
         
-        # Progress bar (Kullanıcı etkileşimiyle güncellenir)
+        # Progress bar
         st.progress(progress_degeri, text="Kalan Süre")
 
         # SABİT KAPSAYICIYI KAPAT
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # SABİT PANO İÇİN DOLGU EKLEME (İçeriğin sabitlenen panonun altına kaymasını sağlar)
-        st.markdown("<div style='padding-top: 170px;'></div>", unsafe_allow_html=True)
+        # NOT: Ana içerik kaydırma boşluğu (padding-top) artık CSS içinde tanımlandı!
         
         # OYUN BİTTİ EKRANI
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
@@ -626,7 +626,7 @@ if secim == "🎮 Oyun Modu":
             time.sleep(1) 
             st.rerun() 
         else:
-            # Süre bittiğinde, oyun_aktif durumu değiştiği için son bir kez yenileme yapılır
+            # Süre bittiğinde, oyunun sonlanması için son bir kez yenileme yapılır
             if st.session_state.oyun_aktif:
                 st.rerun()
 
