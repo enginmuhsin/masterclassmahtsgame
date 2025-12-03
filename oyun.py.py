@@ -434,9 +434,15 @@ kurum_kodu = """
 ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
 </div>
 """
-# --- ORTAK SESSION STATE BAŞLANGICI ---
+# =============================================================================
+# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI
+# =============================================================================
+
+# En Yüksek Puan
 if 'en_yuksek_puan' not in st.session_state:
     st.session_state.en_yuksek_puan = 0
+
+# EZBER MODU STATE'LERİ
 if 'ezber_puan' not in st.session_state:
     st.session_state.ezber_puan = 0
 if 'ezber_soru_index' not in st.session_state:
@@ -447,19 +453,35 @@ if 'ezber_kategori_secildi' not in st.session_state:
     st.session_state.ezber_kategori_secildi = None
 if 'ezber_filtreli_formuller' not in st.session_state:
     st.session_state.ezber_filtreli_formuller = []
-# Diğer oyun state'leri:
+
+# OYUN MODU STATE'LERİ
+# Hata veren değişken ve ilgili tüm oyun değişkenleri
 if 'hedef_sayi' not in st.session_state:
     st.session_state.hedef_sayi = 0
+if 'puan' not in st.session_state:
     st.session_state.puan = 0
+if 'sorular_cevaplandi' not in st.session_state:
     st.session_state.sorular_cevaplandi = [None] * len(OZELLIKLER)
+if 'baslangic_zamani' not in st.session_state:
     st.session_state.baslangic_zamani = 0
+if 'bitis_zamani' not in st.session_state:
     st.session_state.bitis_zamani = 0
-    st.session_state.oyun_suresi = 60
+if 'oyun_aktif' not in st.session_state:
     st.session_state.oyun_aktif = False
+
+# AYARLAR (HATA KAYNAĞI OLABİLECEK SÜRE DEĞİŞKENLERİ)
+if 'ayar_min' not in st.session_state:
     st.session_state.ayar_min = 1
-    st.session_state.ayar_max = 5000 # Default max 5000 olarak güncellendi
+if 'ayar_max' not in st.session_state:
+    st.session_state.ayar_max = 5000 
+if 'ayar_sure' not in st.session_state:
     st.session_state.ayar_sure = 60
-# --- ORTAK SESSION STATE SONU ---
+if 'oyun_suresi' not in st.session_state: # <--- KRİTİK EKSİK
+    st.session_state.oyun_suresi = 60 
+
+# =============================================================================
+# GÜVENLİ ORTAK SESSION STATE SONU
+# =============================================================================
 
 # --- MOD 1: OYUN MODU ---
 if secim == "🎮 Oyun Modu":
@@ -859,3 +881,4 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
