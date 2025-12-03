@@ -286,7 +286,6 @@ def normalize_cevap(cevap):
     normalized = cevap.replace(' ', '').lower()
     # Yaygın notasyon düzeltmeleri (^2 yerine 2 kabul etme, matematiksel sembolleri temizle)
     normalized = normalized.replace('^', '').replace('**', '').replace('*', '')
-    # (a+b)2 -> (a+b)^2 gibi durumlar için özel düzenleme yapılmadı, kullanıcının "a+b)2" girmesi bekleniyor
     return normalized
 
 def sonraki_soru_ezber():
@@ -417,15 +416,14 @@ def yeni_oyun_baslat():
     simdi = time.time()
     st.session_state.baslangic_zamani = simdi
     st.session_state.bitis_zamani = simdi + sure
-    st.session_state.oyun_suresi = sure
+    st.session_state.oyun_suresi = sure # Burası daima ayar_sure'den güncellenir
     st.session_state.oyun_aktif = True
 
 # =============================================================================
-# ARAYÜZ
+# ARAYÜZ VE SESSION STATE BAŞLATMA
 # =============================================================================
 st.sidebar.title("🧮 Menü")
 
-# YENİ MOD ADI: FORMULA SPRİNT
 secim = st.sidebar.radio("Seçim Yapınız:", ["🎮 Oyun Modu", "🔍 Sayı Dedektörü", "📚 Bilgi Köşesi", "🧠 Formula Sprint"])
 st.sidebar.markdown("---")
 
@@ -434,8 +432,10 @@ kurum_kodu = """
 ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
 </div>
 """
+
 # =============================================================================
-# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI
+# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI (AttributeError Çözümü)
+# Tüm değişkenler varlıkları kontrol edilerek kesinlikle başlatılır.
 # =============================================================================
 
 # En Yüksek Puan
@@ -455,7 +455,6 @@ if 'ezber_filtreli_formuller' not in st.session_state:
     st.session_state.ezber_filtreli_formuller = []
 
 # OYUN MODU STATE'LERİ
-# Hata veren değişken ve ilgili tüm oyun değişkenleri
 if 'hedef_sayi' not in st.session_state:
     st.session_state.hedef_sayi = 0
 if 'puan' not in st.session_state:
@@ -469,14 +468,14 @@ if 'bitis_zamani' not in st.session_state:
 if 'oyun_aktif' not in st.session_state:
     st.session_state.oyun_aktif = False
 
-# AYARLAR (HATA KAYNAĞI OLABİLECEK SÜRE DEĞİŞKENLERİ)
+# AYARLAR VE SÜRE DEĞİŞKENLERİ (Hata Kaynağı Kontrolü)
 if 'ayar_min' not in st.session_state:
     st.session_state.ayar_min = 1
 if 'ayar_max' not in st.session_state:
     st.session_state.ayar_max = 5000 
 if 'ayar_sure' not in st.session_state:
     st.session_state.ayar_sure = 60
-if 'oyun_suresi' not in st.session_state: # <--- KRİTİK EKSİK
+if 'oyun_suresi' not in st.session_state: # Hata veren değişkenin güvenli başlatılması
     st.session_state.oyun_suresi = 60 
 
 # =============================================================================
@@ -505,7 +504,8 @@ if secim == "🎮 Oyun Modu":
                 oyun_bitti_animasyonu = True
         else:
             kalan_sure = int(fark)
-            total_sure = st.session_state.oyun_sures # Hesaplamayı basitleştirdik
+            # HATA VEREN SATIR BURADAYDI, Session State başlatıldığı için artık güvenli.
+            total_sure = st.session_state.oyun_sures 
             progress_degeri = fark / total_sure
             if progress_degeri < 0: progress_degeri = 0.0
             if progress_degeri > 1: progress_degeri = 1.0
@@ -530,7 +530,7 @@ if secim == "🎮 Oyun Modu":
     if st.session_state.hedef_sayi != 0:
         # OYUN BAŞLADI / DEVAM EDİYOR
 
-        # YENİ EKLENEN SABİT PANO KAPSAYICISI
+        # SABİT PANO KAPSAYICISI BAŞLANGICI
         st.markdown('<div class="fixed-scoreboard">', unsafe_allow_html=True)
 
         # SKOR PANOSU
@@ -657,7 +657,6 @@ elif secim == "🔍 Sayı Dedektörü":
                     if "FIBONACCI" in kisa_temiz:
                         with st.expander("Fibonacci Bilgisi"):
                             st.write("Altın oranın temeli olan Fibonacci dizisindedir.")
-                            # Streamlit'in kendi görseli kaldırıldı
                     if "RAMANUJAN" in kisa_temiz:
                         st.info("Bu sayı çok özeldir! İlk üç Ramanujan sayısı: **1729**, **4104**, **13832**'dir. (İki küp toplamı olarak iki farklı şekilde yazılabilir.)")
                 
@@ -722,24 +721,24 @@ elif secim == "📚 Bilgi Köşesi":
         ### 🌟 İlk Üç Ramanujan Sayısı ve Küp Açılımları
         #### **1. Ramanujan Sayısı: 1729**
         İki farklı şekilde:
-        * **1729 = 1³ + 12³** (1 + 1728)
-        * **1729 = 9³ + 10³** (729 + 1000)
+        * **$1729 = 1^3 + 12^3$** (1 + 1728)
+        * **$1729 = 9^3 + 10^3$** (729 + 1000)
         #### **2. Ramanujan Sayısı: 4104**
         İki farklı şekilde:
-        * **4104 = 2³ + 16³** (8 + 4096)
-        * **4104 = 9³ + 15³** (729 + 3375)
+        * **$4104 = 2^3 + 16^3$** (8 + 4096)
+        * **$4104 = 9^3 + 15^3$** (729 + 3375)
         #### **3. Ramanujan Sayısı: 13832**
         İki farklı şekilde:
-        * **13832 = 2³ + 24³** (8 + 13824)
-        * **13832 = 18³ + 20³** (5832 + 8000)
+        * **$13832 = 2^3 + 24^3$** (8 + 13824)
+        * **$13832 = 18^3 + 20^3$** (5832 + 8000)
         """)
 
     with st.expander("💪 ARMSTRONG SAYISI Nedir?"):
         st.markdown("""
         **Tanım:** Basamak sayısını kuvvet olarak aldığımızda, rakamların kuvvetleri toplamı sayının kendisine eşit olan sayıdır.
         **Örnek: 153 (3 Basamaklı)**
-        * 1³ + 5³ + 3³
-        * 1 + 125 + 27 = **153**
+        * $1^3 + 5^3 + 3^3$
+        * $1 + 125 + 27 = **153**$
         * Sonuç kendisine eşit!
         """)
 
@@ -881,4 +880,3 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
-
