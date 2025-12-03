@@ -415,7 +415,7 @@ def yeni_oyun_baslat():
     st.session_state.baslangic_zamani = simdi
     st.session_state.bitis_zamani = simdi + sure
     
-    # Hata veren değişkenin (oyun_suresi) bu fonksiyon içinde de set edildiğinden emin olunur.
+    # Hata veren değişkenin (oyun_suresi) bu fonksiyon içinde set edildiğinden emin olunur.
     st.session_state.oyun_suresi = sure 
     st.session_state.oyun_aktif = True
 
@@ -434,11 +434,10 @@ ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
 """
 
 # =============================================================================
-# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI (AttributeError Çözümü)
-# Streamlit'in Session State değişkenlerini uygulama başlangıcında kesin olarak tanımlar.
+# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI
+# Tüm Session State değişkenlerini uygulama yüklenir yüklenmez tanımlar.
 # =============================================================================
 
-# Tüm anahtarları ve başlangıç değerlerini tek bir sözlükte tutmak daha okunaklı ve güvenlidir
 INITIAL_STATE = {
     # Rekor
     'en_yuksek_puan': 0,
@@ -462,7 +461,7 @@ INITIAL_STATE = {
     'ayar_min': 1,
     'ayar_max': 5000, 
     'ayar_sure': 60,
-    'oyun_suresi': 60, # Hata veren değişkenin kesinlikle tanımlanması
+    'oyun_suresi': 60, # KRİTİK DEĞİŞKEN
     
     # Ek form değişkeni
     'cevap_girisi': ''
@@ -499,8 +498,11 @@ if secim == "🎮 Oyun Modu":
                 oyun_bitti_animasyonu = True
         else:
             kalan_sure = int(fark)
-            # Hata veren satır: Session State'in kesinlikle başlatılmasıyla bu hata çözülmeli.
-            total_sure = st.session_state.oyun_sures 
+            
+            # KRİTİK ÇÖZÜM: st.session_state.get() ile güvenli erişim
+            # Eğer 'oyun_suresi' bir şekilde yoksa (hata verdiğiniz durum), varsayılan 60 değerini kullan.
+            total_sure = st.session_state.get('oyun_suresi', 60) 
+            
             progress_degeri = fark / total_sure
             if progress_degeri < 0: progress_degeri = 0.0
             if progress_degeri > 1: progress_degeri = 1.0
@@ -858,23 +860,4 @@ elif secim == "🧠 Formula Sprint":
             st.error(f"❌ Yanlış cevap. Doğrusu: **{gosterilen_cevap}**")
             st.info("İpucu: Cevabınızdaki boşlukları, küçük harfleri ve üs işaretlerini kod otomatik olarak temizler.")
 
-        st.markdown("---")
-        
-        if st.button("⬅️ KATEGORİ SEÇİMİNE DÖN / PUANI SIFIRLA", use_container_width=True, on_click=sifirla_ezber_modu):
-            st.rerun()
-
-    else:
-        # KATEGORİ SEÇİM EKRANI
-        st.markdown("### 🎯 Hangi Konuda Hızlanmak İstersin?")
-        st.warning("Lütfen pratik yapmak istediğiniz kategoriye tıklayın.")
-        
-        # Kolonları dinamik olarak oluştur
-        cols = st.columns(len(EZBER_KATEGORILER))
-        for i, kategori in enumerate(EZBER_KATEGORILER):
-            cols[i].button(
-                f"📚 {kategori}",
-                key=f"kategori_btn_{kategori}",
-                on_click=kategori_sec,
-                args=(kategori,),
-                use_container_width=True
-            )
+        st
