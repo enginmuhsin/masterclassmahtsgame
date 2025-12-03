@@ -380,8 +380,9 @@ def cevap_ver(index, buton_tipi):
         st.toast("Yanlış! -5 Puan", icon="❌")
 
 def yeni_oyun_baslat():
+    # Session state'ten ayarları güvenle çek
     mn = st.session_state.get('ayar_min', 1)
-    mx = st.session_state.get('ayar_max', 5000) # Varsayılan Max 5000
+    mx = st.session_state.get('ayar_max', 5000) 
     sure = st.session_state.get('ayar_sure', 60)
 
     # Oyun Modu için kontrol edilecek fonksiyonlar (Ramanujan hariç)
@@ -392,21 +393,18 @@ def yeni_oyun_baslat():
     aday = 0
     
     while not bulundu and deneme < 200:
-        # Sayı aralığı geniş olduğu için, küçük asal sayı biasını azaltmak için üst aralığı tercih et
         if mx > 1000:
-            min_val = min(100, mx) # En az 100'den başla, max'tan küçük olsun
+            min_val = min(100, mx) 
             aday = random.randint(min_val, mx)
         else:
             aday = random.randint(mn, mx)
         
-        # Sayının herhangi bir özel özelliği var mı kontrol et
         has_property = any(func(aday) for func in CHECK_FUNCTIONS)
         if has_property:
             bulundu = True
         else:
             deneme += 1
 
-    # Eğer 200 denemeden sonra bile özel sayılı bir sayı bulunamazsa, rastgele bir sayı ile devam et (fail-safe)
     if not bulundu:
         aday = random.randint(mn, mx)
 
@@ -416,7 +414,9 @@ def yeni_oyun_baslat():
     simdi = time.time()
     st.session_state.baslangic_zamani = simdi
     st.session_state.bitis_zamani = simdi + sure
-    st.session_state.oyun_suresi = sure # Burası daima ayar_sure'den güncellenir
+    
+    # Hata veren değişkenin (oyun_suresi) bu fonksiyon içinde de set edildiğinden emin olunur.
+    st.session_state.oyun_suresi = sure 
     st.session_state.oyun_aktif = True
 
 # =============================================================================
@@ -435,48 +435,43 @@ ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
 
 # =============================================================================
 # GÜVENLİ ORTAK SESSION STATE BAŞLANGICI (AttributeError Çözümü)
-# Tüm değişkenler varlıkları kontrol edilerek kesinlikle başlatılır.
+# Streamlit'in Session State değişkenlerini uygulama başlangıcında kesin olarak tanımlar.
 # =============================================================================
 
-# En Yüksek Puan
-if 'en_yuksek_puan' not in st.session_state:
-    st.session_state.en_yuksek_puan = 0
+# Tüm anahtarları ve başlangıç değerlerini tek bir sözlükte tutmak daha okunaklı ve güvenlidir
+INITIAL_STATE = {
+    # Rekor
+    'en_yuksek_puan': 0,
+    
+    # Ezber Modu
+    'ezber_puan': 0,
+    'ezber_soru_index': 0,
+    'ezber_geribildirim': None,
+    'ezber_kategori_secildi': None,
+    'ezber_filtreli_formuller': [],
+    
+    # Oyun Modu Verileri
+    'hedef_sayi': 0,
+    'puan': 0,
+    'sorular_cevaplandi': [None] * len(OZELLIKLER),
+    'baslangic_zamani': 0,
+    'bitis_zamani': 0,
+    'oyun_aktif': False,
+    
+    # Ayarlar (oyun_suresi, ayar_sure, ayar_min, ayar_max)
+    'ayar_min': 1,
+    'ayar_max': 5000, 
+    'ayar_sure': 60,
+    'oyun_suresi': 60, # Hata veren değişkenin kesinlikle tanımlanması
+    
+    # Ek form değişkeni
+    'cevap_girisi': ''
+}
 
-# EZBER MODU STATE'LERİ
-if 'ezber_puan' not in st.session_state:
-    st.session_state.ezber_puan = 0
-if 'ezber_soru_index' not in st.session_state:
-    st.session_state.ezber_soru_index = 0
-if 'ezber_geribildirim' not in st.session_state:
-    st.session_state.ezber_geribildirim = None
-if 'ezber_kategori_secildi' not in st.session_state:
-    st.session_state.ezber_kategori_secildi = None
-if 'ezber_filtreli_formuller' not in st.session_state:
-    st.session_state.ezber_filtreli_formuller = []
-
-# OYUN MODU STATE'LERİ
-if 'hedef_sayi' not in st.session_state:
-    st.session_state.hedef_sayi = 0
-if 'puan' not in st.session_state:
-    st.session_state.puan = 0
-if 'sorular_cevaplandi' not in st.session_state:
-    st.session_state.sorular_cevaplandi = [None] * len(OZELLIKLER)
-if 'baslangic_zamani' not in st.session_state:
-    st.session_state.baslangic_zamani = 0
-if 'bitis_zamani' not in st.session_state:
-    st.session_state.bitis_zamani = 0
-if 'oyun_aktif' not in st.session_state:
-    st.session_state.oyun_aktif = False
-
-# AYARLAR VE SÜRE DEĞİŞKENLERİ (Hata Kaynağı Kontrolü)
-if 'ayar_min' not in st.session_state:
-    st.session_state.ayar_min = 1
-if 'ayar_max' not in st.session_state:
-    st.session_state.ayar_max = 5000 
-if 'ayar_sure' not in st.session_state:
-    st.session_state.ayar_sure = 60
-if 'oyun_suresi' not in st.session_state: # Hata veren değişkenin güvenli başlatılması
-    st.session_state.oyun_suresi = 60 
+# Başlatma döngüsü
+for key, default_value in INITIAL_STATE.items():
+    if key not in st.session_state:
+        st.session_state[key] = default_value
 
 # =============================================================================
 # GÜVENLİ ORTAK SESSION STATE SONU
@@ -504,7 +499,7 @@ if secim == "🎮 Oyun Modu":
                 oyun_bitti_animasyonu = True
         else:
             kalan_sure = int(fark)
-            # HATA VEREN SATIR BURADAYDI, Session State başlatıldığı için artık güvenli.
+            # Hata veren satır: Session State'in kesinlikle başlatılmasıyla bu hata çözülmeli.
             total_sure = st.session_state.oyun_sures 
             progress_degeri = fark / total_sure
             if progress_degeri < 0: progress_degeri = 0.0
@@ -513,8 +508,11 @@ if secim == "🎮 Oyun Modu":
     # --- SIDEBAR AYARLARI (HER ZAMAN GÖRÜNÜR) ---
     st.sidebar.subheader("⚙️ Ayarlar")
     mn = st.sidebar.number_input("Min Sayı", 1, 5000, st.session_state.ayar_min)
-    mx = st.sidebar.number_input("Max Sayı", 1, 10000, st.session_state.ayar_max) # Max limit 10000 yapıldı
-    sure_secimi = st.sidebar.selectbox("Süre Seçin", [60, 120, 180], index=[60, 120, 180].index(st.session_state.ayar_sure))
+    mx = st.sidebar.number_input("Max Sayı", 1, 10000, st.session_state.ayar_max) 
+    # ayar_sure değerini güvenle alıp, options içinde index'i buluyoruz
+    sure_options = [60, 120, 180]
+    default_index = sure_options.index(st.session_state.ayar_sure) if st.session_state.ayar_sure in sure_options else 0
+    sure_secimi = st.sidebar.selectbox("Süre Seçin", sure_options, index=default_index)
     
     # Ayarları session state'e kaydet
     st.session_state.ayar_min = mn
@@ -682,7 +680,7 @@ elif secim == "📚 Bilgi Köşesi":
         **Tanım:** Kendisi hariç pozitif bölenlerinin toplamı, kendisine eşit olan sayıya denir.
         **Örnek: 6**
         * 6'nın bölenleri: 1, 2, 3, 6
-        * Kendisi hariç toplayalım: **1 + 2 + 3 = 6**
+        * Kendisi hariç toplayalım: **$1 + 2 + 3 = 6$**
         * Sonuç kendisine eşit olduğu için 6 **Mükemmel Sayıdır**.
         *Diğer Mükemmel Sayılar: 28, 496, 8128...*
         """)
@@ -692,7 +690,7 @@ elif secim == "📚 Bilgi Köşesi":
         **Tanım:** Her sayının, kendinden önceki iki sayının toplamı olduğu sayı dizisidir. Doğadaki "**Altın Oran**" ile ilişkilidir.
         **Dizi:** 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...
         **Örnek: 13**
-        * 5 + 8 = 13 (Kendinden önceki iki sayının toplamı)
+        * $5 + 8 = 13$ (Kendinden önceki iki sayının toplamı)
         * Bu yüzden 13 bir **Fibonacci sayısıdır**.
         """)
 
@@ -709,8 +707,8 @@ elif secim == "📚 Bilgi Köşesi":
         st.markdown("""
         **Tanım:** Rakamları toplamına tam bölünebilen sayıdır. (Sanskritçe'de '**Büyük Sevinç**' demektir.)
         **Örnek: 18**
-        * Rakamları topla: 1 + 8 = **9**
-        * 18 sayısı 9'a bölünür mü? **Evet!** (18 ÷ 9 = 2)
+        * Rakamları topla: $1 + 8 = **9**$
+        * 18 sayısı 9'a bölünür mü? **Evet!** ($18 \div 9 = 2$)
         * O halde 18 bir **Harshad sayısıdır**.
         """)
 
