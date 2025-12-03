@@ -415,7 +415,7 @@ def yeni_oyun_baslat():
     st.session_state.baslangic_zamani = simdi
     st.session_state.bitis_zamani = simdi + sure
     
-    # Hata veren değişkenin (oyun_suresi) bu fonksiyon içinde set edildiğinden emin olunur.
+    # KRİTİK DEĞİŞKENİN SET EDİLMESİ
     st.session_state.oyun_suresi = sure 
     st.session_state.oyun_aktif = True
 
@@ -434,8 +434,8 @@ ANKARA KAHRAMANKAZAN<br>BİLİM ve SANAT MERKEZİ
 """
 
 # =============================================================================
-# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI
-# Tüm Session State değişkenlerini uygulama yüklenir yüklenmez tanımlar.
+# GÜVENLİ ORTAK SESSION STATE BAŞLANGICI (AttributeError Çözümü)
+# Streamlit'in Session State değişkenlerini uygulama başlangıcında kesin olarak tanımlar.
 # =============================================================================
 
 INITIAL_STATE = {
@@ -457,7 +457,7 @@ INITIAL_STATE = {
     'bitis_zamani': 0,
     'oyun_aktif': False,
     
-    # Ayarlar (oyun_suresi, ayar_sure, ayar_min, ayar_max)
+    # Ayarlar
     'ayar_min': 1,
     'ayar_max': 5000, 
     'ayar_sure': 60,
@@ -500,7 +500,6 @@ if secim == "🎮 Oyun Modu":
             kalan_sure = int(fark)
             
             # KRİTİK ÇÖZÜM: st.session_state.get() ile güvenli erişim
-            # Eğer 'oyun_suresi' bir şekilde yoksa (hata verdiğiniz durum), varsayılan 60 değerini kullan.
             total_sure = st.session_state.get('oyun_suresi', 60) 
             
             progress_degeri = fark / total_sure
@@ -612,6 +611,23 @@ if secim == "🎮 Oyun Modu":
             st.markdown("#### Ayarları yaptıysan başlayalım!")
             if st.button("🚀 OYUNU BAŞLAT", key="main_start_button", type="primary", use_container_width=True):
                 yeni_oyun_baslat()
+                st.rerun()
+
+    # =========================================================================
+    # KRİTİK EKLEME: SÜREKLİ GÜNCELLEME DÖNGÜSÜ (Sürenin akmasını sağlar)
+    # =========================================================================
+    if st.session_state.oyun_aktif:
+        # Süre farkını tekrar hesapla
+        fark = st.session_state.bitis_zamani - time.time()
+        kalan_sure_kontrol = int(fark)
+
+        if kalan_sure_kontrol > 0:
+            # 1 saniye bekle ve uygulamayı yenile
+            time.sleep(1) 
+            st.rerun() 
+        else:
+            # Süre bittiğinde, oyun_aktif durumu değiştiği için son bir kez yenileme yapılır
+            if st.session_state.oyun_aktif:
                 st.rerun()
 
 # --- MOD 2: SAYI DEDEKTÖRÜ ---
@@ -860,4 +876,23 @@ elif secim == "🧠 Formula Sprint":
             st.error(f"❌ Yanlış cevap. Doğrusu: **{gosterilen_cevap}**")
             st.info("İpucu: Cevabınızdaki boşlukları, küçük harfleri ve üs işaretlerini kod otomatik olarak temizler.")
 
-        st
+        st.markdown("---")
+        
+        if st.button("⬅️ KATEGORİ SEÇİMİNE DÖN / PUANI SIFIRLA", use_container_width=True, on_click=sifirla_ezber_modu):
+            st.rerun()
+
+    else:
+        # KATEGORİ SEÇİM EKRANI
+        st.markdown("### 🎯 Hangi Konuda Hızlanmak İstersin?")
+        st.warning("Lütfen pratik yapmak istediğiniz kategoriye tıklayın.")
+        
+        # Kolonları dinamik olarak oluştur
+        cols = st.columns(len(EZBER_KATEGORILER))
+        for i, kategori in enumerate(EZBER_KATEGORILER):
+            cols[i].button(
+                f"📚 {kategori}",
+                key=f"kategori_btn_{kategori}",
+                on_click=kategori_sec,
+                args=(kategori,),
+                use_container_width=True
+            )
