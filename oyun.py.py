@@ -679,7 +679,7 @@ elif secim == "📚 Bilgi Köşesi":
         """)
 
         Not: Tüm n değerleri asal olsa bile, **2^n - 1** her zaman asal çıkmaz.  
-        Örneğin n = 11 -> 2^11 - 1 = 2047 (bileşik, çünkü 23 × 89).
+        Örneğin n = 11 -> 2^11 - 1 = 2047 (bileşik, çünkü 23 x 89).
         """)
         
     with st.expander("📐 FERMAT SAYISI Nedir?"):
@@ -807,6 +807,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
