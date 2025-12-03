@@ -721,7 +721,7 @@ elif secim == "📚 Bilgi Köşesi":
         * 15 = 3 × 5  
         * 21 = 3 × 7  
 
-        🔎 Kriptoloji (RSA algoritması) gibi alanlarda çok önemli bir rol oynarlar.
+        Kriptoloji (RSA algoritması) gibi alanlarda çok önemli bir rol oynarlar.
         """)
         Bu özel sayı türü, asal sayıların simetrik bir özelliğini gösterir ve matematikte ilginç bir kategori oluşturur.
         """)
@@ -807,6 +807,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
