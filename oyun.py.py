@@ -143,20 +143,43 @@ def is_ramanujan(n):
         b = round(b3**(1/3))
         if b**3 == b3: ways += 1
     return ways >= 2
+def is_yarim_asal(n):
+    # Yarım asal (semiprime) → tam iki asalın çarpımı (aynı olabilir)
+    if n < 4: 
+        return False
+    for i in range(2, int(math.isqrt(n)) + 1):
+        if n % i == 0 and is_asal(i) and is_asal(n // i):
+            return True
+    return False
+
+def is_mersenne_asali(n):
+    # Mersenne asalı = 2^p - 1 ve kendisi asal
+    if n <= 1:
+        return False
+    p = math.log2(n + 1)
+    return p.is_integer() and is_asal(n)
+
+def is_fermat_sayisi(n):
+    # Fermat sayıları = 2^(2^k) + 1 (k = 0,1,2,3,4)
+    fermatlar = [3, 5, 17, 257, 65537]
+    return n in fermatlar
 
 # OYUN MODU ÖZELLİKLERİ (Ramanujan çıkarıldı)
 OZELLIKLER = [
     ("Sayı TEK mi yoksa ÇİFT mi?", is_tek, 5, 5, "TEK", "ÇİFT"),
-    ("Sayı ASAL mı?", is_asal, 20, 2, "EVET", "HAYIR"),
-    ("Sayı TAM KARE mi?", is_tam_kare, 15, 2, "EVET", "HAYIR"),
-    ("Sayı TAM KÜP mü?", is_tam_kup, 20, 2, "EVET", "HAYIR"),
-    ("Sayı MÜKEMMEL sayı mı?", is_mukemmel, 100, 5, "EVET", "HAYIR"),
-    ("Sayı FIBONACCI dizisinde mi?", is_fibonacci, 25, 2, "EVET", "HAYIR"),
-    ("Sayı PALİNDROMİK mi?", is_palindromik, 10, 1, "EVET", "HAYIR"),
-    ("Sayı HARSHAD sayısı mı?", is_harshad, 15, 1, "EVET", "HAYIR"),
-    ("Sayı ÜÇGENSEL sayı mı?", is_ucgensel, 20, 2, "EVET", "HAYIR"),
-    ("Sayı 2'nin KUVVETİ mi?", is_iki_kuvveti, 15, 2, "EVET", "HAYIR"),
-    ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
+    ("Sayı ASAL mı?", is_asal, 10, 10, "EVET", "HAYIR"),
+    ("Sayı TAM KARE mi?", is_tam_kare, 15, 15, "EVET", "HAYIR"),
+    ("Sayı TAM KÜP mü?", is_tam_kup, 20, 20, "EVET", "HAYIR"),
+    ("Sayı MÜKEMMEL sayı mı?", is_mukemmel, 100, 100, "EVET", "HAYIR"),
+    ("Sayı FIBONACCI dizisinde mi?", is_fibonacci, 75, 75, "EVET", "HAYIR"),
+    ("Sayı PALİNDROMİK mi?", is_palindromik, 10, 10, "EVET", "HAYIR"),
+    ("Sayı HARSHAD sayısı mı?", is_harshad, 25, 25, "EVET", "HAYIR"),
+    ("Sayı ÜÇGENSEL sayı mı?", is_ucgensel, 20, 20, "EVET", "HAYIR"),
+    ("Sayı 2'nin KUVVETİ mi?", is_iki_kuvveti, 10, 10, "EVET", "HAYIR"),
+    ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 80, 80, "EVET", "HAYIR"),
+    ("Sayı YARIM ASAL mı?", is_yarim_asal, 50, 50, "EVET", "HAYIR"),
+    ("Sayı MERSENNE ASALI mı?", is_mersenne_asali, 50, 50, "EVET", "HAYIR"),
+    ("Sayı FERMAT SAYISI mı?", is_fermat_sayisi, 50, 50, "EVET", "HAYIR"),
 ]
 # Ramanujan sayılarını analiz kısmında kullanmak için ayrı tutuyoruz
 RAMANUJAN_FUNCTIONS = [is_ramanujan]
@@ -807,6 +830,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
