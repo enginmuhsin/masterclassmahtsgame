@@ -708,7 +708,9 @@ elif secim == "📚 Bilgi Köşesi":
           * **17** → Tersi: **71** → İkisi de asal ✅  
           * **37** → Tersi: **73** → İkisi de asal ✅  
           * **79** → Tersi: **97** → İkisi de asal ✅  
-        with st.expander("🔗 YARIM ASAL SAYI Nedir?"):
+        """)
+    with st.expander("🔗 YARIM ASAL SAYI Nedir?"):
+        st.markdown("""
         **Tanım:** Yarım asal sayılar, iki asal sayının çarpımı şeklinde yazılabilen pozitif tam sayılardır.  
         Yani ya bir asalın karesi, ya da iki farklı asalın çarpımıdır.
 
@@ -723,7 +725,7 @@ elif secim == "📚 Bilgi Köşesi":
         
         Bu özel sayı türü, asal sayıların simetrik bir özelliğini gösterir ve matematikte ilginç bir kategori oluşturur.
         """)
-        
+    
 # --- MOD 4: FORMULA SPRİNT ---
 elif secim == "🧠 Formula Sprint":
     st.title("🧠 Formula Sprint: Hızlı Tekrar")
@@ -805,6 +807,7 @@ elif secim == "🧠 Formula Sprint":
                 args=(kategori,),
                 use_container_width=True
             )
+
 
 
 
