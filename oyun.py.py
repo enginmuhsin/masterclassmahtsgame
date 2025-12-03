@@ -11,21 +11,33 @@ st.set_page_config(
 )
 
 # =============================================================================
-# TASARIM: KRİTİK CSS ÇÖZÜMÜ (SİYAH ÜST ÇUBUĞU GİZLEME VE PANO SABİTLEME)
+# TASARIM: KRİTİK CSS ÇÖZÜMÜ (TÜM ÜST BOŞLUKLARI VE HEADER'I SİLME)
 # =============================================================================
 st.markdown("""
 <style>
-/* Menü ve Alt Bilgi Gizleme */
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
+/* KRİTİK: Tarayıcı seviyesindeki üst boşlukları sıfırla */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+}
 
-/* KRİTİK ÇÖZÜM: Streamlit'in SİYAH ÜST ÇUBUĞUNU (Header) TAMAMEN GİZLE */
-/* Hem klasik hem de yeni header elementlerini hedefler */
+/* Menü ve Alt Bilgi Gizleme */
+#MainMenu, footer {visibility: hidden;}
+
+/* KRİTİK ÇÖZÜM AŞAMA 1: Streamlit'in SİYAH ÜST ÇUBUĞUNU (Header) SİL */
 .stApp header, [data-testid="stHeader"] {
-    visibility: hidden; /* Görünmez yap */
-    height: 0 !important; /* Yüksekliğini sıfırla */
-    padding: 0 !important; /* İç boşluğu sıfırla */
-    display: none !important; /* Gerekirse tamamen DOM'dan çıkar */
+    visibility: hidden; 
+    height: 0 !important; 
+    padding: 0 !important; 
+    display: none !important; 
+}
+
+/* KRİTİK ÇÖZÜM AŞAMA 2: Streamlit'in Ana Kapsayıcı Üst Boşluğunu SİL */
+/* Bu div, sayfanın en üstünde oluşan beyaz boşluğu hedefler. */
+.stApp > div:first-child > div:first-child { 
+    padding-top: 0px !important; 
+    margin-top: 0px !important;
 }
 
 /* 1. ARKA PLAN */
@@ -37,27 +49,25 @@ footer {visibility: hidden;}
 
 /* KRİTİK MOBİL/GENEL METİN GÖRÜNÜRLÜK FIXİ */
 body, p, span, div, .stMarkdown, .stText, .stAlert > div > div:nth-child(2) > div {
-    color: #31333F !important; /* Koyu gri/siyah metin rengini zorla */
+    color: #31333F !important; 
 }
 
-/* 8. SABİT PUAN TABLOSU STİLİ (position: fixed ile sabitleme) */
+/* 8. SABİT PUAN TABLOSU STİLİ (SADECE BU KISIM SABİT KALACAK) */
 .fixed-scoreboard {
     position: fixed; /* Ekran pozisyonunu sabitle */
     top: 0; /* KRİTİK: Ekranın en üstü */
     left: 0; 
     right: 0; 
     z-index: 1000; /* En üstte olmasını garantiler */
-    background-color: #f8f9fa; /* Arka plan rengi */
+    background-color: #f8f9fa; 
     padding: 10px 10px 0 10px; 
     box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
-    width: 100%; /* Masaüstünde bile tam genişlik */
+    width: 100%; 
 }
 
 /* KRİTİK İÇERİK KAYDIRMA: Ana içeriği, sabitlenen panonun altına it */
-/* Bu, sabit panonun arkasından sarkan BOŞLUĞU yok eden ayardır. */
 .stApp > div:first-child > div:nth-child(2) {
-    /* Sabit panonun tahmini yüksekliği 170-180px civarındadır. 180px güvenli bir değerdir. */
-    margin-top: 180px !important; 
+    margin-top: 180px !important; /* Pano yüksekliği kadar boşluk bırak */
 }
 
 
@@ -570,14 +580,14 @@ if secim == "🎮 Oyun Modu":
                 st.rerun()
 
     # =========================================================================
-    # KRİTİK EKLEME: SÜREKLİ GÜNCELLEME DÖNGÜSÜ (Artık stabil çalışıyor)
+    # KRİTİK EKLEME: SÜREKLİ GÜNCELLEME DÖNGÜSÜ
     # =========================================================================
     if st.session_state.oyun_aktif:
         fark = st.session_state.bitis_zamani - time.time()
         kalan_sure_kontrol = int(fark)
 
         if kalan_sure_kontrol > 0:
-            # Saniyelik güncellemeyi daha garanti hale getirmek için bekleme süresi kısaltıldı.
+            # Saniyelik güncellemeyi garanti altına al
             time.sleep(0.1) 
             st.rerun() 
         else:
