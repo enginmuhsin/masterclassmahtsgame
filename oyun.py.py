@@ -2,24 +2,115 @@ import streamlit as st
 import math
 import random
 import time
-import json
-import os
+
+# --- SAYFA AYARLARI ---
+st.set_page_config(
+    page_title="Master Class Matematik",
+    page_icon="🎓",
+    layout="wide"
+)
 
 # =============================================================================
-# SABİT TANIMLAMALAR
+# TASARIM: AYDINLIK & FERAH TEMA (CSS)
 # =============================================================================
-
-# Dosya yolu (Streamlit Cloud'da dosya yönetimi karmaşıktır, basit bir yol izliyoruz)
-SCORE_FILE = "highscores.json"
+st.markdown("""
+    <style>
+    /* Menü ve Alt Bilgi Gizleme */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* 1. ARKA PLAN */
+    .stApp {
+        background-color: #f8f9fa;
+        background-image: radial-gradient(#dee2e6 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+    
+    /* 2. ANA BAŞLIK */
+    h1 {
+        color: #0d2b5b !important;
+        text-shadow: 1px 1px 2px #b0b0b0;
+        font-weight: 900 !important;
+        font-family: 'Helvetica', sans-serif;
+    }
+    
+    /* 3. SKOR TABLOSU YAZILARI */
+    [data-testid="stMetricLabel"] {
+        color: #495057 !important;
+        font-size: 1.1rem !important;
+        font-weight: bold !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: #dc3545 !important;
+        font-size: 2.5rem !important;
+        font-weight: 900 !important;
+    }
+    
+    /* 4. KURUM İSMİ KUTUSU */
+    .bilsem-header {
+        text-align: center;
+        color: #ffffff; 
+        font-weight: bold;
+        font-size: 1.3rem;
+        font-family: 'Verdana', sans-serif;
+        padding: 15px;
+        margin-bottom: 20px;
+        background: linear-gradient(90deg, #0d2b5b 0%, #dc3545 100%);
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    /* 5. BUTONLAR */
+    .stButton>button {
+        font-weight: bold;
+        border-radius: 12px;
+        border: 2px solid #0d2b5b;
+        color: #0d2b5b;
+        background-color: #ffffff;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .stButton>button:hover {
+        background-color: #0d2b5b;
+        color: white;
+        border-color: #0d2b5b;
+        transform: translateY(-2px);
+    }
+    
+    /* 6. HEDEF SAYI KUTUSU */
+    .hedef-sayi-kutusu {
+        background-color: #ffffff;
+        border: 4px solid #dc3545;
+        padding: 10px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15);
+    }
+    
+    /* 7. BİLGİ KARTLARI STİLİ */
+    .streamlit-expanderHeader {
+        font-weight: bold;
+        color: #0d2b5b;
+        font-size: 1.1rem;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # =============================================================================
-# MATEMATİK VE VERİ FONKSİYONLARI
+# MATEMATİK FONKSİYONLARI VE VERİ YAPILARI
 # =============================================================================
-
-# (Önceki matematik fonksiyonları aynı kalmıştır)
 def is_tek(n): return n % 2 != 0
 def is_tam_kare(n): return n >= 0 and int(math.isqrt(n))**2 == n
-# ... (Diğer matematik fonksiyonları) ...
+def is_tam_kup(n): return n >= 0 and round(n**(1/3))**3 == n
+def is_asal(n):
+    if n < 2: return False
+    if n == 2: return True
+    if n % 2 == 0: return False
+    for i in range(3, int(math.isqrt(n)) + 1, 2):
+        if n % i == 0: return False
+    return True
 def is_mukemmel(n):
     if n < 2: return False
     toplam = 1
@@ -31,62 +122,6 @@ def is_mukemmel(n):
 def is_fibonacci(n):
     def is_sq(x): return int(math.isqrt(x))**2 == x
     return is_sq(5*n*n + 4) or is_sq(5*n*n - 4)
-def is_asal(n):
-    if n < 2: return False
-    if n == 2: return True
-    if n % 2 == 0: return False
-    for i in range(3, int(math.isqrt(n)) + 1, 2):
-        if n % i == 0: return False
-    return True
-
-# --- YENİ: Çarpan Bulma Fonksiyonu ---
-def get_proper_divisors(n):
-    """Kendisi hariç tüm pozitif bölenleri döndürür."""
-    divisors = []
-    for i in range(1, int(math.isqrt(n)) + 1):
-        if n % i == 0:
-            if i != n:
-                divisors.append(i)
-            if n // i != n:
-                divisors.append(n // i)
-    # Kendisi ve 1'i tekrar edenlerden temizle
-    divisors = sorted(list(set([d for d in divisors if d != n and d != 1])))
-    if 1 not in divisors: divisors.insert(0, 1)
-    return divisors
-
-# --- YENİ: Skor Yükleme/Kaydetme Fonksiyonları ---
-def load_scores():
-    try:
-        # Streamlit Cloud'da dosya erişimi için kontrol
-        with open(SCORE_FILE, 'r') as f:
-            scores = json.load(f)
-            # Skorları puana göre sırala
-            return sorted(scores, key=lambda x: x['score'], reverse=True)
-    except FileNotFoundError:
-        st.warning(f"{SCORE_FILE} dosyası bulunamadı. Liderlik tablosu sıfırdan oluşturulacak.")
-        return []
-    except Exception as e:
-        st.error(f"Skorları yüklerken bir hata oluştu: {e}")
-        return []
-
-def save_new_score(isim, puan):
-    """Yeni skoru ekler ve sadece ilk 5 skoru tutar."""
-    try:
-        scores = load_scores()
-        scores.append({"name": isim, "score": puan, "date": time.strftime("%d/%m %H:%M")})
-        scores = sorted(scores, key=lambda x: x['score'], reverse=True)
-        
-        # En iyi 5 skoru tut
-        with open(SCORE_FILE, 'w') as f:
-            json.dump(scores[:5], f, indent=4)
-        return True
-    except Exception as e:
-        st.error(f"Skoru kaydederken bir hata oluştu: {e}")
-        return False
-
-# =============================================================================
-# ... (Geri kalan matematik ve özellik listeleri aynı) ...
-# =============================================================================
 def is_palindromik(n): return str(n) == str(n)[::-1]
 def is_harshad(n): return n > 0 and n % sum(int(d) for d in str(n)) == 0
 def is_ucgensel(n): return n >= 0 and is_tam_kare(8 * n + 1)
@@ -105,7 +140,7 @@ def is_ramanujan(n):
         if b**3 == b3: ways += 1
     return ways >= 2
 
-# OYUN MODU ÖZELLİKLERİ (Ramanujan çıkarıldı)
+# OYUN MODU ÖZELLİKLERİ (TÜM VİRGÜLLER KONTROL EDİLMİŞTİR)
 OZELLIKLER = [
     ("Sayı TEK mi yoksa ÇİFT mi?", is_tek, 5, 5, "TEK", "ÇİFT"),
     ("Sayı ASAL mı?", is_asal, 20, 2, "EVET", "HAYIR"),
@@ -120,36 +155,41 @@ OZELLIKLER = [
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
-# ... (Kalan Ezber Modu ve Tema Kodları) ...
-
+# YENİ EZBER MODU VERİ SETİ
 EZBER_FORMULLER = [
     ("Çarpım Tablosu", "7 x 9 = ...", "63", 5),
     ("Çarpım Tablosu", "12 x 12 = ...", "144", 5),
     ("Çarpım Tablosu", "8 x 7 = ...", "56", 5),
     ("Çarpım Tablosu", "11 x 6 = ...", "66", 5),
     ("Çarpım Tablosu", "13 x 5 = ...", "65", 5),
+
     ("Özdeşlikler", "a² - b² = (a - b)(...)", "a+b", 30),
     ("Özdeşlikler", "x² - 16 = (x - 4)(...)", "x+4", 30),
     ("Özdeşlikler", "(x + 3)² = x² + 6x + ...", "9", 25),
     ("Özdeşlikler", "(2a - 5)² = 4a² - 20a + ...", "25", 25),
     ("Özdeşlikler", "a² + 2ab + b² = (...)", "a+b)2", 30),
+
     ("Özdeşlikler (Küp)", "a³ + b³ = (a + b)(a² - ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "(a + b)³ = a³ + 3a²b + 3ab² + ...", "b³", 80),
     ("Özdeşlikler (Üç Terimli)", "(a+b+c)² = a²+b²+c²+2(ab+ac+...)", "bc", 90),
+
     ("Trigonometri", "tanx = sinx / ...", "cosx", 40),
     ("Trigonometri", "cotx = ... / sinx", "cosx", 40),
     ("Trigonometri", "sin²x + cos²x = ...", "1", 50),
     ("Trigonometri", "secx = 1 / ...", "cosx", 40),
     ("Trigonometri", "cscx = 1 / ...", "sinx", 40),
+
     ("Trigonometri", "sin(x + y) = sinx cosy + ...", "cosx siny", 50),
     ("Trigonometri", "cos(a + b) = cosa cosb - ...", "sina sinb", 50),
     ("Trigonometri", "sin(2x) = 2 sinx ...", "cosx", 70),
     ("Trigonometri", "cos(2x) = cos²x - ...", "sin²x", 70),
     ("Trigonometri", "tan(x + y) = (tanx + tany) / (1 - ...)", "tanx tany", 60),
+
     ("Trigonometri", "sin(90 - x) = ...", "cosx", 60),
     ("Trigonometri", "cos(270 + x) = ...", "sinx", 60),
 ]
+
 EZBER_KATEGORILER = sorted(list(set([f[0] for f in EZBER_FORMULLER])))
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
 
@@ -169,6 +209,7 @@ def sonraki_soru_ezber():
     if yeni_index >= len(formuller):
         yeni_index = 0
         st.toast("🎉 Seçilen Kategorideki Tüm Formülleri Tamamladın! Baştan Başlıyoruz.", icon="🥳")
+
     st.session_state.ezber_soru_index = yeni_index
     st.session_state.ezber_geribildirim = None
     st.session_state.cevap_girisi = ""
@@ -178,12 +219,16 @@ def kontrol_et_ezber(cevap_key):
     if not st.session_state.ezber_filtreli_formuller:
         st.warning("Önce bir kategori seçmelisiniz!")
         return
+        
     kullanici_cevabi = st.session_state[cevap_key]
     soru_index = st.session_state.ezber_soru_index
+    
     formuller = st.session_state.ezber_filtreli_formuller
     kategori, soru, dogru_cevap, puan = formuller[soru_index]
+    
     normalized_kullanici = normalize_cevap(kullanici_cevabi)
     normalized_dogru = normalize_cevap(dogru_cevap)
+    
     if normalized_kullanici == normalized_dogru:
         if st.session_state.ezber_geribildirim != "dogru":
             st.session_state.ezber_puan += puan
@@ -216,12 +261,17 @@ def kategori_sec(kategori):
 # OYUN MODU LOGİĞİ VE CALLBACK'LERİ
 # =============================================================================
 def cevap_ver(index, buton_tipi):
-    if not st.session_state.oyun_aktif: return
+    if not st.session_state.oyun_aktif:
+        return
+
     soru_data = OZELLIKLER[index]
     func = soru_data[1]
-    p_d = soru_data[2]; p_y = soru_data[3]
+    p_d = soru_data[2]
+    p_y = soru_data[3]
+    
     dogru_mu = func(st.session_state.hedef_sayi)
     kullanici_bildi_mi = False
+    
     if buton_tipi == "sol":
         if dogru_mu: kullanici_bildi_mi = True
     elif buton_tipi == "sag":
@@ -242,6 +292,7 @@ def yeni_oyun_baslat():
     mx = st.session_state.get('ayar_max', 5000)
     sure = st.session_state.get('ayar_sure', 60)
     
+    # Oyun Modu için kontrol edilecek fonksiyonlar (Ramanujan hariç)
     CHECK_FUNCTIONS = [is_asal, is_tam_kare, is_fibonacci, is_mukemmel, is_harshad, is_ucgensel, is_iki_kuvveti, is_armstrong]
     
     bulundu = False; deneme = 0; aday = 0
@@ -276,6 +327,7 @@ def yeni_oyun_baslat():
 # =============================================================================
 
 st.sidebar.title("🧮 Menü")
+# YENİ MOD ADI: FORMULA SPRİNT
 secim = st.sidebar.radio("Seçim Yapınız:", ["🎮 Oyun Modu", "🔍 Sayı Dedektörü", "📚 Bilgi Köşesi", "🧠 Formula Sprint"])
 st.sidebar.markdown("---")
 
@@ -559,77 +611,3 @@ elif secim == "🧠 Formula Sprint":
     
     # Mevcut puanı göster
     st.metric("SPRINT PUANI", st.session_state.ezber_puan)
-    
-    if st.session_state.ezber_kategori_secildi:
-        # KATEGORİ SEÇİLDİ, OYUN BAŞLADI
-        
-        soru_index = st.session_state.ezber_soru_index
-        formuller = st.session_state.ezber_filtreli_formuller
-        toplam_soru = len(formuller)
-        
-        kategori_adi = st.session_state.ezber_kategori_secildi
-        st.subheader(f"🏷️ Kategori: {kategori_adi} ({toplam_soru} Formül)")
-
-        # --- SORU VE KONTROL ALANI ---
-        with st.form(key="ezber_form"):
-            # Kategori, Soru, Doğru Cevap, Puan
-            kategori, soru_text, dogru_cevap, puan = formuller[soru_index]
-            
-            st.markdown(f"### Soru {soru_index + 1}/{toplam_soru}: **`{soru_text}`**")
-            st.markdown(f"*(Puan: {puan})*")
-            
-            # Kullanıcı Girişi
-            cevap_girisi = st.text_input(
-                "Boşluğu Doldurun:", 
-                key="cevap_girisi", 
-                help="Örn: a+b, cosxsiny. Boşluklar, üs işaretleri ve harf büyüklüğü önemsenmez."
-            )
-            
-            col_cevap1, col_cevap2, col_cevap3 = st.columns([1, 1, 2])
-            
-            # Kontrol Butonu
-            col_cevap1.form_submit_button(
-                "✅ KONTROL ET", 
-                type="primary",
-                on_click=kontrol_et_ezber, 
-                args=("cevap_girisi",)
-            )
-            
-            # Sonraki Soru Butonu 
-            col_cevap2.form_submit_button(
-                "⏭️ SONRAKİ FORMÜL", 
-                on_click=sonraki_soru_ezber
-            )
-
-        # --- GERİ BİLDİRİM SONUÇLARI ---
-        geribildirim = st.session_state.ezber_geribildirim
-        
-        if geribildirim == "dogru":
-            st.success(f"✅ {random.choice(OVGULER)} Doğru bildiniz!")
-        elif geribildirim and "yanlis" in geribildirim:
-            _, dogru_cevap = geribildirim.split(" | ")
-            # Kullanıcıya doğru cevabın sadeleştirilmemiş halini göster
-            gosterilen_cevap = dogru_cevap.split(': ')[1]
-            st.error(f"❌ Yanlış cevap. Doğrusu: **`{gosterilen_cevap}`**")
-            st.info("İpucu: Cevabınızdaki boşlukları, küçük harfleri ve üs işaretlerini kod otomatik olarak temizler.")
-            
-        st.markdown("---")
-        if st.button("⬅️ KATEGORİ SEÇİMİNE DÖN / PUANI SIFIRLA", use_container_width=True, on_click=sifirla_ezber_modu):
-            st.rerun()
-
-    else:
-        # KATEGORİ SEÇİM EKRANI
-        st.markdown("### 🎯 Hangi Konuda Hızlanmak İstersin?")
-        st.warning("Lütfen pratik yapmak istediğiniz kategoriye tıklayın.")
-        
-        # Kolonları dinamik olarak oluştur
-        cols = st.columns(len(EZBER_KATEGORILER))
-        
-        for i, kategori in enumerate(EZBER_KATEGORILER):
-            cols[i].button(
-                f"📚 {kategori}", 
-                key=f"kategori_btn_{kategori}",
-                on_click=kategori_sec,
-                args=(kategori,),
-                use_container_width=True
-            )
