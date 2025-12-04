@@ -724,21 +724,23 @@ elif secim == "📚 Bilgi Köşesi":
 
     with st.expander("⚡ MERSENNE ASALI Nedir?"):
         st.markdown("""
-        **Tanım:** Mersenne asalları, özel bir formülle tanımlanır:  
-        **Mₙ = 2^n - 1**
+        **Tanım:** Mersenne asalları, Mₙ = 2ⁿ - 1 formundaki özel asal sayılardır.
+        n asal olduğunda bazen 2ⁿ - 1 de asal çıkar.
 
-        Yani n bir asal sayı olduğunda, bazen **2^n - 1** de asal çıkar.  
-        Bu özel asal sayılar matematikte çok önemlidir ve büyük asal sayıların keşfinde kullanılır.
+        **Üstlü Gösterim ile Örnekler:**  
+        * n = 2 → 2² - 1 = **3**  
+        * n = 3 → 2³ - 1 = **7**  
+        * n = 5 → 2⁵ - 1 = **31**  
+        * n = 7 → 2⁷ - 1 = **127**  
+        * n = 13 → 2¹³ - 1 = **8191**
+       
+        **Not:** Her asal n icin 2ⁿ - 1 asal cikmaz.  
+        Ornegin n = 11 → 2¹¹ - 1 = 2047 (bilesik, 23 x 89).
 
-        **Örnekler:**  
-        * n = 2 → 2² - 1 = **3** (asal)  
-        * n = 3 → 2³ - 1 = **7** (asal)  
-        * n = 5 → 2⁵ - 1 = **31** (asal)  
-        * n = 7 → 2⁷ - 1 = **127** (asal)  
-        * n = 13 → 2¹³ - 1 = **8191** (asal)
-
-        **Not:** Tüm n değerleri asal olsa bile, **2^n - 1** her zaman asal çıkmaz.  
-        Örneğin n = 11 → 2¹¹ - 1 = 2047 (bileşik, çünkü 23 × 89).
+        **Ilginc Bilgi:**  
+        Su ana kadar hesaplanan en buyuk Mersenne asali:  
+        **2¹³⁶²⁷⁹⁸⁴¹ - 1**  
+        Bu sayi tam **41,024,320 basamak** uzunlugundadir ve 2018'de GIMPS projesi tarafindan bulunmustur.
         """)
 
     with st.expander("📐 FERMAT SAYISI Nedir?"):
@@ -747,11 +749,11 @@ elif secim == "📚 Bilgi Köşesi":
         Fₙ = 2^(2^n) + 1
 
         **Örnekler:**  
-        * F₀ = 2^(2^0) + 1 = 3  
-        * F₁ = 2^(2^1) + 1 = 5  
-        * F₂ = 2^(2^2) + 1 = 17  
-        * F₃ = 2^(2^3) + 1 = 257  
-        * F₄ = 2^(2^4) + 1 = 65537  
+        * F₀ = 2¹ + 1 = 3  
+        * F₁ = 2² + 1 = 5  
+        * F₂ = 2⁴ + 1 = 17  
+        * F₃ = 2⁸ + 1 = 257  
+        * F₄ = 2¹⁶ + 1 = 65537  
 
         Açıklama: "2 üzeri 2^n artı 1" şeklinde tanımlanır.
         """)
@@ -862,3 +864,4 @@ elif secim == "🧠 Formula Sprint":
                     args=(kategori,),
                     use_container_width=True
                 )
+
