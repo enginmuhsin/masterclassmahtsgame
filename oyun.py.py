@@ -155,47 +155,42 @@ OZELLIKLER = [
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
-# YENİ EZBER MODU VERİ SETİ
+# EZBER MODU VERİ SETİ
 EZBER_FORMULLER = [
     ("Çarpım Tablosu", "7 x 9 = ...", "63", 5),
     ("Çarpım Tablosu", "12 x 12 = ...", "144", 5),
     ("Çarpım Tablosu", "8 x 7 = ...", "56", 5),
     ("Çarpım Tablosu", "11 x 6 = ...", "66", 5),
     ("Çarpım Tablosu", "13 x 5 = ...", "65", 5),
-
     ("Özdeşlikler", "a² - b² = (a - b)(...)", "a+b", 30),
     ("Özdeşlikler", "x² - 16 = (x - 4)(...)", "x+4", 30),
     ("Özdeşlikler", "(x + 3)² = x² + 6x + ...", "9", 25),
     ("Özdeşlikler", "(2a - 5)² = 4a² - 20a + ...", "25", 25),
     ("Özdeşlikler", "a² + 2ab + b² = (...)", "a+b)2", 30),
-
     ("Özdeşlikler (Küp)", "a³ + b³ = (a + b)(a² - ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80),
     ("Özdeşlikler (Küp)", "(a + b)³ = a³ + 3a²b + 3ab² + ...", "b³", 80),
     ("Özdeşlikler (Üç Terimli)", "(a+b+c)² = a²+b²+c²+2(ab+ac+...)", "bc", 90),
-
     ("Trigonometri", "tanx = sinx / ...", "cosx", 40),
     ("Trigonometri", "cotx = ... / sinx", "cosx", 40),
     ("Trigonometri", "sin²x + cos²x = ...", "1", 50),
     ("Trigonometri", "secx = 1 / ...", "cosx", 40),
     ("Trigonometri", "cscx = 1 / ...", "sinx", 40),
-
     ("Trigonometri", "sin(x + y) = sinx cosy + ...", "cosx siny", 50),
     ("Trigonometri", "cos(a + b) = cosa cosb - ...", "sina sinb", 50),
     ("Trigonometri", "sin(2x) = 2 sinx ...", "cosx", 70),
     ("Trigonometri", "cos(2x) = cos²x - ...", "sin²x", 70),
     ("Trigonometri", "tan(x + y) = (tanx + tany) / (1 - ...)", "tanx tany", 60),
-
     ("Trigonometri", "sin(90 - x) = ...", "cosx", 60),
     ("Trigonometri", "cos(270 + x) = ...", "sinx", 60),
 ]
+
 EZBER_KATEGORILER = sorted(list(set([f[0] for f in EZBER_FORMULLER])))
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
 
 # =============================================================================
 # EZBER MODU LOGİĞİ VE CALLBACK'LERİ
 # =============================================================================
-
 def normalize_cevap(cevap):
     if not isinstance(cevap, str): cevap = str(cevap)
     normalized = cevap.replace(' ', '').lower()
@@ -208,7 +203,6 @@ def sonraki_soru_ezber():
     if yeni_index >= len(formuller):
         yeni_index = 0
         st.toast("🎉 Seçilen Kategorideki Tüm Formülleri Tamamladın! Baştan Başlıyoruz.", icon="🥳")
-
     st.session_state.ezber_soru_index = yeni_index
     st.session_state.ezber_geribildirim = None
     st.session_state.cevap_girisi = ""
@@ -224,7 +218,6 @@ def kontrol_et_ezber(cevap_key):
     kategori, soru, dogru_cevap, puan = formuller[soru_index]
     normalized_kullanici = normalize_cevap(kullanici_cevabi)
     normalized_dogru = normalize_cevap(dogru_cevap)
-    
     if normalized_kullanici == normalized_dogru:
         if st.session_state.ezber_geribildirim != "dogru":
             st.session_state.ezber_puan += puan
@@ -329,7 +322,7 @@ kurum_kodu = """
 </div>
 """
 
-# --- ORTAK SESSION STATE BAŞLANGICI ---
+# --- ORTAK SESSION STATE ---
 if 'en_yuksek_puan' not in st.session_state: st.session_state.en_yuksek_puan = 0
 if 'ezber_puan' not in st.session_state: st.session_state.ezber_puan = 0
 if 'ezber_soru_index' not in st.session_state: st.session_state.ezber_soru_index = 0
@@ -347,8 +340,6 @@ if 'hedef_sayi' not in st.session_state:
     st.session_state.ayar_min = 1
     st.session_state.ayar_max = 5000
     st.session_state.ayar_sure = 60
-# --- ORTAK SESSION STATE SONU ---
-
 
 # --- MOD 1: OYUN MODU ---
 if secim == "🎮 Oyun Modu":
@@ -386,7 +377,6 @@ if secim == "🎮 Oyun Modu":
     if st.sidebar.button("🎲 YENİ OYUN BAŞLAT (SIFIRLA)", use_container_width=True):
         yeni_oyun_baslat()
         st.rerun()
-
     st.markdown("---")
 
     if st.session_state.hedef_sayi != 0:
@@ -442,7 +432,6 @@ if secim == "🎮 Oyun Modu":
         st.info("Oyun başlamadan önce sol menüden süre ve sayı aralığı ayarlarını kontrol edebilirsin.")
         col_start1, col_start2, col_start3 = st.columns([1, 2, 1])
         with col_start2:
-            st.markdown("#### Ayarları yaptıysan başlayalım!")
             if st.button("🚀 OYUNU BAŞLAT", key="main_start_button", type="primary", use_container_width=True):
                 yeni_oyun_baslat()
                 st.rerun()
@@ -513,7 +502,7 @@ elif secim == "📚 Bilgi Köşesi":
     st.markdown("### 🔢 Oyunda Karşılaştığımız Özel Sayılar")
     with st.expander("✨ MÜKEMMEL SAYI Nedir?"):
         st.markdown("""
-        **Tanım:** Pozitif bölenleri toplamı kendisine eşit olan sayı.
+        **Tanım:** Kendisi hariç pozitif bölenlerinin toplamı kendisine eşit olan sayı.
         **Örnek:** 6 -> 1+2+3=6.
         """)
     with st.expander("🌀 FIBONACCI SAYISI Nedir?"):
@@ -529,7 +518,7 @@ elif secim == "📚 Bilgi Köşesi":
         st.markdown("""
         **Tanım:** Rakamları toplamına tam bölünen sayıdır. (Örn: 18 -> 1+8=9, 18/9=2)
         """)
-    with st.expander("🚕 RAMANUJAN (TAKSİ) SAYISI Nedir?"):
+    with st.expander("🚕 RAMANUJAN SAYISI Nedir?"):
         st.markdown("""
         **Tanım:** İki farklı şekilde, iki sayının küplerinin toplamı olarak yazılabilen sayıdır.
         **Örnek:** $1729 = 1^3 + 12^3 = 9^3 + 10^3$
