@@ -17,15 +17,78 @@ st.markdown("""
     <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    
     .stApp {
         background-color: #f8f9fa;
         background-image: radial-gradient(#dee2e6 1px, transparent 1px);
         background-size: 20px 20px;
     }
-    h1 { color: #0d2b5b !important; text-shadow: 1px 1px 2px #b0b0b0; font-weight: 900 !important; font-family: 'Helvetica', sans-serif;}
-    [data-testid="stMetricLabel"] { color: #495057 !important; font-size: 1.1rem !important; font-weight: bold !important; }
-    [data-testid="stMetricValue"] { color: #dc3545 !important; font-size: 2.5rem !important; font-weight: 900 !important; }
     
+    h1 {
+        color: #0d2b5b !important;
+        text-shadow: 1px 1px 2px #b0b0b0;
+        font-weight: 900 !important;
+        font-family: 'Helvetica', sans-serif;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        color: #495057 !important;
+        font-size: 1.1rem !important;
+        font-weight: bold !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: #dc3545 !important;
+        font-size: 2.5rem !important;
+        font-weight: 900 !important;
+    }
+    
+    /* YÜZEN (STICKY) HEDEF SAYI KUTUSU */
+    .floating-container {
+        position: fixed;
+        top: 60px;
+        right: 20px;
+        z-index: 999999;
+        background: linear-gradient(135deg, #dc3545, #a71d2a);
+        padding: 15px 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        border: 3px solid white;
+        text-align: center;
+        min-width: 150px;
+    }
+    
+    .floating-label {
+        color: white;
+        display: block;
+        font-size: 1rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .floating-value {
+        color: #ffffff;
+        font-size: 3rem;
+        font-weight: 900;
+        line-height: 1;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    }
+
+    @media (max-width: 600px) {
+        .floating-container {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .floating-label { margin-bottom: 0; font-size: 0.9rem; }
+        .floating-value { font-size: 2rem; }
+    }
+
     .bilsem-header {
         text-align: center;
         color: #ffffff; 
@@ -48,6 +111,7 @@ st.markdown("""
         color: #0d2b5b;
         background-color: #ffffff;
         transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .stButton>button:hover {
         background-color: #0d2b5b;
@@ -56,14 +120,7 @@ st.markdown("""
         transform: translateY(-2px);
     }
     
-    .hedef-sayi-kutusu {
-        background-color: #ffffff;
-        border: 4px solid #dc3545;
-        padding: 10px;
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: 0 10px 20px rgba(220, 53, 69, 0.15);
-    }
+    .streamlit-expanderHeader { font-weight: bold; color: #0d2b5b; font-size: 1.1rem; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -124,44 +181,18 @@ OZELLIKLER = [
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
-# =============================================================================
-# VERİ SETLERİ (FORMULA SPRINT)
-# =============================================================================
-def get_carpim_tablosu():
-    return [(f"{i} x {j} = ...", str(i*j), 5) for i in range(2, 10) for j in range(2, 10)]
-
-def get_tam_kareler():
-    # 1'den 30'a kadar sayıların kareleri (Ezber için makul aralık)
-    return [(f"{i}² = ...", str(i**2), 10) for i in range(1, 31)]
-
-def get_tam_kupler():
-    # 1'den 15'e kadar sayıların küpleri
-    return [(f"{i}³ = ...", str(i**3), 15) for i in range(1, 16)]
-
+# FORMULA SPRINT VERİLERİ
+def get_carpim_tablosu(): return [(f"{i} x {j} = ...", str(i*j), 5) for i in range(2, 10) for j in range(2, 10)]
+def get_tam_kareler(): return [(f"{i}² = ...", str(i**2), 10) for i in range(1, 31)]
+def get_tam_kupler(): return [(f"{i}³ = ...", str(i**3), 15) for i in range(1, 16)]
 def get_ileri_duzey():
     return [
-        # ÖZDEŞLİKLER (Zenginleştirilmiş)
-        ("a² - b² = (a - b)(...)", "a+b", 30),
-        ("(a + b)² = a² + 2ab + ...", "b²", 25),
-        ("(a - b)² = a² - 2ab + ...", "b²", 25),
-        ("x² - 16 = (x - 4)(...)", "x+4", 30),
-        ("a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80),
-        ("a³ + b³ = (a + b)(a² - ab + ...)", "b²", 80),
-        ("(a + b)³ = a³ + 3a²b + 3ab² + ...", "b³", 80),
-        ("(a+b+c)² = a²+b²+c²+2(...)", "ab+ac+bc", 90),
-        
-        # TRİGONOMETRİ (Tam Kadro)
-        ("sin²x + cos²x = ...", "1", 20),
-        ("tanx = sinx / ...", "cosx", 20),
-        ("cotx = cosx / ...", "sinx", 20),
-        ("tanx * cotx = ...", "1", 20),
-        ("sin(2x) = 2 sinx ...", "cosx", 60), # Yarım Açı
-        ("cos(2x) = cos²x - ...", "sin²x", 60),
-        ("cos(2x) = 2cos²x - ...", "1", 60),
-        ("sin(x + y) = sinx cosy + ...", "cosx siny", 70), # Toplam Fark
-        ("cos(x + y) = cosx cosy - ...", "sinx siny", 70),
-        ("tan(x + y) = (tanx + tany) / (1 - ...)", "tanx tany", 80),
-        ("sin(90 - x) = ...", "cosx", 40), # Dönüşüm
+        ("a² - b² = (a - b)(...)", "a+b", 30), ("(a + b)² = a² + 2ab + ...", "b²", 25),
+        ("(a - b)² = a² - 2ab + ...", "b²", 25), ("x² - 16 = (x - 4)(...)", "x+4", 30),
+        ("a³ - b³ = (a - b)(a² + ab + ...)", "b²", 80), ("a³ + b³ = (a + b)(a² - ab + ...)", "b²", 80),
+        ("sin²x + cos²x = ...", "1", 20), ("tanx = sinx / ...", "cosx", 20),
+        ("sin(2x) = 2 sinx ...", "cosx", 60), ("cos(2x) = cos²x - ...", "sin²x", 60),
+        ("sin(x + y) = sinx cosy + ...", "cosx siny", 70), ("sin(90 - x) = ...", "cosx", 40),
     ]
 
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
@@ -172,41 +203,29 @@ OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! �
 def normalize_cevap(cevap):
     if not isinstance(cevap, str): cevap = str(cevap)
     normalized = cevap.replace(' ', '').lower()
-    # Matematiksel ifadeleri sadeleştir
     normalized = normalized.replace('²', '2').replace('³', '3')
     normalized = normalized.replace('^', '').replace('**', '').replace('*', '') 
     return normalized
 
 def sonraki_soru_sprint(tab_key):
-    """Her sekme (tab) için ayrı soru indexini yönetir"""
     liste = st.session_state[f"liste_{tab_key}"]
-    mevcut_idx = st.session_state.get(f"idx_{tab_key}", 0)
-    
-    # Rastgele bir sonraki soruya geç (Sıralı gitmesin, ezber bozulur)
     yeni_idx = random.randint(0, len(liste) - 1)
-    
     st.session_state[f"idx_{tab_key}"] = yeni_idx
-    st.session_state[f"msg_{tab_key}"] = None # Mesajı temizle
-    st.session_state[f"input_{tab_key}"] = "" # Inputu temizle
+    st.session_state[f"msg_{tab_key}"] = None 
+    st.session_state[f"input_{tab_key}"] = "" 
 
 def kontrol_et_sprint(cevap, tab_key):
     idx = st.session_state.get(f"idx_{tab_key}", 0)
     liste = st.session_state[f"liste_{tab_key}"]
     soru, dogru, puan = liste[idx]
-    
     if normalize_cevap(cevap) == normalize_cevap(dogru):
         st.session_state[f"msg_{tab_key}"] = ("dogru", puan)
         st.session_state.ezber_puan += puan
         st.toast(f"✅ Doğru! +{puan} Puan", icon="🧠")
-        # Doğru bilince otomatik yeni soruya geçme opsiyonu eklenebilir ama
-        # öğrencinin doğruyu görmesi için bekletiyoruz.
     else:
         st.session_state[f"msg_{tab_key}"] = ("yanlis", dogru)
         st.toast("❌ Yanlış Cevap", icon="🤔")
 
-# =============================================================================
-# OYUN MANTIĞI (OYUN MODU İÇİN)
-# =============================================================================
 def cevap_ver(index, buton_tipi):
     if not st.session_state.oyun_aktif: return
     soru_data = OZELLIKLER[index]
@@ -239,6 +258,7 @@ def yeni_oyun_baslat():
     mx = st.session_state.get('ayar_max', 5000)
     sure = st.session_state.get('ayar_sure', 60)
     CHECK_FUNCTIONS = [is_asal, is_tam_kare, is_fibonacci, is_mukemmel, is_harshad, is_ucgensel, is_iki_kuvveti, is_armstrong]
+    
     bulundu = False; deneme = 0; aday = 0
     while not bulundu and deneme < 200:
         if mx > 1000:
@@ -273,7 +293,7 @@ kurum_kodu = """
 </div>
 """
 
-# GLOBAL STATE BAŞLATMA
+# GLOBAL STATE
 if 'en_yuksek_puan' not in st.session_state: st.session_state.en_yuksek_puan = 0
 if 'ezber_puan' not in st.session_state: st.session_state.ezber_puan = 0
 
@@ -326,14 +346,20 @@ if secim == "🎮 Oyun Modu":
     st.markdown("---")
 
     if st.session_state.hedef_sayi != 0:
+        # YÜZEN (STICKY) HEDEF SAYI KUTUSU
+        st.markdown(f"""
+            <div class="floating-container">
+                <span class="floating-label">HEDEF SAYI</span>
+                <span class="floating-value">{st.session_state.hedef_sayi}</span>
+            </div>
+        """, unsafe_allow_html=True)
+        
         c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
         c1.metric("PUAN", st.session_state.puan)
         with c2:
             st.markdown(f"""<div style="text-align: center;"><p style="margin:0; font-weight:bold; color:#495057;">REKOR</p><p style="margin:0; font-size: 2.5rem; font-weight:900; color: #d4af37; text-shadow: 1px 1px 1px black;">{st.session_state.en_yuksek_puan}</p></div>""", unsafe_allow_html=True)
         c3.metric("SÜRE", f"{kalan_sure} sn")
-        with c4:
-            st.markdown(f"""<div class="hedef-sayi-kutusu"><p style="color: #495057; font-weight: bold; margin:0; font-size: 0.9rem; text-transform: uppercase;">HEDEF SAYI</p><p style="color: #dc3545; font-weight: 900; font-size: 3rem; margin:0; line-height: 1;">{st.session_state.hedef_sayi}</p></div>""", unsafe_allow_html=True)
-
+        
         st.progress(progress_degeri, text="Kalan Süre")
         
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
@@ -420,11 +446,10 @@ elif secim == "🔍 Sayı Dedektörü":
             idx += 1
         st.divider()
 
-# --- MOD 3: FORMULA SPRINT (YENİLENMİŞ) ---
+# --- MOD 3: FORMULA SPRINT ---
 elif secim == "🧠 Formula Sprint":
     st.title("🧠 Formula Sprint: Hızlı Tekrar")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
-    
     st.metric("SPRINT PUANI", st.session_state.ezber_puan)
     
     # Veri setlerini hazırla
@@ -433,76 +458,49 @@ elif secim == "🧠 Formula Sprint":
     if 'liste_kup' not in st.session_state: st.session_state.liste_kup = get_tam_kupler()
     if 'liste_efsane' not in st.session_state: st.session_state.liste_efsane = get_ileri_duzey()
     
-    # 4 AYRI SEKME
     tab1, tab2, tab3, tab4 = st.tabs(["✖️ Çarpım Tablosu", "🔲 Tam Kareler", "🧊 Tam Küpler", "🚀 Efsane Formüller"])
     
-    # TAB 1: ÇARPIM
     with tab1:
-        st.subheader("Çarpım Tablosu (1-9)")
-        if st.button("Sıradaki Soru (Çarpım)", key="btn_next_carpim"): sonraki_soru_sprint("carpim")
-        
-        # Soru Göster
+        st.subheader("Çarpım Tablosu")
+        if st.button("Sıradaki Soru", key="bn_c"): sonraki_soru_sprint("carpim")
         idx = st.session_state.get("idx_carpim", 0)
         soru, dogru, puan = st.session_state.liste_carpim[idx]
         st.markdown(f"### `{soru}`")
-        
-        # Form
-        with st.form("form_carpim"):
-            cevap = st.text_input("Cevap:", key="in_carpim")
-            if st.form_submit_button("Kontrol Et"):
-                if normalize_cevap(cevap) == normalize_cevap(dogru):
-                    st.success("Doğru! +5 Puan")
-                    st.session_state.ezber_puan += 5
-                else:
-                    st.error(f"Yanlış. Doğrusu: {dogru}")
-
-    # TAB 2: TAM KARELER
+        with st.form("f_c"):
+            cevap = st.text_input("Cevap:", key="in_c")
+            if st.form_submit_button("Kontrol Et"): kontrol_et_sprint(cevap, "carpim")
+    
     with tab2:
-        st.subheader("Tam Kareler (1-30)")
-        if st.button("Sıradaki Soru (Kare)", key="btn_next_kare"): sonraki_soru_sprint("kare")
+        st.subheader("Tam Kareler")
+        if st.button("Sıradaki Soru", key="bn_k"): sonraki_soru_sprint("kare")
         idx = st.session_state.get("idx_kare", 0)
         soru, dogru, puan = st.session_state.liste_kare[idx]
         st.markdown(f"### `{soru}`")
-        with st.form("form_kare"):
-            cevap = st.text_input("Cevap:", key="in_kare")
-            if st.form_submit_button("Kontrol Et"):
-                if normalize_cevap(cevap) == normalize_cevap(dogru):
-                    st.success("Doğru! +10 Puan")
-                    st.session_state.ezber_puan += 10
-                else: st.error(f"Yanlış. Doğrusu: {dogru}")
+        with st.form("f_k"):
+            cevap = st.text_input("Cevap:", key="in_k")
+            if st.form_submit_button("Kontrol Et"): kontrol_et_sprint(cevap, "kare")
 
-    # TAB 3: TAM KÜPLER
     with tab3:
-        st.subheader("Tam Küpler (1-15)")
-        if st.button("Sıradaki Soru (Küp)", key="btn_next_kup"): sonraki_soru_sprint("kup")
+        st.subheader("Tam Küpler")
+        if st.button("Sıradaki Soru", key="bn_ku"): sonraki_soru_sprint("kup")
         idx = st.session_state.get("idx_kup", 0)
         soru, dogru, puan = st.session_state.liste_kup[idx]
         st.markdown(f"### `{soru}`")
-        with st.form("form_kup"):
-            cevap = st.text_input("Cevap:", key="in_kup")
-            if st.form_submit_button("Kontrol Et"):
-                if normalize_cevap(cevap) == normalize_cevap(dogru):
-                    st.success("Doğru! +15 Puan")
-                    st.session_state.ezber_puan += 15
-                else: st.error(f"Yanlış. Doğrusu: {dogru}")
+        with st.form("f_ku"):
+            cevap = st.text_input("Cevap:", key="in_ku")
+            if st.form_submit_button("Kontrol Et"): kontrol_et_sprint(cevap, "kup")
 
-    # TAB 4: İLERİ DÜZEY
     with tab4:
         st.subheader("Özdeşlikler & Trigonometri")
-        if st.button("Sıradaki Soru (Efsane)", key="btn_next_efsane"): sonraki_soru_sprint("efsane")
+        if st.button("Sıradaki Soru", key="bn_e"): sonraki_soru_sprint("efsane")
         idx = st.session_state.get("idx_efsane", 0)
         soru, dogru, puan = st.session_state.liste_efsane[idx]
         st.markdown(f"### `{soru}`")
-        st.caption("İpucu: a+b, sinx gibi boşluksuz yazabilirsiniz. Üs işaretlerini (²) yazmanıza gerek yok, normal rakam kullanın.")
-        with st.form("form_efsane"):
-            cevap = st.text_input("Boşluğu Doldur:", key="in_efsane")
-            if st.form_submit_button("Kontrol Et"):
-                if normalize_cevap(cevap) == normalize_cevap(dogru):
-                    st.success(f"Mükemmel! +{puan} Puan")
-                    st.session_state.ezber_puan += puan
-                else: st.error(f"Yanlış. Doğrusu: {dogru}")
+        with st.form("f_e"):
+            cevap = st.text_input("Cevap:", key="in_e")
+            if st.form_submit_button("Kontrol Et"): kontrol_et_sprint(cevap, "efsane")
 
-# --- MOD 4: BİLGİ KÖŞESİ (YENİLENMİŞ) ---
+# --- MOD 4: BİLGİ KÖŞESİ (FULL İÇERİK GERİ GELDİ) ---
 elif secim == "📚 Bilgi Köşesi":
     st.title("📚 Master Class Bilgi Bankası")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -511,16 +509,73 @@ elif secim == "📚 Bilgi Köşesi":
     
     with tab_sayi:
         st.info("Sayı teorisinin en gizemli üyeleri burada!")
+        
         with st.expander("⭐ MERSENNE ASALLARI"):
-            st.latex(r"M_p = 2^p - 1")
-            st.write("p asal bir sayı olmak üzere, bu formdaki asallara denir.")
-        with st.expander("🚕 RAMANUJAN SAYILARI"):
-            st.write("İki farklı küp toplamı olarak iki yolla yazılabilen sayılar.")
-            st.latex(r"1729 = 1^3 + 12^3 = 9^3 + 10^3")
+            st.markdown(r"""
+            **Tanım:** $2^p - 1$ biçiminde yazılabilen asal sayılardır ($p$ de asal olmalıdır).
+            
+            **Dünya Rekoru (2024):** Bilinen en büyük asal sayı bir Mersenne asalıdır:
+            $$ 2^{136,279,841} - 1 $$
+            *(Bu sayının 41 milyondan fazla basamağı vardır!)*
+            """)
+
+        with st.expander("➗ FERMAT ASALLARI"):
+            st.markdown(r"""
+            **Tanım:** $F_n = 2^{2^n} + 1$ formülü ile elde edilen asal sayılardır.
+            
+            **Bilinen Sadece 5 Tane Vardır:**
+            * $F_0 = 3$, $F_1 = 5$, $F_2 = 17$, $F_3 = 257$, $F_4 = 65537$
+            """)
+        
+        with st.expander("🔺 YARI ASAL (Semi-Prime)"):
+            st.markdown("""
+            **Tanım:** Sadece iki asal sayının çarpımı olan sayılardır. (Örn: $6=2x3$, $9=3x3$).
+            """)
+
+        with st.expander("🔄 PALİNDROMİK ASALLAR"):
+            st.markdown("""
+            **Tanım:** Hem asal sayı olan hem de tersten okunuşu aynı olan sayılardır. (Örn: 101, 131, 929).
+            """)
+
+        with st.expander("🚕 RAMANUJAN (TAKSİ) SAYILARI"):
+            st.markdown("""
+            **Tanım:** İki farklı küp toplamı olarak iki farklı yolla yazılabilen sayılardır.
+            
+            **1. Ramanujan Sayısı (1729):**
+            $$ 1^3 + 12^3 = 1729 $$
+            $$ 9^3 + 10^3 = 1729 $$
+            
+            **2. Ramanujan Sayısı (4104):**
+            $$ 2^3 + 16^3 = 4104 $$
+            $$ 9^3 + 15^3 = 4104 $$
+            
+            **3. Ramanujan Sayısı (13832):**
+            $$ 2^3 + 24^3 = 13832 $$
+            $$ 18^3 + 20^3 = 13832 $$
+            """)
+            
         with st.expander("✨ MÜKEMMEL SAYILAR"):
-            st.write("Kendisi hariç bölenleri toplamı kendine eşit olan sayılar.")
-            st.latex(r"6 \rightarrow 1+2+3=6")
-            st.latex(r"28 \rightarrow 1+2+4+7+14=28")
+            st.markdown("""
+            **Tanım:** Kendisi hariç pozitif bölenlerinin toplamı kendisine eşit olan sayılardır.
+            * **6:** $1+2+3=6$
+            * **28:** $1+2+4+7+14=28$
+            """)
+            
+        with st.expander("🌀 FIBONACCI SAYILARI"):
+            st.markdown("""
+            **Tanım:** Her sayının kendinden önceki iki sayının toplamı olduğu dizidir.
+            **Dizi:** 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...
+            """)
+            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
+            
+        with st.expander("💪 ARMSTRONG SAYISI"):
+            st.markdown("""
+            **Tanım:** Rakamlarının, basamak sayısı kadar kuvvetlerinin toplamı kendine eşit olan sayıdır.
+            **Örnek (153):** $1^3 + 5^3 + 3^3 = 1 + 125 + 27 = 153$
+            """)
+            
+        with st.expander("🔢 HARSHAD SAYISI"):
+            st.markdown("Rakamları toplamına tam bölünen sayıdır. Örn: 18 (1+8=9 ve 18/9=2)")
 
     with tab_trigo:
         st.info("Trigonometrik özdeşlikler ve formüller.")
