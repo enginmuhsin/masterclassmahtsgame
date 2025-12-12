@@ -24,16 +24,15 @@ st.markdown("""
         background-size: 20px 20px;
     }
 
-    /* SOL PANEL YAZI RENGİ DÜZELTMESİ (Bütün Metinleri Beyaz Yapar) */
-    .stSidebar .st-emotion-cache-1cypcdb p, 
-    .stSidebar .st-emotion-cache-1cypcdb h2,
-    .stSidebar .st-emotion-cache-1cypcdb label,
-    .stSidebar .st-emotion-cache-1cypcdb {
+    /* SOL PANEL KAPSAMLI YAZI RENGİ DÜZELTMESİ */
+    .stSidebar * {
         color: white !important;
     }
     
-    /* SOL PANEL RADYO SEÇİM METNİ (st.radio metnini Beyaz Yapar) */
-    .stSidebar [data-testid="stRadio"] label span {
+    /* RADYO VE SELECTBOX ETİKETLERİNİN METNİ */
+    .stSidebar [data-testid="stRadio"] label span,
+    .stSidebar [data-testid="stSelectbox"] label span,
+    .stSidebar [data-testid="stNumberInput"] label span {
         color: white !important;
     }
 
