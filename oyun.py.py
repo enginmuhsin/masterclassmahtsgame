@@ -24,7 +24,7 @@ st.markdown("""
         background-size: 20px 20px;
     }
 
-    /* SOL PANEL KAPSAMLI YAZI RENGİ DÜZELTMESİ */
+    /* SOL PANEL KAPSAMLI YAZI RENGİ DÜZELTMESİ (Menü, Ayarlar başlıkları ve input etiketleri) */
     .stSidebar * {
         color: white !important;
     }
@@ -33,7 +33,18 @@ st.markdown("""
     .stSidebar [data-testid="stRadio"] label span,
     .stSidebar [data-testid="stSelectbox"] label span,
     .stSidebar [data-testid="stNumberInput"] label span {
-        color: white !important;
+        color: white !important; /* Etiketler beyaz kalmalı */
+    }
+
+    /* KRİTİK DÜZELTME: NUMBER INPUT İÇİNDEKİ SAYI METNİ RENGİ */
+    .stSidebar [data-testid="stNumberInput"] input {
+        color: #000000 !important; /* Sayı kutusunun içindeki metin siyah oldu */
+    }
+
+    /* SOL PANEL İÇİNDEKİ DÜĞMELERİN METİN RENGİ */
+    .stSidebar .stButton>button {
+        color: white !important; 
+        border-color: white !important; 
     }
 
     /* BAŞLIK RENGİ GARANTİSİ */
@@ -138,6 +149,7 @@ st.markdown("""
         letter-spacing: 1px;
     }
     
+    /* ANA PANEL DÜĞMELERİ */
     .stButton>button {
         font-weight: bold;
         border-radius: 12px;
