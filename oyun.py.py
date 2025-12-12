@@ -45,7 +45,7 @@ st.markdown("""
     /* YÜZEN (STICKY) HEDEF SAYI KUTUSU */
     .floating-container {
         position: fixed;
-        top: 60px;
+        top: 60px; /* Masaüstü görünümde üstten 60px aşağıda (varsayılan) */
         right: 20px;
         z-index: 999999;
         background: linear-gradient(135deg, #dc3545, #a71d2a);
@@ -75,11 +75,14 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
     }
 
+    /* BURASI GÜNCELLENDİ */
     @media (max-width: 600px) {
         .floating-container {
-            top: 10px;
-            right: 10px;
-            left: 10px;
+            position: relative; /* Sabit konumdan çıkar, normal akışa girsin */
+            margin-bottom: 20px; /* Altındaki elementlerle boşluk bırak */
+            top: unset;
+            right: unset;
+            left: unset;
             padding: 10px;
             display: flex;
             justify-content: space-between;
@@ -87,6 +90,10 @@ st.markdown("""
         }
         .floating-label { margin-bottom: 0; font-size: 0.9rem; }
         .floating-value { font-size: 2rem; }
+        
+        /* st.title ve diğer elementler için yukarıdan biraz boşluk bırakalım. */
+        /* Bunu yapmanın en güvenli yolu, hedef sayıyı göstermeyi oyunun içine almaktır. */
+        /* Ancak mevcut kodu korumak için, oyun modu içeriğinde bir düzenleme yapmalıyız. */
     }
 
     .bilsem-header {
@@ -345,17 +352,21 @@ if secim == "🎮 Oyun Modu":
         st.rerun()
     st.markdown("---")
 
-    if st.session_state.hedef_sayi != 0:
-        # YÜZEN (STICKY) HEDEF SAYI KUTUSU
-        st.markdown(f"""
-            <div class="floating-container">
-                <span class="floating-label">HEDEF SAYI</span>
-                <span class="floating-value">{st.session_state.hedef_sayi}</span>
-            </div>
-        """, unsafe_allow_html=True)
+   if st.session_state.hedef_sayi != 0:
+        # YÜZEN (STICKY) HEDEF SAYI KUTUSU
+        # Yeni CSS sayesinde mobil cihazlarda artık bu kutu içeriğin akışına uyacak ve 
+        # diğer elementleri engellemeyecek.
+        st.markdown(f"""
+            <div class="floating-container">
+                <span class="floating-label">HEDEF SAYI</span>
+                <span class="floating-value">{st.session_state.hedef_sayi}</span>
+            </div>
+        """, unsafe_allow_html=True)
+        # ARTIK BU KODUN ALTINDAKİ ELEMENTLER MOBİLDE GÖRÜNEBİLİR.
         
-        c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
+        c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
         c1.metric("PUAN", st.session_state.puan)
+
         with c2:
             st.markdown(f"""<div style="text-align: center;"><p style="margin:0; font-weight:bold; color:#495057;">REKOR</p><p style="margin:0; font-size: 2.5rem; font-weight:900; color: #d4af37; text-shadow: 1px 1px 1px black;">{st.session_state.en_yuksek_puan}</p></div>""", unsafe_allow_html=True)
         c3.metric("SÜRE", f"{kalan_sure} sn")
@@ -613,4 +624,5 @@ elif secim == "📚 Bilgi Köşesi":
         st.markdown("##### Küp Açılımları")
         st.latex(r"a^3 - b^3 = (a - b)(a^2 + ab + b^2)")
         st.latex(r"a^3 + b^3 = (a + b)(a^2 - ab + b^2)")
+
         st.latex(r"(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3")
