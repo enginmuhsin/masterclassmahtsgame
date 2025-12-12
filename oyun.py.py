@@ -24,7 +24,7 @@ st.markdown("""
         background-size: 20px 20px;
     }
 
-    /* YENİ İYİLEŞTİRME 1: SOL PANEL YAZI RENGİ DÜZELTMESİ */
+    /* SOL PANEL YAZI RENGİ DÜZELTMESİ (Bütün Metinleri Beyaz Yapar) */
     .stSidebar .st-emotion-cache-1cypcdb p, 
     .stSidebar .st-emotion-cache-1cypcdb h2,
     .stSidebar .st-emotion-cache-1cypcdb label,
@@ -32,7 +32,7 @@ st.markdown("""
         color: white !important;
     }
     
-    /* YENİ İYİLEŞTİRME 2: SOL PANEL RADYO SEÇİM METNİ */
+    /* SOL PANEL RADYO SEÇİM METNİ (st.radio metnini Beyaz Yapar) */
     .stSidebar [data-testid="stRadio"] label span {
         color: white !important;
     }
