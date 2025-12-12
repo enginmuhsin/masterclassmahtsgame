@@ -579,9 +579,6 @@ elif secim == "📚 Bilgi Köşesi":
             **Dizi:** 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...
             """)
             st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı") 
-
-[Image of Fibonacci Spiral]
-
             
         with st.expander("💪 ARMSTRONG SAYISI"):
             st.markdown("""
@@ -630,3 +627,4 @@ elif secim == "📚 Bilgi Köşesi":
         st.latex(r"a^3 + b^3 = (a + b)(a^2 - ab + b^2)")
 
         st.latex(r"(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3")
+
