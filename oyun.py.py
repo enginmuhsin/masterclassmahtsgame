@@ -24,18 +24,32 @@ st.markdown("""
         background-size: 20px 20px;
     }
     
-    h1 {
+    /* BAŞLIK RENGİ GARANTİSİ */
+    h1, h2, h3, h4, h5, h6 {
         color: #0d2b5b !important;
         text-shadow: 1px 1px 2px #b0b0b0;
         font-weight: 900 !important;
         font-family: 'Helvetica', sans-serif;
     }
     
-    /* İYİLEŞTİRME 2: Soru Metninin Daima Koyu Renk Olmasını Garanti Ediyoruz */
+    /* GENEL METİN RENGİ GARANTİSİ (Bütün Menüler İçin Çözüm) */
+    p, li, span, div:not(.st-emotion-cache-12m3y1p) { /* Çoğu metin elementi ve kapsayıcıları */
+        color: #212529 !important; /* Koyu Gri */
+    }
+    
+    /* VURGU (BOLD) METİN RENGİ GARANTİSİ */
     strong {
         color: #0d2b5b !important; /* Başlıklar ile aynı koyu mavi renk */
     }
 
+    /* LATEX VE FORMÜL ARKA PLAN GARANTİSİ */
+    [data-testid="stText"] .katex-display {
+        background-color: white !important;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+    
     [data-testid="stMetricLabel"] {
         color: #495057 !important;
         font-size: 1.1rem !important;
@@ -80,14 +94,14 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
     }
 
-    /* İYİLEŞTİRME 1: MOBİL GÖRÜNÜM DÜZELTMESİ */
+    /* MOBİL GÖRÜNÜM DÜZELTMESİ (Oyun Modu) */
     @media (max-width: 600px) {
         .floating-container {
-            position: relative; /* Sabit konumu iptal et, normal akışa dahil et */
+            position: relative; 
             top: unset;
             right: unset;
             left: unset;
-            margin: 10px 0 20px 0; /* Üstte ve altta yeterli boşluk bırak */
+            margin: 10px 0 20px 0; 
             padding: 10px;
             display: flex;
             justify-content: space-between;
@@ -370,7 +384,7 @@ if secim == "🎮 Oyun Modu":
         
         st.progress(progress_degeri, text="Kalan Süre")
         
-        # İYİLEŞTİRME 3: Metrikler ile Sorular Arasına Ayırıcı
+        # Metrikler ile Sorular Arasına Ayırıcı
         st.divider()
 
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
@@ -627,4 +641,3 @@ elif secim == "📚 Bilgi Köşesi":
         st.latex(r"a^3 + b^3 = (a + b)(a^2 - ab + b^2)")
 
         st.latex(r"(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3")
-
