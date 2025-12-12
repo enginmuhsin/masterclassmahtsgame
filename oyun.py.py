@@ -31,6 +31,11 @@ st.markdown("""
         font-family: 'Helvetica', sans-serif;
     }
     
+    /* İYİLEŞTİRME 2: Soru Metninin Daima Koyu Renk Olmasını Garanti Ediyoruz */
+    strong {
+        color: #0d2b5b !important; /* Başlıklar ile aynı koyu mavi renk */
+    }
+
     [data-testid="stMetricLabel"] {
         color: #495057 !important;
         font-size: 1.1rem !important;
@@ -45,7 +50,7 @@ st.markdown("""
     /* YÜZEN (STICKY) HEDEF SAYI KUTUSU */
     .floating-container {
         position: fixed;
-        top: 60px; /* Masaüstü görünümde üstten 60px aşağıda (varsayılan) */
+        top: 60px;
         right: 20px;
         z-index: 999999;
         background: linear-gradient(135deg, #dc3545, #a71d2a);
@@ -75,14 +80,14 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
     }
 
-    /* BURASI GÜNCELLENDİ */
+    /* İYİLEŞTİRME 1: MOBİL GÖRÜNÜM DÜZELTMESİ */
     @media (max-width: 600px) {
         .floating-container {
-            position: relative; /* Sabit konumdan çıkar, normal akışa girsin */
-            margin-bottom: 20px; /* Altındaki elementlerle boşluk bırak */
+            position: relative; /* Sabit konumu iptal et, normal akışa dahil et */
             top: unset;
             right: unset;
             left: unset;
+            margin: 10px 0 20px 0; /* Üstte ve altta yeterli boşluk bırak */
             padding: 10px;
             display: flex;
             justify-content: space-between;
@@ -90,10 +95,6 @@ st.markdown("""
         }
         .floating-label { margin-bottom: 0; font-size: 0.9rem; }
         .floating-value { font-size: 2rem; }
-        
-        /* st.title ve diğer elementler için yukarıdan biraz boşluk bırakalım. */
-        /* Bunu yapmanın en güvenli yolu, hedef sayıyı göstermeyi oyunun içine almaktır. */
-        /* Ancak mevcut kodu korumak için, oyun modu içeriğinde bir düzenleme yapmalıyız. */
     }
 
     .bilsem-header {
@@ -132,7 +133,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # =============================================================================
-# MATEMATİK FONKSİYONLARI
+# MATEMATİK FONKSİYONLARI (DEĞİŞMEDİ)
 # =============================================================================
 def is_tek(n): return n % 2 != 0
 def is_tam_kare(n): return n >= 0 and int(math.isqrt(n))**2 == n
@@ -188,7 +189,7 @@ OZELLIKLER = [
     ("Sayı ARMSTRONG sayısı mı?", is_armstrong, 30, 2, "EVET", "HAYIR"),
 ]
 
-# FORMULA SPRINT VERİLERİ
+# FORMULA SPRINT VERİLERİ (DEĞİŞMEDİ)
 def get_carpim_tablosu(): return [(f"{i} x {j} = ...", str(i*j), 5) for i in range(2, 10) for j in range(2, 10)]
 def get_tam_kareler(): return [(f"{i}² = ...", str(i**2), 10) for i in range(1, 31)]
 def get_tam_kupler(): return [(f"{i}³ = ...", str(i**3), 15) for i in range(1, 16)]
@@ -205,7 +206,7 @@ def get_ileri_duzey():
 OVGULER = ["Harikasın! 🚀", "Matematik Dehası! 🧠", "BİLSEM Yıldızı! ⭐", "Mükemmel Gidiyorsun! 🔥", "Durmak Yok! 💪", "Süper Zeka! ⚡"]
 
 # =============================================================================
-# YARDIMCI FONKSİYONLAR
+# YARDIMCI FONKSİYONLAR (DEĞİŞMEDİ)
 # =============================================================================
 def normalize_cevap(cevap):
     if not isinstance(cevap, str): cevap = str(cevap)
@@ -350,26 +351,28 @@ if secim == "🎮 Oyun Modu":
     if st.sidebar.button("🎲 YENİ OYUN BAŞLAT (SIFIRLA)", use_container_width=True):
         yeni_oyun_baslat()
         st.rerun()
-    st.markdown("---")
+    st.sidebar.markdown("---")
 
-    if st.session_state.hedef_sayi != 0 :
+    if st.session_state.hedef_sayi != 0:
+        # YÜZEN (STICKY) HEDEF SAYI KUTUSU - MOBİL DÜZELTME İÇİN CSS GÜNCELLENDİ
         st.markdown(f"""
             <div class="floating-container">
                 <span class="floating-label">HEDEF SAYI</span>
                 <span class="floating-value">{st.session_state.hedef_sayi}</span>
             </div>
         """, unsafe_allow_html=True)
-        # ARTIK BU KODUN ALTINDAKİ ELEMENTLER MOBİLDE GÖRÜNEBİLİR.
-            
+        
         c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
         c1.metric("PUAN", st.session_state.puan)
-
         with c2:
             st.markdown(f"""<div style="text-align: center;"><p style="margin:0; font-weight:bold; color:#495057;">REKOR</p><p style="margin:0; font-size: 2.5rem; font-weight:900; color: #d4af37; text-shadow: 1px 1px 1px black;">{st.session_state.en_yuksek_puan}</p></div>""", unsafe_allow_html=True)
         c3.metric("SÜRE", f"{kalan_sure} sn")
         
         st.progress(progress_degeri, text="Kalan Süre")
         
+        # İYİLEŞTİRME 3: Metrikler ile Sorular Arasına Ayırıcı
+        st.divider()
+
         if not st.session_state.oyun_aktif and kalan_sure <= 0:
             if oyun_bitti_animasyonu:
                 st.balloons()
@@ -391,6 +394,7 @@ if secim == "🎮 Oyun Modu":
             durum = st.session_state.sorular_cevaplandi[i]
             if durum is None:
                 with st.container():
+                    # Soru metni (bold ve koyu renk garantili)
                     st.write(f"**{soru}** <span style='color:#6c757d; font-size:0.9em;'>(D: {p_d}p / Y: {p_y}p)</span>", unsafe_allow_html=True)
                     col_btn1, col_btn2 = st.columns(2)
                     buton_aktif = st.session_state.oyun_aktif
@@ -416,7 +420,7 @@ if secim == "🎮 Oyun Modu":
                 yeni_oyun_baslat()
                 st.rerun()
 
-# --- MOD 2: SAYI DEDEKTÖRÜ ---
+# --- MOD 2: SAYI DEDEKTÖRÜ (DEĞİŞMEDİ) ---
 elif secim == "🔍 Sayı Dedektörü":
     st.title("🔍 Master Class Dedektör")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -454,7 +458,7 @@ elif secim == "🔍 Sayı Dedektörü":
             idx += 1
         st.divider()
 
-# --- MOD 3: FORMULA SPRINT ---
+# --- MOD 3: FORMULA SPRINT (DEĞİŞMEDİ) ---
 elif secim == "🧠 Formula Sprint":
     st.title("🧠 Formula Sprint: Hızlı Tekrar")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -508,7 +512,7 @@ elif secim == "🧠 Formula Sprint":
             cevap = st.text_input("Cevap:", key="in_e")
             if st.form_submit_button("Kontrol Et"): kontrol_et_sprint(cevap, "efsane")
 
-# --- MOD 4: BİLGİ KÖŞESİ (FULL İÇERİK GERİ GELDİ) ---
+# --- MOD 4: BİLGİ KÖŞESİ (DEĞİŞMEDİ) ---
 elif secim == "📚 Bilgi Köşesi":
     st.title("📚 Master Class Bilgi Bankası")
     st.markdown(kurum_kodu, unsafe_allow_html=True)
@@ -574,7 +578,10 @@ elif secim == "📚 Bilgi Köşesi":
             **Tanım:** Her sayının kendinden önceki iki sayının toplamı olduğu dizidir.
             **Dizi:** 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...
             """)
-            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı")
+            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Fibonacci_Spiral.svg/1024px-Fibonacci_Spiral.svg.png", caption="Fibonacci Sarmalı") 
+
+[Image of Fibonacci Spiral]
+
             
         with st.expander("💪 ARMSTRONG SAYISI"):
             st.markdown("""
@@ -623,6 +630,3 @@ elif secim == "📚 Bilgi Köşesi":
         st.latex(r"a^3 + b^3 = (a + b)(a^2 - ab + b^2)")
 
         st.latex(r"(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3")
-
-
-
