@@ -24,7 +24,7 @@ st.markdown("""
         background-size: 20px 20px;
     }
 
-    /* SOL PANEL KAPSAMLI YAZI RENGİ DÜZELTMESİ (Menü, Ayarlar başlıkları ve input etiketleri) */
+    /* SOL PANEL KAPSAMLI YAZI RENGİ DÜZELTMESİ (Menü başlıkları ve input etiketleri) */
     .stSidebar * {
         color: white !important;
     }
@@ -36,15 +36,21 @@ st.markdown("""
         color: white !important; /* Etiketler beyaz kalmalı */
     }
 
-    /* KRİTİK DÜZELTME: NUMBER INPUT İÇİNDEKİ SAYI METNİ RENGİ */
+    /* KRİTİK DÜZELTME 1: NUMBER INPUT İÇİNDEKİ SAYI METNİ RENGİ (Beyaz kutu üzerinde siyah) */
     .stSidebar [data-testid="stNumberInput"] input {
         color: #000000 !important; /* Sayı kutusunun içindeki metin siyah oldu */
     }
 
-    /* SOL PANEL İÇİNDEKİ DÜĞMELERİN METİN RENGİ */
+    /* KRİTİK DÜZELTME 2: SOL PANEL İÇİNDEKİ DÜĞMELERİN METİN RENGİ (Beyaz kutu üzerinde koyu mavi) */
     .stSidebar .stButton>button {
-        color: white !important; 
-        border-color: white !important; 
+        color: #0d2b5b !important; /* Düğme metni koyu mavi oldu */
+        border-color: #0d2b5b !important; /* Kenarlığı da koyu mavi yapalım */
+        background-color: white !important; /* Arka plan rengini de netleştirelim */
+    }
+    .stSidebar .stButton>button:hover {
+        background-color: #0d2b5b !important; /* Hover'da arka plan koyu mavi olsun */
+        color: white !important; /* Hover'da metin beyaz olsun */
+        border-color: white !important;
     }
 
     /* BAŞLIK RENGİ GARANTİSİ */
