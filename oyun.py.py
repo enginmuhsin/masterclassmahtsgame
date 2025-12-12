@@ -353,9 +353,6 @@ if secim == "🎮 Oyun Modu":
     st.markdown("---")
 
     if st.session_state.hedef_sayi != 0 :
-        # YÜZEN (STICKY) HEDEF SAYI KUTUSU
-        # Yeni CSS sayesinde mobil cihazlarda artık bu kutu içeriğin akışına uyacak ve 
-        # diğer elementleri engellemeyecek.
         st.markdown(f"""
             <div class="floating-container">
                 <span class="floating-label">HEDEF SAYI</span>
@@ -626,4 +623,5 @@ elif secim == "📚 Bilgi Köşesi":
         st.latex(r"a^3 + b^3 = (a + b)(a^2 - ab + b^2)")
 
         st.latex(r"(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3")
+
 
