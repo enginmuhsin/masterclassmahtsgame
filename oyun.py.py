@@ -353,15 +353,15 @@ if secim == "🎮 Oyun Modu":
     st.markdown("---")
 
     if st.session_state.hedef_sayi != 0 :
-        st.markdown(f"""
-            <div class="floating-container">
-                <span class="floating-label">HEDEF SAYI</span>
-                <span class="floating-value">{st.session_state.hedef_sayi}</span>
-            </div>
-        """, unsafe_allow_html=True)
-        # ARTIK BU KODUN ALTINDAKİ ELEMENTLER MOBİLDE GÖRÜNEBİLİR.
-        
-        c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
+        st.markdown(f"""
+            <div class="floating-container">
+                <span class="floating-label">HEDEF SAYI</span>
+                <span class="floating-value">{st.session_state.hedef_sayi}</span>
+            </div>
+        """, unsafe_allow_html=True)
+        # ARTIK BU KODUN ALTINDAKİ ELEMENTLER MOBİLDE GÖRÜNEBİLİR.
+            
+        c1, c2, c3, c4 = st.columns([1, 1, 1, 1.5])
         c1.metric("PUAN", st.session_state.puan)
 
         with c2:
@@ -623,5 +623,6 @@ elif secim == "📚 Bilgi Köşesi":
         st.latex(r"a^3 + b^3 = (a + b)(a^2 - ab + b^2)")
 
         st.latex(r"(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3")
+
 
 
