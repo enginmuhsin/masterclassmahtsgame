@@ -23,7 +23,20 @@ st.markdown("""
         background-image: radial-gradient(#dee2e6 1px, transparent 1px);
         background-size: 20px 20px;
     }
+
+    /* YENİ İYİLEŞTİRME 1: SOL PANEL YAZI RENGİ DÜZELTMESİ */
+    .stSidebar .st-emotion-cache-1cypcdb p, 
+    .stSidebar .st-emotion-cache-1cypcdb h2,
+    .stSidebar .st-emotion-cache-1cypcdb label,
+    .stSidebar .st-emotion-cache-1cypcdb {
+        color: white !important;
+    }
     
+    /* YENİ İYİLEŞTİRME 2: SOL PANEL RADYO SEÇİM METNİ */
+    .stSidebar [data-testid="stRadio"] label span {
+        color: white !important;
+    }
+
     /* BAŞLIK RENGİ GARANTİSİ */
     h1, h2, h3, h4, h5, h6 {
         color: #0d2b5b !important;
@@ -33,7 +46,7 @@ st.markdown("""
     }
     
     /* GENEL METİN RENGİ GARANTİSİ (Bütün Menüler İçin Çözüm) */
-    p, li, span, div:not(.st-emotion-cache-12m3y1p) { /* Çoğu metin elementi ve kapsayıcıları */
+    p, li, span, div:not(.st-emotion-cache-12m3y1p) { 
         color: #212529 !important; /* Koyu Gri */
     }
     
