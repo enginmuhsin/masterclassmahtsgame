@@ -179,7 +179,7 @@
       U.$("#avSira", avEl).style.color = k ? "var(--kirmizi)" : "var(--mavi)";
       U.$("#avTK", avEl).classList.toggle("sirada", k); U.$("#avTM", avEl).classList.toggle("sirada", !k);
     }
-    if (U.animasyon()) gsap.fromTo(U.$("#avSayi", avEl), { scale: ilk ? .6 : .85, opacity: 0, rotateX: -50 }, { scale: 1, opacity: 1, rotateX: 0, duration: .45, ease: "back.out(2)" });
+    if (U.animasyon()) gsap.fromTo(U.$("#avSayi", avEl), { scale: ilk ? .6 : .85, opacity: 0, rotateX: -50 }, { scale: 1, opacity: 1, rotateX: 0, duration: .45, ease: "back.out(2)", overwrite: true });
   }
   function avSayac(t) {
     if (!oyun || oyun.bitti) return;
@@ -234,7 +234,7 @@
       <div class="satir"><button class="btn btn-ana" id="avTekrar">Tekrar Oyna</button><button class="btn btn-ikinci" id="avAyar">Ayarları değiştir</button></div>`;
     U.$("#avTekrar", el).addEventListener("click", avBaslat);
     U.$("#avAyar", el).addEventListener("click", () => { el.hidden = true; U.$("#avKurulum", avEl).hidden = false; });
-    if (U.animasyon()) gsap.from(U.$$(".metrik", el), { y: 20, opacity: 0, stagger: .08, duration: .5 });
+    if (U.animasyon()) gsap.fromTo(U.$$(".metrik", el), { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: .08, duration: .5, overwrite: true });
   }
 
   /* =====================================================================
@@ -306,7 +306,7 @@
     iz.sayilar.forEach((n, i) => { const v = f(BigInt(n)); if (iz.secili.has(i)) son += v ? 10 : -10; else if (v) son -= 5; });
     iz.kontrol = true; iz.son = son; iz.toplam += son;
     Ses.efekt(son > 0 ? "seri" : "yanlis"); izCiz();
-    if (U.animasyon()) gsap.from(U.$$(".karo", izEl), { scale: .85, duration: .35, stagger: .02, ease: "back.out(2)" });
+    if (U.animasyon()) gsap.fromTo(U.$$(".karo", izEl), { scale: .85 }, { scale: 1, duration: .35, stagger: .02, ease: "back.out(2)", overwrite: true, clearProps: "transform" });
   }
 
   /* =====================================================================
@@ -361,7 +361,7 @@
       else { bl.elenen.add(m); bl.acik = Math.min(bl.ipucu.length, bl.acik + 1); Ses.efekt("yanlis"); }
       blCiz();
     }));
-    if (U.animasyon()) { const son = U.$$(".ipucu-kart", k).pop(); if (son) gsap.from(son, { x: -20, opacity: 0, duration: .4 }); }
+    if (U.animasyon()) { const son = U.$$(".ipucu-kart", k).pop(); if (son) gsap.fromTo(son, { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: .4, overwrite: true }); }
   }
 
   /* ---------- Modül ---------- */

@@ -90,7 +90,7 @@
         U.$("#lEAc", k).innerHTML = `<b>Bitti!</b> √${N} ≈ ${S.ondalik(Math.sqrt(N), 1)} olduğundan ${eleyiciler[eleyiciler.length - 1]}'den büyük asalları denemeye gerek yok. Kırmızı kalan <b>${S.elek(N).length}</b> sayı 1–${N} arasındaki asallardır.`;
         U.$("#lEAdim", k).disabled = true; clearInterval(oto); oto = null; U.$("#lEOto", k).textContent = "Otomatik oynat";
         Ses.efekt("bitis");
-        if (U.animasyon()) gsap.from(U.$$(".asal-son", grid), { scale: .5, duration: .4, stagger: .01, ease: "back.out(3)" });
+        if (U.animasyon()) gsap.fromTo(U.$$(".asal-son", grid), { scale: .5 }, { scale: 1, duration: .4, stagger: .01, ease: "back.out(3)", overwrite: true, clearProps: "transform" });
         return;
       }
       const p = eleyiciler[adim++], renk = ELEK_RENK[p] || "#9db0d6", hucre = U.$(`span[data-n="${p}"]`, grid);

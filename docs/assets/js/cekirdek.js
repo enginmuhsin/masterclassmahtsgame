@@ -9,6 +9,7 @@ window.MC = window.MC || {};
   const UST = "⁰¹²³⁴⁵⁶⁷⁸⁹";
   S.tr = (n) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   S.us = (e) => String(e).split("").map((c) => UST[+c]).join("");
+  S.alt = (e) => String(e).split("").map((c) => "₀₁₂₃₄₅₆₇₈₉"[+c]).join("");
   S.ondalik = (x, b = 2) => x.toLocaleString("tr-TR", { minimumFractionDigits: b, maximumFractionDigits: b });
   S.ONDOKUZ = 10n ** 19n;
   S.DENEME_SINIRI = 10n ** 12n;
@@ -173,7 +174,7 @@ window.MC = window.MC || {};
       case "ucgen": {
         if (n < 1n) return "Üçgensel sayılar 1'den başlar.";
         const m = (S.karekok(8n * n + 1n) - 1n) / 2n, t = m * (m + 1n) / 2n;
-        return t === n ? `${N} = ${S.tr(m)}·${S.tr(m + 1n)}/2: ${S.tr(m)}. üçgensel sayı (${S.tr(m)} sıralık nokta üçgeni).` : `T${m} = ${S.tr(t)} < ${N} < T${m + 1n} = ${S.tr((m + 1n) * (m + 2n) / 2n)}; üçgensel değil.`;
+        return t === n ? `${N} = ${S.tr(m)}·${S.tr(m + 1n)}/2: ${S.tr(m)}. üçgensel sayı (${S.tr(m)} sıralık nokta üçgeni).` : `T${S.alt(m)} = ${S.tr(t)} < ${N} < T${S.alt(m + 1n)} = ${S.tr((m + 1n) * (m + 2n) / 2n)}; üçgensel değil.`;
       }
       case "fib": { let a = 0n, b = 1n; while (b < n) [a, b] = [b, a + b]; return b === n || n === 0n ? `Dizide … ${S.tr(a)}, ${N} …; Fibonacci sayısı.` : `Dizide ${S.tr(a)} ile ${S.tr(b)} arasında kalır; Fibonacci değil.`; }
       case "iki": { if (n < 1n) return "Pozitif değil."; const e = n.toString(2).length - 1; return (1n << BigInt(e)) === n ? `${N} = 2${S.us(e)} (ikili tabanda 1 ve ${e} sıfır).` : `2${S.us(e)} = ${S.tr(1n << BigInt(e))} < ${N} < 2${S.us(e + 1)}; 2'nin kuvveti değil.`; }

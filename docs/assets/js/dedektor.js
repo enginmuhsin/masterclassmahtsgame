@@ -79,7 +79,7 @@
       <span class="soluk" style="font-size:14px">Çarpanlara ayırma ${S.ondalik(sure, 1)} ms sürdü · yöntem: ${n > S.DENEME_SINIRI ? "Miller–Rabin + Pollard rho" : "6k ± 1 deneme bölmesi"}</span>`;
     if (U.animasyon()) {
       gsap.fromTo(U.$(".tarama", T), { x: "-100%" }, { x: "100%", duration: .9, ease: "power2.inOut" });
-      gsap.from(U.$$(".cip", T), { y: 18, opacity: 0, scale: .6, stagger: .05, duration: .4, ease: "back.out(2.5)" });
+      gsap.fromTo(U.$$(".cip", T), { y: 18, opacity: 0, scale: .6 }, { y: 0, opacity: 1, scale: 1, stagger: .05, duration: .4, ease: "back.out(2.5)", overwrite: true });
     }
   }
 
@@ -219,7 +219,7 @@
       ["ω(n) farklı asal", u.size], ["Bolluk sınıfı", n === 1n ? "—" : s === n ? "Mükemmel" : s > n ? "Bol (zengin)" : "Eksik"],
       ["Kare-serbest mi?", S.mobius(n) !== 0 ? "Evet" : "Hayır"],
       ["Mersenne biçimi 2ᵏ − 1", mers ? `Evet: 2${S.us((n + 1n).toString(2).length - 1)} − 1${S.asalMi(n) ? " (Mersenne asalı)" : ""}` : "Hayır"],
-      ["Fermat biçimi 2^(2ᵏ) + 1", fermat ? "Evet" : "Hayır"],
+      ["Fermat sayısı mı?", fermat ? "Evet" : "Hayır"],
     ];
     U.html(k, `<div class="panel"><span class="etiket">Kimlik kartı · ${S.tr(n)}</span>
       <div class="kimlik">${alanlar.map(([a, d]) => `<div><small>${a}</small><b>${d}</b></div>`).join("")}</div>

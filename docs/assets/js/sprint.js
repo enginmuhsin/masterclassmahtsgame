@@ -36,9 +36,9 @@
     [String.raw`\sin A + \sin B = \square`, "2 sin((A+B)/2) cos((A−B)/2)", ["2 cos((A+B)/2) cos((A−B)/2)", "sin(A + B)", "2 sin((A−B)/2) cos((A+B)/2)"]],
   ];
   const USLU = [
-    [String.raw`a^m \cdot a^n = \square`, "a^(m+n)", ["a^(m·n)", "(2a)^(m+n)", "a^(m−n)"]],
-    [String.raw`\dfrac{a^m}{a^n} = \square`, "a^(m−n)", ["a^(m/n)", "a^(n−m)", "a^(m+n)"]],
-    [String.raw`(a^m)^n = \square`, "a^(m·n)", ["a^(m+n)", "a^(mⁿ)", "m · aⁿ"]],
+    [String.raw`a^m \cdot a^n = \square`, "aᵐ⁺ⁿ", ["aᵐⁿ", "(2a)ᵐ⁺ⁿ", "aᵐ⁻ⁿ"]],
+    [String.raw`\dfrac{a^m}{a^n} = \square`, "aᵐ⁻ⁿ", ["(m/n) · a", "aⁿ⁻ᵐ", "aᵐ⁺ⁿ"]],
+    [String.raw`(a^m)^n = \square`, "aᵐⁿ", ["aᵐ⁺ⁿ", "n · aᵐ", "m · aⁿ"]],
     [String.raw`a^0 = \square \quad (a \neq 0)`, "1", ["0", "a", "tanımsız"]],
     [String.raw`a^{-n} = \square`, "1 / aⁿ", ["−aⁿ", "a / n", "−n · a"]],
     [String.raw`(a\,b)^n = \square`, "aⁿ · bⁿ", ["a · bⁿ", "(a + b)ⁿ", "aⁿ + bⁿ"]],
@@ -146,7 +146,7 @@
     k.innerHTML = ""; k.appendChild(soruHtml(q, true));
     U.$("#spSecenek", el).innerHTML = q.secenekler.map((s) => `<button type="button" data-s="${U.kacis(s)}">${U.kacis(s)}</button>`).join("");
     U.$$("#spSeri i", el).forEach((i, j) => i.classList.toggle("dolu", sp.seri > 0 && (sp.seri % 5 === 0 || j < sp.seri % 5)));
-    if (U.animasyon()) { gsap.from(k, { scale: .94, opacity: 0, duration: .3, ease: "back.out(2)" }); gsap.from(U.$$("#spSecenek button", el), { y: 12, opacity: 0, stagger: .04, duration: .25 }); }
+    if (U.animasyon()) { gsap.fromTo(k, { scale: .94, opacity: 0 }, { scale: 1, opacity: 1, duration: .3, ease: "back.out(2)", overwrite: true }); gsap.fromTo(U.$$("#spSecenek button", el), { y: 12, opacity: 0 }, { y: 0, opacity: 1, stagger: .04, duration: .25, overwrite: true }); }
   }
   function sayac(t) {
     if (!sp || sp.bitti) return;

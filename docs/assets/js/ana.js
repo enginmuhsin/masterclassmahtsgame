@@ -21,7 +21,7 @@
   const MODULLER = [
     ["oyunlar", "OA", "var(--kirmizi)", "Oyun Arenası", "Sayı Avı (tek oyuncu ya da takım), Sayı Izgarası ve ipuçlarıyla Sayı Bilmecesi.", "3 oyun"],
     ["fonksiyon", "fx", "var(--turuncu)", "Fonksiyon Yarışı", "İki fonksiyon engel kırma yarışında. Önce tahmin et, sonra büyüme hızının nedenini grafiklerle gör.", "16 etkinlik"],
-    ["dedektor", "SD", "var(--mavi)", "Sayı Dedektörü", "10¹⁹'a kadar her sayı ya da 2^61−1 gibi bir ifade. Çarpan ağacı, 3B bölen küpü, EBOB–EKOK.", "5 sekme"],
+    ["dedektor", "SD", "var(--mavi)", "Sayı Dedektörü", "10¹⁹'a kadar her sayı ya da 2⁶¹−1 gibi bir ifade. Çarpan ağacı, 3B bölen küpü, EBOB–EKOK.", "5 sekme"],
     ["sprint", "FS", "var(--altin)", "Formula Sprint", "Kuvvetler, kökler, bölünebilme, özdeşlikler, trigonometri ve logaritmada hız yarışı.", "11 konu"],
     ["laboratuvar", "GL", "var(--turkuaz)", "Görsel Laboratuvar", "Bölen dağları, Ulam spirali, Eratosthenes kalburu, (a+b)³ küpü, Fibonacci ve Collatz.", "7 deney"],
     ["bilgi", "BK", "var(--mor)", "Bilgi Köşesi", "Tanımlar, ispatlar, kavram yanılgıları ve hâlâ çözülmemiş ünlü problemler.", "11 konu"],

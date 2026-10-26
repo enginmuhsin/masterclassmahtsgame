@@ -68,6 +68,7 @@
       ${B("Üçgensel sayılar <b>bowling labutları</b>dır: 1, 3, 6, 10 … Her yeni sıra bir fazla labut ekler.")}` },
     { id: "diger", ad: "Diğer Türler", h: String.raw`
       <h3>2'nin kuvvetleri</h3>$$n = 2^k \iff n \,\&\, (n-1) = 0$$
+      <p>Buradaki &amp; işareti ikili tabandaki <b>VE</b> işlemidir: iki sayının aynı basamağı ancak ikisi de 1 ise sonuçta 1 olur. Örneğin 8 = 1000₂ ve 7 = 0111₂ olduğundan 8 VE 7 = 0000₂ = 0.</p>
       ${B("2'nin kuvveti, <b>tek bir lambası yanan</b> bir evdir. n − 1, o lambayı söndürüp alttakilerin hepsini yakar.")}
       <h3>Armstrong (narsisistik) sayılar</h3>$$153 = 1^3 + 5^3 + 3^3 \qquad 9474 = 9^4 + 4^4 + 7^4 + 4^4$$<p>10 tabanında yalnızca 88 Armstrong sayısı vardır.</p>
       <h3>Harshad (Niven) sayılar</h3><p>Rakamları toplamına bölünen sayılar: $18 \to 1 + 8 = 9,\; 18 \div 9 = 2$. Adı Sanskritçede “büyük sevinç” anlamına gelir; D. R. Kaprekar koymuştur.</p>
@@ -106,7 +107,7 @@
         <tr><td>Bölenler</td><td>Asal çarpanlardan tüm bileşimleri üretme</td><td>O(τ(n))</td></tr>
         <tr><td>Ramanujan testi</td><td>İki işaretçi: a artar, b azalır</td><td>O(∛n)</td></tr>
         <tr><td>Fibonacci testi</td><td>5n² ± 4 tam kare mi?</td><td>O(log n)</td></tr>
-        <tr><td>2'nin kuvveti</td><td>n & (n − 1) = 0</td><td>O(1)</td></tr>
+        <tr><td>2'nin kuvveti</td><td>n VE (n − 1) = 0 (ikili tabanda)</td><td>O(1)</td></tr>
         <tr><td>Asal listesi</td><td>Eratosthenes kalburu</td><td>O(N log log N)</td></tr>
         <tr><td>EBOB</td><td>Öklid algoritması</td><td>O(log min(a, b))</td></tr>
       </table></div>
@@ -126,7 +127,7 @@
         const k = KONU.find((x) => x.id === id) || KONU[0];
         U.$$(".bilgi-menu button", el).forEach((b) => b.setAttribute("aria-selected", b.dataset.id === k.id));
         U.html(metin, k.h);
-        if (U.animasyon()) gsap.from(metin, { y: 10, opacity: 0, duration: .3 });
+        if (U.animasyon()) gsap.fromTo(metin, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: .3, overwrite: true });
       };
       U.$(".bilgi-menu", el).addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { MC.Ses.efekt("dokun"); sec(b.dataset.id); } });
       sec("asal");
