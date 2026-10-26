@@ -31,7 +31,7 @@ docs/                      → web sitesi (GitHub Pages)
   assets/css/              → site.css, fonts.css
   assets/lib/              → three.js, GSAP, KaTeX (yerel kopyalar)
   assets/fonts/            → yazı tipleri (OFL lisanslı)
-oyun.py.py                 → önceki Streamlit sürümü (masterclass…streamlit.app)
+oyun.py.py                 → önceki Streamlit sürümü (Streamlit Cloud'da çalışmaya devam eder)
 ```
 
 ## Algoritmalar
