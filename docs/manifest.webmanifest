@@ -1,0 +1,12 @@
+{
+  "name": "Master Class: Sayılar ve DNA'ları",
+  "short_name": "Master Class",
+  "description": "Asal sayılar, yarı asallar ve fonksiyonların büyümesi üzerine oyunlar ve 3B görseller.",
+  "lang": "tr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#081227",
+  "theme_color": "#081227",
+  "icons": [{ "src": "assets/img/simge.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

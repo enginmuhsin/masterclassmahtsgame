@@ -1,0 +1,197 @@
+/* Yazı tipleri yerelde: site internetsiz de aynı görünür (kaynak: Fontsource, OFL lisansı). */
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/unbounded-latin-ext-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/unbounded-latin-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/unbounded-latin-ext-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/unbounded-latin-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 900;
+  src: url(../fonts/unbounded-latin-ext-900-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 900;
+  src: url(../fonts/unbounded-latin-900-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(../fonts/onest-latin-ext-400-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(../fonts/onest-latin-400-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/onest-latin-ext-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/onest-latin-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(../fonts/onest-latin-ext-600-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(../fonts/onest-latin-600-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/onest-latin-ext-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Onest';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/onest-latin-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/jetbrains-mono-latin-ext-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/jetbrains-mono-latin-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/jetbrains-mono-latin-ext-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/jetbrains-mono-latin-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/bricolage-grotesque-latin-ext-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(../fonts/bricolage-grotesque-latin-500-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/bricolage-grotesque-latin-ext-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/bricolage-grotesque-latin-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 800;
+  src: url(../fonts/bricolage-grotesque-latin-ext-800-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Bricolage Grotesque';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 800;
+  src: url(../fonts/bricolage-grotesque-latin-800-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(../fonts/atkinson-hyperlegible-latin-ext-400-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(../fonts/atkinson-hyperlegible-latin-400-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/atkinson-hyperlegible-latin-ext-700-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(../fonts/atkinson-hyperlegible-latin-700-normal.woff2) format('woff2');
+}

@@ -1,0 +1,806 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fonksiyon Yarışı</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="icon" href="assets/img/simge.svg" type="image/svg+xml">
+<style>
+/* Layout: graph-paper notebook page around a dark, glowing "arena" stage. Activities by grade on top, the race in the middle, the math (charts + why) below. */
+:root{
+  --paper:#F2F5FA; --grid:#DFE6F0; --card:#FFFFFF; --ink:#141B2E; --muted:#5B6782; --line:#CCD5E3; --soft:#EAEFF7;
+  --a:#E8590C; --a-soft:#FFE6D5; --b:#7C3AED; --b-soft:#EDE4FE;
+  --ok:#15803D; --bad:#B91C1C;
+  --arena:#0A0F2C; --arena2:#160E35; --arena-ink:#EEF1FF; --arena-muted:#929BD0; --arena-line:rgba(255,255,255,.12);
+  --la:#FF8A1F; --lb:#A66BFF;
+  --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0C1222; --grid:#141D33; --card:#121A2E; --ink:#E6EBF7; --muted:#97A3BF; --line:#25304A; --soft:#1A2440;
+  --a:#FF9147; --a-soft:#3B2214; --b:#B794FF; --b-soft:#271A48; --ok:#4ADE80; --bad:#F87171; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0C1222; --grid:#141D33; --card:#121A2E; --ink:#E6EBF7; --muted:#97A3BF; --line:#25304A; --soft:#1A2440;
+  --a:#FF9147; --a-soft:#3B2214; --b:#B794FF; --b-soft:#271A48; --ok:#4ADE80; --bad:#F87171; color-scheme:dark}
+
+html,body{height:100%}
+body{background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:900px;margin:0 auto;padding-block:20px 48px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:18px}
+header .eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.28em;color:var(--muted);text-transform:uppercase}
+header h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:64ch}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.label{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;background:var(--soft);padding:4px;border-radius:12px;align-self:flex-start;max-width:100%}
+.tab{font:inherit;font-weight:700;font-size:14px;border:0;background:transparent;color:var(--muted);padding:8px 14px;border-radius:9px;cursor:pointer}
+.tab small{display:block;font-weight:400;font-size:11px;font-family:var(--f-mono)}
+.tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.act{font:inherit;text-align:left;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-width:0}
+.act:hover{border-color:var(--muted)}
+.act[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.act .t{font-family:var(--f-display);font-weight:700;font-size:16px;line-height:1.2}
+.act .f{font-family:var(--f-mono);font-size:13px}
+.act .f .fa{color:var(--a)} .act .f .fb{color:var(--b)}
+.act .k{font-size:12px;color:var(--muted)}
+.act sup{font-size:.7em}
+.brief{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.brief .box{background:var(--soft);border-radius:10px;padding:10px 12px;min-width:0}
+.brief .box p{margin:2px 0 0}
+details.custom summary{cursor:pointer;font-weight:700}
+details.custom[open] summary{margin-bottom:10px}
+.fx{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fx .side{display:flex;flex-direction:column;gap:6px;min-width:0}
+.fx input{font:inherit;width:100%;box-sizing:border-box;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 10px}
+.fx input.expr{font-family:var(--f-mono);font-size:16px}
+.side.a input.expr{border-left:4px solid var(--a)} .side.b input.expr{border-left:4px solid var(--b)}
+.err{color:var(--bad);font-size:13px;min-height:1.2em}
+.hint{font-size:13px;color:var(--muted)}
+.hint code{font-family:var(--f-mono);font-size:12px;background:var(--soft);padding:1px 4px;border-radius:4px}
+.settings{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end}
+.settings .field{display:flex;flex-direction:column;gap:4px}
+.settings input[type=range]{width:170px;accent-color:var(--ink)}
+.settings select,.settings .sig{font:inherit;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:6px 8px}
+.settings .sig{width:150px}
+.val{font-family:var(--f-mono);font-weight:600}
+.toggle{display:flex;align-items:center;gap:6px;cursor:pointer}
+
+/* Arena stage: one deliberate dark look in both themes */
+.stage{background:linear-gradient(180deg,var(--arena),var(--arena2));color:var(--arena-ink);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(10,15,44,.25)}
+.stage-title{display:none;text-align:center;padding:16px 12px 4px}
+.stage-title .eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.3em;color:var(--arena-muted)}
+.stage-title h2{font-family:var(--f-display);font-weight:800;font-size:32px;margin:2px 0 0}
+.heads{position:relative;display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--arena-line)}
+.head{padding:12px 12px 10px;text-align:center;min-width:0}
+.head .name{font-size:13px;color:var(--arena-muted)}
+.head .formula{font-family:var(--f-display);font-weight:800;font-size:clamp(24px,6vw,36px);line-height:1.15;overflow-wrap:anywhere}
+.head .formula sup{font-size:.6em}
+.head.a .formula{color:var(--la);text-shadow:0 0 18px rgba(255,138,31,.45)}
+.head.b .formula{color:var(--lb);text-shadow:0 0 18px rgba(166,107,255,.5)}
+.vs{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--f-display);font-weight:800;font-size:14px;background:conic-gradient(var(--la),var(--lb),var(--la));color:#0A0F2C;box-shadow:0 0 0 4px var(--arena)}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px 6px;margin-top:6px}
+.stats .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;color:var(--arena-muted);text-transform:uppercase}
+.stats .v{font-family:var(--f-mono);font-weight:800;font-size:clamp(12px,3.2vw,17px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.head.a .v.pw{color:var(--la)} .head.b .v.pw{color:var(--lb)}
+canvas#cv{display:block;width:100%;height:clamp(380px,60vh,640px)}
+.live{border-top:1px solid var(--arena-line);padding:8px 12px 4px}
+.live .cap{display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;color:var(--arena-muted);text-transform:uppercase}
+canvas#gv{display:block;width:100%;height:92px}
+.sigline{display:none;text-align:center;font-family:var(--f-mono);font-size:13px;color:var(--arena-muted);padding:4px 0 12px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:12px;border-top:1px solid var(--arena-line)}
+.btn{font:inherit;font-weight:700;border-radius:11px;padding:10px 16px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:var(--arena-ink);cursor:pointer}
+.btn:hover{background:rgba(255,255,255,.12)}
+.btn.pa{background:var(--la);border-color:var(--la);color:#1B0F00}
+.btn.pb{background:var(--lb);border-color:var(--lb);color:#12002B}
+.btn.light{background:var(--arena-ink);color:var(--arena);border-color:var(--arena-ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:focus-visible,.tab:focus-visible,.act:focus-visible,input:focus-visible,select:focus-visible,.strip button:focus-visible{outline:3px solid #33C3F0;outline-offset:2px}
+.ask{width:100%;text-align:center;font-weight:700}
+.msg{width:100%;text-align:center;font-weight:800;font-size:17px;min-height:1.4em}
+.msg.ok{color:#4ADE80} .msg.bad{color:#FF8A8A}
+
+/* Analysis */
+.analysis h3{font-family:var(--f-display);font-weight:800;font-size:26px;margin:0}
+.analysis h4{font-family:var(--f-display);font-weight:700;font-size:17px;margin:0}
+.analysis p{margin:0;max-width:68ch}
+.why{border-left:4px solid var(--ink);padding:2px 0 2px 14px;display:flex;flex-direction:column;gap:8px}
+.discuss{background:var(--soft);border-radius:10px;padding:10px 12px}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.chart{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.chart.wide{grid-column:1/-1}
+.chart svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.donuts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.donuts figure{margin:0;text-align:center;min-width:0}
+.donuts figcaption{font-size:12.5px;color:var(--muted)}
+.strip{display:flex;flex-wrap:wrap;gap:4px}
+.strip button{font-family:var(--f-mono);font-size:12px;width:34px;height:30px;border-radius:7px;border:2px solid transparent;cursor:pointer;color:var(--ink)}
+.strip button.wa{background:var(--a-soft)} .strip button.wb{background:var(--b-soft)} .strip button.wt{background:var(--soft)}
+.strip button.cur{border-color:var(--ink);font-weight:800}
+.tablebox{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.05em}
+td:first-child,th:first-child{text-align:left}
+td.ca{color:var(--a)} td.cb{color:var(--b)} td.op{color:var(--muted);font-size:11.5px}
+.placeholder{color:var(--muted);text-align:center;padding:8px}
+footer{font-size:13px;color:var(--muted);text-align:center}
+.mc-geri{display:inline-block;margin-bottom:10px;font-weight:700;color:var(--muted);text-decoration:none;font-size:14px}.mc-geri:hover{color:var(--ink)}
+html.gomulu .mc-geri{display:none}
+
+.exit{display:none;position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px));z-index:20}
+body.stage-mode .wrap{max-width:520px;height:100%;box-sizing:border-box;padding-block:8px}
+body.stage-mode header,body.stage-mode .setup,body.stage-mode .analysis,body.stage-mode .placeholder,body.stage-mode footer{display:none}
+body.stage-mode .stage{flex:1;min-height:0}
+body.stage-mode .stage-title{display:block}
+body.stage-mode canvas#cv{flex:1;height:auto;min-height:0}
+body.stage-mode .sigline{display:block}
+body.stage-mode .exit{display:block}
+body.stage-mode .modeBtn{display:none}
+@media (max-width:600px){.fx,.brief,.charts{grid-template-columns:1fr}.settings input[type=range]{width:140px}}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <a class="mc-geri" id="mcGeri" href="index.html#fonksiyon">← Master Class: Sayılar ve DNA'ları</a>
+    <div class="eyebrow">Fonksiyon yarışı</div>
+    <h1>Hangisi kazanır?</h1>
+    <p>İki parlak top, sırayla dizilmiş engellere çarpar. Her vuruş engelin canından f(n) kadar götürür. Engel kırılınca n bir artar ve top bir sonraki engele düşer. Bütün engelleri ilk kıran kazanır.</p>
+  </header>
+
+  <section class="panel setup" aria-label="Etkinlik seçimi">
+    <div class="tabs" role="tablist" id="tabs">
+      <button class="tab" role="tab" data-g="ilk">İlkokul<small>1–4. sınıf</small></button>
+      <button class="tab" role="tab" data-g="orta">Ortaokul<small>5–8. sınıf</small></button>
+      <button class="tab" role="tab" data-g="lise">Lise<small>9–12. sınıf</small></button>
+      <button class="tab" role="tab" data-g="serbest">Serbest<small>kendi yarışın</small></button>
+    </div>
+    <div class="acts" id="acts"></div>
+    <div class="brief" id="brief"></div>
+
+    <details class="custom" id="custom">
+      <summary>Kendi yarışını kur</summary>
+      <div class="fx">
+        <div class="side a">
+          <div class="label">Sol top</div>
+          <input id="nameA" aria-label="Sol topun adı" placeholder="Ad">
+          <input id="exprA" class="expr" aria-label="Sol fonksiyon" spellcheck="false" autocomplete="off">
+          <div class="err" id="errA"></div>
+        </div>
+        <div class="side b">
+          <div class="label">Sağ top</div>
+          <input id="nameB" aria-label="Sağ topun adı" placeholder="Ad">
+          <input id="exprB" class="expr" aria-label="Sağ fonksiyon" spellcheck="false" autocomplete="off">
+          <div class="err" id="errB"></div>
+        </div>
+      </div>
+      <div class="hint">Yazabileceklerin: <code>7</code> <code>2n</code> <code>n^2</code> <code>2^n</code> <code>(n+2)!</code> <code>1.5^n</code> <code>fib(n)</code> <code>asal(n)</code> <code>ucgen(n)</code> <code>sqrt(n)</code> <code>log(n+1)</code></div>
+    </details>
+
+    <div class="settings">
+      <div class="field">
+        <label class="label" for="lenR">Engel sayısı</label>
+        <div><input type="range" id="lenR" min="3" max="25" step="1"> <span class="val" id="lenV"></span></div>
+      </div>
+      <div class="field">
+        <label class="label" for="ruleS">Engel canı kuralı</label>
+        <select id="ruleS"></select>
+      </div>
+      <div class="field">
+        <label class="label" for="sigI">İmza (sahne modunda)</label>
+        <input id="sigI" class="sig" placeholder="@hesap_adin">
+      </div>
+      <label class="toggle"><input type="checkbox" id="soundC" checked> Ses efektleri</label>
+    </div>
+  </section>
+
+  <section class="stage" aria-label="Yarış sahnesi">
+    <div class="stage-title"><div class="eyebrow">FONKSİYON YARIŞI</div><h2>Hangisi kazanır?</h2></div>
+    <div class="heads">
+      <div class="head a">
+        <div class="name" id="hNameA"></div>
+        <div class="formula" id="hFormA"></div>
+        <div class="stats"><div class="k">Güç</div><div class="k">Vuruş</div><div class="k">Engel</div>
+          <div class="v pw" id="pwA">0</div><div class="v" id="hitA">0</div><div class="v" id="lvA">0</div></div>
+      </div>
+      <div class="vs" aria-hidden="true">VS</div>
+      <div class="head b">
+        <div class="name" id="hNameB"></div>
+        <div class="formula" id="hFormB"></div>
+        <div class="stats"><div class="k">Güç</div><div class="k">Vuruş</div><div class="k">Engel</div>
+          <div class="v pw" id="pwB">0</div><div class="v" id="hitB">0</div><div class="v" id="lvB">0</div></div>
+      </div>
+    </div>
+    <canvas id="cv" aria-label="İki topun engelleri kırdığı yarış animasyonu"></canvas>
+    <div class="live">
+      <div class="cap"><span>Konum–zaman grafiği</span><span>eğim = hız</span></div>
+      <canvas id="gv" aria-label="İki topun kaçıncı engelde olduğunu zamana göre gösteren canlı grafik"></canvas>
+    </div>
+    <div class="sigline" id="sigLine"></div>
+    <div class="controls" id="controls"></div>
+  </section>
+
+  <div class="placeholder" id="ph">Yarış bitince burada “Neden?” açıklaması, tartışma sorusu ve dört grafik çıkar.</div>
+  <section class="panel analysis" id="analysis" hidden></section>
+
+  <footer>Ekran kaydı için “Sahne modu”nu aç: ayarlar gizlenir, telefon ekranına uygun dikey görünüm kalır.</footer>
+</div>
+<button class="btn exit" id="exitBtn">Sahneden çık</button>
+
+<script>
+// ==LOGIC==
+function fact(x){const r=Math.round(x);if(x<0||Math.abs(x-r)>1e-9)return NaN;if(r>170)return Infinity;let p=1;for(let i=2;i<=r;i++)p*=i;return p;}
+function fib(x){const r=Math.round(x);if(r<0||Math.abs(x-r)>1e-9)return NaN;let a=0,b=1;for(let i=0;i<r;i++){const t=a+b;a=b;b=t;}return a;}
+const PR=[2];
+function asal(x){const r=Math.round(x);if(r<1||r>20000||Math.abs(x-r)>1e-9)return NaN;
+  while(PR.length<r){let c=PR[PR.length-1]+1;for(;;c++){let ok=true;for(const p of PR){if(p*p>c)break;if(c%p===0){ok=false;break;}}if(ok)break;}PR.push(c);}
+  return PR[r-1];}
+function ucgen(x){return x*(x+1)/2;}
+function tokenize(src){
+  let s=src.replace(/²/g,'^2').replace(/³/g,'^3').replace(/[·×]/g,'*').replace(/\s+/g,'').toLowerCase().replace(/,/g,'.');
+  if(!s) throw new Error('Bir fonksiyon yaz.');
+  const t=[];let i=0;
+  while(i<s.length){const c=s[i];
+    if(/[0-9.]/.test(c)){let j=i;while(j<s.length&&/[0-9.]/.test(s[j]))j++;const v=parseFloat(s.slice(i,j));if(isNaN(v))throw new Error('Sayı okunamadı: '+s.slice(i,j));t.push({t:'num',v});i=j;continue;}
+    if(/[a-zğüşıöç]/.test(c)){let j=i;while(j<s.length&&/[a-zğüşıöç]/.test(s[j]))j++;const w=s.slice(i,j);
+      if(['fib','sqrt','kok','log','ln','asal','ucgen','üçgen'].includes(w))t.push({t:'fn',v:w});
+      else if(/^n+$/.test(w))for(let q=0;q<w.length;q++)t.push({t:'n'});
+      else throw new Error('Tanınmayan kelime: '+w+' (değişken olarak yalnızca n kullan)');
+      i=j;continue;}
+    if('+-*/^!()'.includes(c)){t.push({t:c});i++;continue;}
+    throw new Error('Tanınmayan karakter: '+c);}
+  return t;}
+function compile(src){
+  const tk=tokenize(src);let p=0;
+  const peek=()=>tk[p];
+  const eat=ty=>{if(!tk[p]||tk[p].t!==ty)throw new Error(ty===')'?'Kapanmayan parantez var.':'Beklenmeyen ifade.');return tk[p++];};
+  const startsPrimary=k=>k&&(k.t==='num'||k.t==='n'||k.t==='fn'||k.t==='(');
+  const FN={fib,asal,ucgen,'üçgen':ucgen,sqrt:Math.sqrt,kok:Math.sqrt,log:Math.log10,ln:Math.log};
+  function expr(){let a=term();while(peek()&&(peek().t==='+'||peek().t==='-')){const o=tk[p++].t,b=term(),x=a;a=o==='+'?n=>x(n)+b(n):n=>x(n)-b(n);}return a;}
+  function term(){let a=unary();for(;;){const k=peek();
+    if(k&&(k.t==='*'||k.t==='/')){p++;const b=unary(),x=a;a=k.t==='*'?n=>x(n)*b(n):n=>x(n)/b(n);}
+    else if(startsPrimary(k)){const b=unary(),x=a;a=n=>x(n)*b(n);}else break;}return a;}
+  function unary(){if(peek()&&peek().t==='-'){p++;const a=unary();return n=>-a(n);}return power();}
+  function power(){const a=postfix();if(peek()&&peek().t==='^'){p++;const b=unary();return n=>Math.pow(a(n),b(n));}return a;}
+  function postfix(){let a=primary();while(peek()&&peek().t==='!'){p++;const x=a;a=n=>fact(x(n));}return a;}
+  function primary(){const k=tk[p++];if(!k)throw new Error('İfade yarım kaldı.');
+    if(k.t==='num'){const v=k.v;return()=>v;}
+    if(k.t==='n')return n=>n;
+    if(k.t==='fn'){eat('(');const a=expr();eat(')');const F=FN[k.v];return n=>F(a(n));}
+    if(k.t==='('){const a=expr();eat(')');return a;}
+    throw new Error('Beklenmeyen işaret: '+k.t);}
+  const f=expr();if(p<tk.length)throw new Error('Fazladan işaret: '+tk[p].t);return f;}
+const RULES={
+  lin:{label:'10·k → 10, 20, 30, …',f:k=>10*k},
+  sq:{label:'10·k² → 10, 40, 90, …',f:k=>10*k*k},
+  dbl:{label:'10·2ᵏ → 20, 40, 80, …',f:k=>10*Math.pow(2,k)},
+  five:{label:'5ᵏ → 5, 25, 125, …',f:k=>Math.pow(5,k)},
+  ten:{label:'10ᵏ → 10, 100, 1000, …',f:k=>Math.pow(10,k)}};
+function buildLane(f,L,rule){
+  const lv=[];let cum=0;const R=RULES[rule].f;
+  for(let k=1;k<=L;k++){const hp=R(k),pw=f(k);
+    if(!(pw>0))throw new Error('n = '+k+' için değer 0, negatif ya da tanımsız. Top bu engeli hiç kıramaz.');
+    if(!isFinite(pw))throw new Error('n = '+k+' için değer hesaplanamayacak kadar büyük.');
+    const hits=Math.max(1,Math.ceil(hp/pw-1e-9));cum+=hits;lv.push({k,hp,pw,hits,cum});}
+  return {lv,total:cum};}
+// ==/LOGIC==
+
+// ---------- Activities ----------
+const ACTS=[
+ {id:'i1',g:'ilk',t:'Kalanlı bölme düellosu',a:'4',b:'5',na:'Dörtlü top',nb:'Beşli top',L:6,rule:'lin',
+  kaz:'Bölmeyi ardışık çıkarma olarak görür, kalanı yorumlar.',
+  soru:'İlk engelin canı 10. Dörtlü top kaç vuruşta kırar? Beşli top kaç vuruşta? Defterine yaz, sonra izle.',
+  tart:'Beşli top neden hiç fazladan vuruş yapmadı? Dörtlü top hangi engellerde son vuruşunda gücünün bir kısmını boşa harcadı?',
+  why:['Her vuruş engelin canından aynı sayıyı çıkarır. Bu, bölmeyi ardışık çıkarmayla yapmaktır.','30 ÷ 4 = 7, kalan 2. Yedi vuruş yetmez, kalan 2 için sekizinci vuruş gerekir. Beşli top için canlar hep 5’in katı olduğundan kalan hiç oluşmaz.']},
+ {id:'i2',g:'ilk',t:'Sabit mi, artan mı?',a:'8',b:'2n',na:'Hep 8',nb:'İkişer artan',L:8,rule:'lin',
+  kaz:'Sayı örüntüsünü sürdürür; sabit ve artan örüntüyü karşılaştırır.',
+  soru:'Başta 8’lik top çok daha güçlü. Sonuna kadar önde kalır mı?',
+  tart:'Engel sayısını 4 yap ve tekrar yarıştır. Kazanan neden değişti?',
+  why:['İkişer artan topun gücü 2, 4, 6, 8, 10… diye büyür ve dördüncü engelde sabit topu yakalar.','Engel canları da 10’ar arttığı için artan top her engeli tam 5 vuruşta kırar. Sabit topun vuruş sayısı ise her engelde biraz daha artar.']},
+ {id:'i3',g:'ilk',t:'Aynı sayı, iki yazılış',a:'2*n',b:'n+n',na:'İki kere n',nb:'n artı n',L:6,rule:'lin',
+  kaz:'Çarpmanın tekrarlı toplama olduğunu fark eder.',
+  soru:'2·n ile n+n yarışırsa ne olur? Berabere seçeneğini unutma!',
+  tart:'Berabere bitecek başka bir ikili bulabilir misin? Örneğin 3·n ile neyi yarıştırırsın?',
+  why:['İki ifade de her n için aynı sayıyı verir: 2·3 = 3+3 = 6.','Aynı güç, aynı vuruş sayısı, berabere. Matematikte bunlara eşdeğer ifadeler denir.']},
+ {id:'i4',g:'ilk',t:'Kendisiyle çarpınca',a:'10',b:'n*n',na:'Hep 10',nb:'Kare sayılar',L:8,rule:'lin',
+  kaz:'Kare sayı örüntüsünü (1, 4, 9, 16…) tanır.',
+  soru:'Sağdaki topun gücü 1, 4, 9, 16… diye büyüyor. 10’luk topu hangi engelde geçer?',
+  tart:'Kare sayıları nokta dizerek çiz. Her yeni karede kaç nokta ekleniyor?',
+  why:['Kare sayılar önce yavaş, sonra hızlı büyür: 1, 4, 9, 16, 25.','Dördüncü engelden itibaren kare top sabit topu geçer. Sonraki engellerde birkaç vuruş yetiyor.']},
+
+ {id:'o1',g:'orta',t:'Doğrusal mı, karesel mi?',a:'10n',b:'n^2',na:'Doğrusal',nb:'Karesel',L:24,rule:'sq',
+  kaz:'Doğrusal ve karesel büyümeyi tablo ve grafikle karşılaştırır.',
+  soru:'10n başta n²’den çok güçlü. 24 engellik yarışta kim kazanır?',
+  tart:'Toplam vuruşları formülle yaz: doğrusal top için 1+2+…+L, karesel top için 10·L. Hangi L’de eşitlenirler?',
+  why:['Engel canı 10·k² olduğundan 10n gücündeki top k. engelde k vuruş yapar, n² gücündeki top ise her engelde 10 vuruş.','Doğrusal topun toplamı L(L+1)/2, karesel topunki 10L. L = 19’da eşitlenirler, sonrasında karesel top öne geçer.']},
+ {id:'o2',g:'orta',t:'Üslü sayının patlaması',a:'2^n',b:'n^2',na:'İkinin kuvveti',nb:'Kare',L:14,rule:'dbl',
+  kaz:'Üslü ifadelerin büyümesini kare sayılarla karşılaştırır.',
+  soru:'2ⁿ ve n² neredeyse aynı başlıyor. Uzun yarışta fark ne kadar açılır?',
+  tart:'n = 2, 3, 4, 5 için 2ⁿ ve n² değerlerini tabloya yaz. Hangi n’de kim önde?',
+  why:['n² kare sayılarla, 2ⁿ ikiye katlanarak büyür. n = 2 ve n = 4’te eşittirler (4 = 4, 16 = 16), n = 3’te kare önde.','n = 5’ten sonra 2ⁿ hep önde ve her adımda iki katına çıktığı için fark katlanarak açılır.']},
+ {id:'o3',g:'orta',t:'Asallar ve çift sayılar',a:'asal(n)',b:'2n',na:'Asal sayılar',nb:'Çift sayılar',L:14,rule:'lin',
+  kaz:'Asal sayıları sıralar; düzenli ve düzensiz artışı karşılaştırır.',
+  soru:'Asallar 2, 3, 5, 7, 11… çiftler 2, 4, 6, 8, 10… Uzun yarışta kim önde biter?',
+  tart:'Ardışık asallar arasındaki farkları yaz: 1, 2, 2, 4, 2, 4… Ortalaması 2’den büyük mü?',
+  why:['Çift sayılar düzenli 2’şer artar. Asallar düzensizdir, aralarındaki boşluklar giderek büyür.','Bu yüzden ortalama artışları 2’yi geçer. n. asal sayı yaklaşık n·ln n kadardır, 2n’den hızlı büyür.']},
+ {id:'o4',g:'orta',t:'Üçgen sayılar',a:'ucgen(n)',b:'3n',na:'Üçgen sayılar',nb:'Üçün katları',L:12,rule:'lin',
+  kaz:'Şekil örüntüsünden sayı örüntüsüne geçer: n(n+1)/2.',
+  soru:'Üçgen sayılar 1, 3, 6, 10, 15… Üçün katlarını hangi engelde yakalar?',
+  tart:'Üçgen sayıyı noktalarla çiz. İki üçgeni birleştirince neden n·(n+1)’lik dikdörtgen çıkıyor?',
+  why:['n. üçgen sayı n(n+1)/2, yani her adımda bir öncekinden n kadar fazla eklenir.','3n her adımda yalnızca 3 ekler. n = 5’te eşitlenirler (15 = 15), sonra üçgen sayılar hızlanır.']},
+ {id:'o5',g:'orta',t:'Fibonacci tavşanları',a:'fib(n)',b:'n^2',na:'Fibonacci',nb:'Kare',L:18,rule:'dbl',
+  kaz:'Yinelemeli örüntüyü (her terim önceki ikisinin toplamı) inceler.',
+  soru:'Fibonacci 1, 1, 2, 3, 5, 8… Kare sayılar 1, 4, 9, 16… Hangi engelde yer değiştirirler?',
+  tart:'Fibonacci’de ardışık terimlerin oranını hesapla: 8/5, 13/8, 21/13… Hangi sayıya yaklaşıyor?',
+  why:['Başta kare sayılar çok önde. n = 12’de eşitlenirler: F(12) = 144 = 12².','Fibonacci her adımda yaklaşık 1,618 katına çıktığı için sonrasında kare sayıları hızla geride bırakır.']},
+
+ {id:'l1',g:'lise',t:'Kendi kuvveti ve faktöriyel',a:'n^n',b:'(n+2)!',na:'Kendi kuvveti',nb:'Faktöriyel',L:12,rule:'ten',
+  kaz:'Faktöriyel ve üstel büyümeyi Stirling yaklaşımıyla karşılaştırır.',
+  soru:'Faktöriyel iki basamak avansla başlıyor. 12 engellik yarışı kim kazanır?',
+  tart:'Engel sayısını 8 yap. Kazanan neden değişiyor? “Uzun vadede büyür” ne demek?',
+  why:['<b>Merdiven benzetmesi.</b> (n+2)! = (n+2)·(n+1)·n···1 merdivenden inen biri gibidir, her basamakta çarpan küçülür. nⁿ = n·n···n hep en üst basamakta durur.','Stirling’e göre n! ≈ √(2πn)·(n/e)ⁿ, yani nⁿ faktöriyelden kabaca eⁿ kat hızlı büyür. Avans ne kadar büyük olsa da sonunda kapanır.']},
+ {id:'l2',g:'lise',t:'Üstel ve polinom',a:'2^n',b:'n^4',na:'Üstel',nb:'Polinom',L:20,rule:'ten',
+  kaz:'Üstel fonksiyonun her polinomu geçtiğini oran testiyle gösterir.',
+  soru:'n⁴ ilk 15 engelde 2ⁿ’den güçlü. 20 engelde kim kazanır?',
+  tart:'f(n+1)/f(n) oranını iki fonksiyon için yaz. n → ∞ iken bu oranlar neye gider?',
+  why:['<b>Vites benzetmesi.</b> n⁴ her adımda ((n+1)/n)⁴ kat büyür ve bu çarpan 1’e yaklaşır: araç vites düşürür.','2ⁿ her adımda tam ×2 büyür. Kesişme n = 16’da: 2¹⁶ = 65.536 = 16⁴.']},
+ {id:'l3',g:'lise',t:'Faktöriyel ve 3ⁿ',a:'n!',b:'3^n',na:'Faktöriyel',nb:'Üçün kuvveti',L:10,rule:'ten',
+  kaz:'Artan çarpanlı ve sabit çarpanlı büyümeyi ayırt eder.',
+  soru:'3ⁿ başta önde. Faktöriyel kaçıncı engelde geçer?',
+  tart:'n! > 3ⁿ eşitsizliğini tümevarımla kanıtla. Başlangıç adımı hangi n olmalı?',
+  why:['Faktöriyelde her adımın çarpanı n+1 ve sürekli artıyor. 3ⁿ’de çarpan hep 3.','n ≥ 3 olduktan sonra faktöriyelin her adımı daha büyük, ama farkı kapatması biraz sürüyor: 7! = 5.040 > 3⁷ = 2.187.']},
+ {id:'l4',g:'lise',t:'Altın oran yarışı',a:'fib(n)',b:'1.5^n',na:'Fibonacci',nb:'1,5’in kuvveti',L:18,rule:'five',
+  kaz:'Yinelemeli diziyi üstel fonksiyonla modeller (Binet).',
+  soru:'1,5ⁿ başta önde. Fibonacci yetişebilir mi?',
+  tart:'F(n) ≈ φⁿ/√5 formülünü kullanarak kesişme noktasını tahmin et.',
+  why:['Fibonacci’de ardışık terimlerin oranı φ ≈ 1,618’e yerleşir, yani F(n) ≈ φⁿ/√5: kılık değiştirmiş bir üstel fonksiyon.','1,5 < 1,618 olduğu için baştaki √5’lik fark kapanır.']},
+ {id:'l5',g:'lise',t:'Polinom destekli üstel',a:'n^2*2^n',b:'3^n',na:'n²·2ⁿ',nb:'3ⁿ',L:20,rule:'ten',
+  kaz:'Üstel tabanın polinom çarpandan baskın olduğunu görür.',
+  soru:'Sol top n² kadar destek alıyor. Bu destek yetecek mi?',
+  tart:'3ⁿ > n²·2ⁿ eşitsizliğini 1,5ⁿ > n² biçimine getir. Kesişme hangi n’de?',
+  why:['n²’nin katkısı her adımda ((n+1)/n)² olur ve 1’e yaklaşır. Son engellerde sol yaklaşık ×2, sağ ×3 büyür.','Polinom çarpan üstel tabanı değiştiremez. Kesişme n = 13’te.']},
+ {id:'l6',g:'lise',t:'Yavaş devler: log ve kök',a:'4*sqrt(n)',b:'12*log(n+1)',na:'Kök',nb:'Logaritma',L:25,rule:'lin',
+  kaz:'Logaritmik ve kök büyümenin hızlarını karşılaştırır.',
+  soru:'İki fonksiyon da çok yavaş büyüyor. Hangisi daha az yavaş?',
+  tart:'√n / log n oranının n büyüdükçe sınırsız büyüdüğünü L’Hôpital ile göster.',
+  why:['log(n+1) ancak n 10 katına çıktığında 1 artar. √n ise n 4 katına çıkınca 2 katına çıkar.','Başta 12·log önde, n ≈ 10’da kök yetişir. Sonrasında fark hep açılır: her kök fonksiyonu her logaritmayı er geç geçer.']},
+];
+const GRADE_LABEL={ilk:'İlkokul',orta:'Ortaokul',lise:'Lise',serbest:'Serbest'};
+
+// ---------- Helpers ----------
+const $=id=>document.getElementById(id);
+const supMap={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+function fmt(x){
+  if(!isFinite(x))return '∞';
+  if(Math.abs(x)<1e12){
+    if(Math.abs(x)<1000&&Math.abs(x-Math.round(x))>1e-6)return x.toLocaleString('tr-TR',{maximumFractionDigits:2});
+    return Math.round(x).toLocaleString('tr-TR');}
+  let e=Math.floor(Math.log10(Math.abs(x))),m=x/Math.pow(10,e);if(Math.abs(m)>=9.995){m/=10;e++;}
+  return m.toFixed(2).replace('.',',')+'·10'+String(e).split('').map(c=>supMap[c]).join('');}
+function fmtShort(x){ if(Math.abs(x)<1e4) return fmt(x);
+  let e=Math.floor(Math.log10(Math.abs(x))),m=x/Math.pow(10,e);if(m>=9.95){m/=10;e++;}
+  return m.toFixed(1).replace('.',',')+'·10'+String(e).split('').map(c=>supMap[c]).join('');}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function pretty(src){
+  let s=esc(src.replace(/\s+/g,'')).replace(/\*/g,'·');
+  for(let i=0;i<4;i++)s=s.replace(/\^\(([^()]*)\)/g,'<sup>$1</sup>');
+  s=s.replace(/\^([0-9.]+|n)/g,'<sup>$1</sup>');
+  return s.replace(/(\d)\.(\d)/g,'$1,$2');}
+function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=n>>16,g=(n>>8)&255,b=n&255;
+  const t=amt<0?0:255,p=Math.abs(amt);r=Math.round((t-r)*p+r);g=Math.round((t-g)*p+g);b=Math.round((t-b)*p+b);return `rgb(${r},${g},${b})`;}
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`;}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+// ---------- State ----------
+let st={a:'4',b:'5',na:'',nb:'',L:6,rule:'lin',act:'i1',grade:'ilk'};
+let fA=null,fB=null,laneA=null,laneB=null;
+let phase='ready',prediction=null,t0=0,tRace=-99,raceT=0,timeline=null,raceDur=20,lastCount=99,history=[];
+const vis={a:{off:0,parts:[],lastK:0,lastHit:0,y:0,trail:[],sndT:0},b:{off:0,parts:[],lastK:0,lastHit:0,y:0,trail:[],sndT:0}};
+let popups=[],confetti=[],rings=[];
+
+function curAct(){return ACTS.find(x=>x.id===st.act)||null;}
+function rebuild(){
+  $('errA').textContent='';$('errB').textContent='';
+  try{fA=compile(st.a);}catch(e){fA=null;$('errA').textContent=e.message;}
+  try{fB=compile(st.b);}catch(e){fB=null;$('errB').textContent=e.message;}
+  laneA=laneB=null;
+  if(fA){try{laneA=buildLane(fA,st.L,st.rule);}catch(e){$('errA').textContent=e.message;}}
+  if(fB){try{laneB=buildLane(fB,st.L,st.rule);}catch(e){$('errB').textContent=e.message;}}
+  if((!laneA&&$('errA').textContent)||(!laneB&&$('errB').textContent)) $('custom').open=true;
+  $('hNameA').textContent=st.na||'Sol top';$('hNameB').textContent=st.nb||'Sağ top';
+  $('hFormA').innerHTML=pretty(st.a)||'—';$('hFormB').innerHTML=pretty(st.b)||'—';
+  $('lenV').textContent=st.L;
+  renderBrief();resetRace();}
+function renderTabs(){
+  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.g===st.grade)));
+  const list=ACTS.filter(a=>a.g===st.grade);
+  $('acts').hidden=st.grade==='serbest';
+  $('acts').innerHTML=list.map(a=>`<button class="act" data-id="${a.id}" aria-pressed="${a.id===st.act}">
+    <span class="t">${a.t}</span><span class="f"><span class="fa">${pretty(a.a)}</span> vs <span class="fb">${pretty(a.b)}</span></span><span class="k">${a.kaz}</span></button>`).join('');
+  if(st.grade==='serbest') $('custom').open=true;}
+function renderBrief(){
+  const a=curAct();
+  if(!a){$('brief').innerHTML=`<div class="box"><div class="label">Serbest yarış</div><p>İki fonksiyonu kendin yaz, engel sayısını ve can kuralını seç.</p></div><div class="box"><div class="label">Tahmin sorusu</div><p>Hangisi kazanır? Önce tahmin et, sonra yarışı başlat.</p></div>`;return;}
+  $('brief').innerHTML=`<div class="box"><div class="label">${GRADE_LABEL[a.g]} · Kazanım</div><p>${a.kaz}</p></div><div class="box"><div class="label">Tahmin sorusu</div><p>${a.soru}</p></div>`;}
+function applyAct(id){
+  const a=ACTS.find(x=>x.id===id);if(!a)return;
+  Object.assign(st,{a:a.a,b:a.b,na:a.na,nb:a.nb,L:a.L,rule:a.rule,act:id,grade:a.g});
+  $('exprA').value=a.a;$('exprB').value=a.b;$('nameA').value=a.na;$('nameB').value=a.nb;
+  $('lenR').value=a.L;$('ruleS').value=a.rule;$('custom').open=false;
+  renderTabs();rebuild();}
+
+// ---------- Timeline ----------
+// Slow, readable start; an eased (log-space) part brings in more and more hits toward the end.
+function makeTimeline(maxT){
+  const D=Math.min(34,Math.max(18,14+2*Math.log10(Math.max(10,maxT))));raceDur=D;
+  let v0=1.7,M=maxT-v0*D;if(M<0){v0=maxT/D;M=0;}
+  const LM=Math.log10(1+M),P=1.9;
+  return t=>{if(t<=0)return 0;const u=Math.min(1,t/D);const E=M>0?Math.pow(10,LM*Math.pow(u,P))-1:0;return Math.min(maxT,u>=1?maxT:v0*t+E);};}
+const COUNTDOWN=3;
+function laneAt(lane,T){
+  if(T>=lane.total)return {i:lane.lv.length,done:true,hitsTot:lane.total,dmg:0};
+  let prev=0;
+  for(let i=0;i<lane.lv.length;i++){const l=lane.lv[i];if(T<l.cum){const into=Math.floor(T-prev);return {i,done:false,hitsTot:prev+into,dmg:Math.min(l.hp,into*l.pw)};}prev=l.cum;}
+  return {i:lane.lv.length,done:true,hitsTot:lane.total,dmg:0};}
+function progress(lane,T){const p=laneAt(lane,T);return p.done?lane.lv.length:p.i+p.dmg/lane.lv[p.i].hp;}
+function winner(){if(!laneA||!laneB)return null;return laneA.total<laneB.total?'a':laneB.total<laneA.total?'b':'t';}
+
+// ---------- Sound ----------
+const SND={ctx:null,master:null,noise:null,
+  init(){if(!$('soundC').checked)return;try{
+    if(!this.ctx){const C=window.AudioContext||window.webkitAudioContext;this.ctx=new C();
+      const comp=this.ctx.createDynamicsCompressor();this.master=this.ctx.createGain();this.master.gain.value=.55;this.master.connect(comp).connect(this.ctx.destination);
+      const len=this.ctx.sampleRate;const buf=this.ctx.createBuffer(1,len,this.ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;this.noise=buf;}
+    if(this.ctx.state==='suspended')this.ctx.resume();}catch(e){this.ctx=null;}},
+  ok(){return this.ctx&&$('soundC').checked;},
+  tone(f,dur,o={}){if(!this.ok())return;const c=this.ctx,t=c.currentTime+(o.delay||0);
+    const os=c.createOscillator(),g=c.createGain();os.type=o.type||'sine';os.frequency.setValueAtTime(f,t);
+    if(o.slide)os.frequency.exponentialRampToValueAtTime(Math.max(30,f*o.slide),t+dur);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(o.vol||.2,t+(o.attack||.006));g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    os.connect(g).connect(this.master);os.start(t);os.stop(t+dur+.05);},
+  burst(dur,o={}){if(!this.ok())return;const c=this.ctx,t=c.currentTime+(o.delay||0);
+    const s=c.createBufferSource();s.buffer=this.noise;const fl=c.createBiquadFilter();fl.type=o.type||'bandpass';fl.frequency.setValueAtTime(o.freq||2000,t);fl.Q.value=o.q||1;
+    if(o.sweep)fl.frequency.exponentialRampToValueAtTime(o.sweep,t+dur);
+    const g=c.createGain();g.gain.setValueAtTime(o.vol||.2,t);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    s.connect(fl).connect(g).connect(this.master);s.start(t);s.stop(t+dur+.05);},
+  note(lane,level){const sc=[0,2,4,7,9];const i=level-1;const semi=sc[i%5]+12*Math.floor(i/5);return (lane==='a'?330:247)*Math.pow(2,Math.min(semi,24)/12);},
+  hit(lane,level,soft){const f=this.note(lane,level);const v=soft?.07:.16;
+    if(lane==='a'){this.tone(f*1.5,.16,{type:'sine',vol:v,slide:.6});this.tone(f*3,.04,{type:'square',vol:v*.15});}
+    else{this.tone(f*1.5,.14,{type:'triangle',vol:v*1.2,slide:.5});this.burst(.03,{freq:3500,q:3,vol:v*.3});}},
+  brk(lane,level){const f=this.note(lane,level);this.burst(.35,{type:'highpass',freq:4500,vol:.22});this.tone(120,.25,{vol:.28,slide:.45});
+    [1,1.5,2].forEach((m,i)=>this.tone(f*2*m,.45,{type:'triangle',vol:.07,delay:.03*i}));},
+  count(n){if(n>0)this.tone(520,.13,{type:'square',vol:.1});else{this.tone(1040,.4,{type:'square',vol:.1});this.tone(1560,.4,{type:'triangle',vol:.08});this.burst(.6,{freq:300,sweep:5000,q:1.5,vol:.12});}},
+  finish(lane){const f=lane==='b'?247:330;this.tone(f,.2,{type:'triangle',vol:.16});},
+  fanfare(){[523,659,784,1047].forEach((f,i)=>this.tone(f,.32,{type:'triangle',vol:.15,delay:i*.11}));
+    [1047,1319,1568].forEach(f=>this.tone(f,.9,{type:'sine',vol:.07,delay:.48}));this.burst(.8,{type:'highpass',freq:7000,vol:.08,delay:.48});},
+  sad(){[392,370,349,294].forEach((f,i)=>this.tone(f,i===3?.6:.28,{type:'sawtooth',vol:.06,delay:i*.26,slide:i===3?.8:1}));}};
+$('soundC').addEventListener('change',()=>SND.init());
+
+// ---------- Controls ----------
+function nm(k){return esc(k==='a'?(st.na||'Sol top'):(st.nb||'Sağ top'));}
+function renderControls(){
+  const c=$('controls'),ok=laneA&&laneB;
+  if(phase==='ready'){
+    c.innerHTML=`<div class="ask">Önce tahmin et: hangisi kazanır?</div>
+      <button class="btn pa" data-act="pa" ${ok?'':'disabled'}>${nm('a')}</button>
+      <button class="btn pb" data-act="pb" ${ok?'':'disabled'}>${nm('b')}</button>
+      <button class="btn" data-act="pt" ${ok?'':'disabled'}>Berabere</button>
+      <button class="btn" data-act="go" ${ok?'':'disabled'}>Tahminsiz başlat</button>
+      <button class="btn light modeBtn" data-act="mode">Sahne modu</button>`;
+  }else if(phase==='running'){
+    const p=prediction?('Tahminin: '+(prediction==='t'?'Berabere':nm(prediction))):'Yarış sürüyor';
+    c.innerHTML=`<div class="msg">${p}</div><button class="btn" data-act="reset">Durdur</button>`;
+  }else{
+    const w=winner();let m,cls='';
+    if(prediction){if(w===prediction){m='Tahminin doğru!';cls='ok';}else{m='Bu sefer olmadı.';cls='bad';}}
+    else m=w==='t'?'Berabere!':nm(w)+' kazandı';
+    c.innerHTML=`<div class="msg ${cls}">${m}</div>
+      <button class="btn light" data-act="again">Yeniden oynat</button>
+      <button class="btn" data-act="reset">Başa dön</button>
+      <button class="btn modeBtn" data-act="mode">Sahne modu</button>`;}}
+function resetVis(){for(const k of['a','b']){Object.assign(vis[k],{off:0,parts:[],lastK:0,lastHit:0,trail:[],sndT:0});}popups=[];confetti=[];rings=[];history=[];}
+function resetRace(){phase='ready';prediction=null;raceT=0;tRace=-99;resetVis();$('analysis').hidden=true;$('ph').hidden=false;renderControls();updateHeads(0);}
+function startRace(pred){
+  if(!laneA||!laneB)return;
+  prediction=pred;phase='running';raceT=0;lastCount=99;
+  timeline=makeTimeline(Math.max(laneA.total,laneB.total));
+  t0=performance.now();resetVis();SND.init();renderControls();}
+function finishRace(){
+  phase='done';renderControls();renderAnalysis();
+  const w=winner();burstConfetti(w);
+  if(prediction&&prediction!==w)SND.sad();else SND.fanfare();}
+$('controls').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='pa')startRace('a');else if(a==='pb')startRace('b');else if(a==='pt')startRace('t');else if(a==='go')startRace(null);
+  else if(a==='again')startRace(prediction);else if(a==='reset')resetRace();else if(a==='mode')setStage(true);});
+$('exitBtn').addEventListener('click',()=>setStage(false));
+function setStage(on){document.body.classList.toggle('stage-mode',on);setTimeout(resize,40);}
+
+// ---------- Inputs ----------
+$('ruleS').innerHTML=Object.entries(RULES).map(([k,r])=>`<option value="${k}">${r.label}</option>`).join('');
+$('tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;st.grade=t.dataset.g;
+  if(st.grade==='serbest'){st.act=null;renderTabs();renderBrief();}else{const first=ACTS.find(a=>a.g===st.grade);applyAct(first.id);}});
+$('acts').addEventListener('click',e=>{const b=e.target.closest('.act');if(b)applyAct(b.dataset.id);});
+let deb=null;
+function onEdit(){clearTimeout(deb);deb=setTimeout(()=>{
+  st.a=$('exprA').value;st.b=$('exprB').value;st.na=$('nameA').value.trim();st.nb=$('nameB').value.trim();
+  const a=curAct();if(a&&(a.a!==st.a||a.b!==st.b)){st.act=null;st.grade='serbest';renderTabs();}
+  rebuild();},250);}
+['exprA','exprB','nameA','nameB'].forEach(id=>$(id).addEventListener('input',onEdit));
+$('lenR').addEventListener('input',e=>{st.L=+e.target.value;rebuild();});
+$('ruleS').addEventListener('change',e=>{st.rule=e.target.value;rebuild();});
+$('sigI').addEventListener('input',e=>{$('sigLine').textContent=e.target.value;try{localStorage.setItem('fy_sig',e.target.value);}catch(_){}});
+try{const s=localStorage.getItem('fy_sig');if(s){$('sigI').value=s;$('sigLine').textContent=s;}}catch(_){}
+
+// ---------- Arena drawing ----------
+const LANE={a:{base:'#FF8A1F',light:'#FFE2B0',dark:'#9A3A00',glow:'rgba(255,150,40,.95)'},
+            b:{base:'#A66BFF',light:'#EBDDFF',dark:'#41169A',glow:'rgba(175,115,255,.95)'}};
+const HUES=['#FF5D73','#FFC233','#3DDC97','#33C3F0','#5B8CFF','#FF7AC6','#8BE36B','#2EE6D6'];
+const cv=$('cv'),cx=cv.getContext('2d'),gv=$('gv'),gx=gv.getContext('2d');
+let W=0,H=0,GW=0,GH=0,dpr=1,patCanvas=null,patFor='';
+function resize(){dpr=Math.min(window.devicePixelRatio||1,2);
+  let r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cx.setTransform(dpr,0,0,dpr,0,0);
+  r=gv.getBoundingClientRect();GW=r.width;GH=r.height;gv.width=Math.round(GW*dpr);gv.height=Math.round(GH*dpr);gx.setTransform(dpr,0,0,dpr,0,0);patFor='';}
+new ResizeObserver(resize).observe(cv);
+function gradeKey(){return st.grade==='serbest'?'lise':st.grade;}
+function makePattern(){
+  const g=gradeKey();if(patFor===g&&patCanvas)return;patFor=g;
+  const c=document.createElement('canvas'),s=Math.round(dpr);let w,h;const p=c.getContext('2d');
+  if(g==='ilk'){w=h=90;c.width=w*s;c.height=h*s;p.scale(s,s);
+    const R=rng(7);for(let i=0;i<6;i++){const x=R()*w,y=R()*h,z=5+R()*6;p.strokeStyle=hexA(HUES[i%8],.16);p.lineWidth=1.5;p.beginPath();
+      if(i%3===0)p.arc(x,y,z,0,7);else if(i%3===1){p.moveTo(x,y-z);p.lineTo(x+z,y+z*.8);p.lineTo(x-z,y+z*.8);p.closePath();}else p.rect(x-z*.7,y-z*.7,z*1.4,z*1.4);p.stroke();}}
+  else if(g==='orta'){const r=18;w=3*r;h=Math.sqrt(3)*r;c.width=Math.round(w*s);c.height=Math.round(h*s);p.scale(s,s);
+    p.strokeStyle='rgba(46,230,214,.10)';p.lineWidth=1;
+    const hex=(cx0,cy0)=>{p.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i;p.lineTo(cx0+r*Math.cos(a),cy0+r*Math.sin(a));}p.closePath();p.stroke();};
+    hex(0,0);hex(w,0);hex(0,h);hex(w,h);hex(1.5*r,h/2);}
+  else{const a=30;w=a;h=Math.sqrt(3)*a;c.width=Math.round(w*s);c.height=Math.round(h*s);p.scale(s,s);
+    p.strokeStyle='rgba(140,170,255,.09)';p.lineWidth=1;p.beginPath();
+    p.moveTo(0,0);p.lineTo(w,h);p.moveTo(w,0);p.lineTo(0,h);p.moveTo(0,h/2);p.lineTo(w,h/2);p.moveTo(0,.5);p.lineTo(w,.5);p.stroke();
+    p.fillStyle='rgba(170,195,255,.18)';[[0,0],[w,0],[w/2,h/2],[0,h],[w,h]].forEach(([x,y])=>{p.beginPath();p.arc(x,y,1.3,0,7);p.fill();});}
+  patCanvas=c;}
+function drawBackground(now){
+  const g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0A0F2C');g.addColorStop(1,'#170E36');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  makePattern();const pat=cx.createPattern(patCanvas,'repeat');const m=new DOMMatrix();const sc=1/Math.round(dpr);
+  m.translateSelf(0,-(now/1000*10)%(patCanvas.height*sc));m.scaleSelf(sc,sc);pat.setTransform(m);cx.fillStyle=pat;cx.fillRect(0,0,W,H);
+  const v=cx.createRadialGradient(W/2,H*.45,Math.min(W,H)*.2,W/2,H*.45,Math.max(W,H)*.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.45)');cx.fillStyle=v;cx.fillRect(0,0,W,H);
+  const half=W/2;const lg=cx.createLinearGradient(0,0,0,H);lg.addColorStop(0,'rgba(255,255,255,0)');lg.addColorStop(.5,'rgba(255,255,255,.18)');lg.addColorStop(1,'rgba(255,255,255,0)');
+  cx.fillStyle=lg;cx.fillRect(half-.5,0,1,H);}
+const TOPY=96;
+function gapPx(){return Math.max(70,Math.min(112,(H-TOPY-40)/4.6));}
+function rrect(x,y,w,h,r){r=Math.min(r,h/2,w/2);cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath();}
+function obsPath(x,y,w,h,g){cx.beginPath();if(g==='ilk')rrect(x,y,w,h,h*.38);else{const t=Math.min(h*.6,w/2);cx.moveTo(x,y+h/2);cx.lineTo(x+t,y);cx.lineTo(x+w-t,y);cx.lineTo(x+w,y+h/2);cx.lineTo(x+w-t,y+h);cx.lineTo(x+t,y+h);cx.closePath();}}
+function drawObstacle(x,y,w,h,rem,col,g,label,cur,dmgF,seed){
+  obsPath(x,y,w,h,g);cx.fillStyle='rgba(255,255,255,.035)';cx.fill();cx.strokeStyle=hexA(col,cur?.55:.3);cx.lineWidth=1.2;cx.stroke();
+  const vw=w*rem;
+  if(vw>1){cx.save();obsPath(x,y,w,h,g);cx.clip();cx.beginPath();cx.rect(x+w/2-vw/2,y-2,vw,h+4);cx.clip();
+    if(cur){cx.shadowColor=hexA(col,.7);cx.shadowBlur=16;}
+    const gr=cx.createLinearGradient(0,y,0,y+h);gr.addColorStop(0,shade(col,.45));gr.addColorStop(.45,col);gr.addColorStop(1,shade(col,-.4));
+    cx.fillStyle=gr;cx.fillRect(x,y,w,h);cx.shadowBlur=0;
+    cx.strokeStyle='rgba(255,255,255,.22)';cx.lineWidth=1;
+    if(g==='orta'){const r=6,hh=Math.sqrt(3)*r;for(let yy=y-r;yy<y+h+r;yy+=hh)for(let xx=x,j=0;xx<x+w+r;xx+=1.5*r,j++){const cy0=yy+(j%2?hh/2:0);cx.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i;cx.lineTo(xx+r*Math.cos(a),cy0+r*Math.sin(a));}cx.closePath();cx.stroke();}}
+    else if(g==='lise'){cx.beginPath();const s=h*.9;for(let xx=x,i=0;xx<x+w+s;xx+=s,i++){cx.moveTo(xx,i%2?y:y+h);cx.lineTo(xx+s,i%2?y+h:y);}cx.stroke();
+      const sh=cx.createLinearGradient(x,y,x+w,y+h);sh.addColorStop(.35,'rgba(255,255,255,0)');sh.addColorStop(.5,'rgba(255,255,255,.28)');sh.addColorStop(.65,'rgba(255,255,255,0)');cx.fillStyle=sh;cx.fillRect(x,y,w,h);}
+    cx.fillStyle='rgba(255,255,255,.35)';cx.fillRect(x,y+1.5,w,1.5);
+    cx.restore();
+    if(g==='ilk'){const n=Math.max(2,Math.floor(w/34));for(let i=0;i<n;i++){const sx=x+(i+.5)*w/n;if(Math.abs(sx-(x+w/2))>vw/2-6)continue;
+      cx.beginPath();rrect(sx-7,y-5,14,6,3);cx.fillStyle=shade(col,.25);cx.fill();}}}
+  if(cur&&dmgF>0){const R=rng(seed);const n=Math.ceil(dmgF*7);cx.lineWidth=1.3;
+    for(let i=0;i<n;i++){let px=x+w/2+(R()-.5)*vw*.9,py=R()<.5?y:y+h;const dir=py===y?1:-1;cx.beginPath();cx.moveTo(px,py);
+      for(let s=0;s<3;s++){px+=(R()-.5)*16;py+=dir*(h*.2+R()*h*.25);cx.lineTo(px,py);}cx.strokeStyle='rgba(20,10,40,.55)';cx.stroke();}}
+  cx.font="800 "+(h>24?14:12)+"px 'JetBrains Mono', monospace";let fs=h>24?14:12;
+  while(cx.measureText(label).width>w-24&&fs>8){fs--;cx.font="800 "+fs+"px 'JetBrains Mono', monospace";}
+  cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle=vw>1?'#fff':'rgba(255,255,255,.4)';
+  cx.shadowColor='rgba(0,0,0,.7)';cx.shadowBlur=4;cx.fillText(label,x+w/2,y+h/2+1);cx.shadowBlur=0;cx.textBaseline='alphabetic';}
+function drawBall(x,yBottom,r,lane,squash){
+  const L=LANE[lane];cx.save();cx.translate(x,yBottom);cx.scale(1+squash*.35,1-squash*.3);
+  cx.shadowColor=L.glow;cx.shadowBlur=24;
+  const g=cx.createRadialGradient(-r*.35,-r-r*.4,r*.08,0,-r,r);g.addColorStop(0,'#FFFFFF');g.addColorStop(.22,L.light);g.addColorStop(.62,L.base);g.addColorStop(1,L.dark);
+  cx.fillStyle=g;cx.beginPath();cx.arc(0,-r,r,0,Math.PI*2);cx.fill();cx.shadowBlur=0;
+  cx.strokeStyle='rgba(255,255,255,.35)';cx.lineWidth=1.2;cx.beginPath();cx.arc(0,-r,r-1.5,.5,1.9);cx.stroke();
+  cx.fillStyle='rgba(255,255,255,.9)';cx.beginPath();cx.ellipse(-r*.38,-r-r*.42,r*.22,r*.14,-.6,0,7);cx.fill();
+  cx.restore();}
+function spawnShards(key,x0,w,y,col){
+  const g=gradeKey();const v=vis[key];
+  for(let i=0;i<20;i++)v.parts.push({x:x0+16+Math.random()*(w-32),y:y+10,vx:(Math.random()-.5)*5,vy:-1-Math.random()*4.5,rot:Math.random()*6,vr:(Math.random()-.5)*.4,s:5+Math.random()*7,life:55+Math.random()*25,col,shape:g});
+  rings.push({x:x0+w/2,y:y+12,r:8,life:30,col});}
+function drawShards(v){
+  v.parts=v.parts.filter(p=>p.life>0);
+  for(const p of v.parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.22;p.rot+=p.vr;p.life--;
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.globalAlpha=Math.min(1,p.life/30);cx.fillStyle=p.col;cx.beginPath();
+    if(p.shape==='ilk')rrect(-p.s/2,-p.s/2,p.s,p.s,2);else if(p.shape==='orta'){for(let i=0;i<6;i++){const a=Math.PI/3*i;cx.lineTo(p.s*.6*Math.cos(a),p.s*.6*Math.sin(a));}cx.closePath();}
+    else{cx.moveTo(0,-p.s*.7);cx.lineTo(p.s*.6,p.s*.5);cx.lineTo(-p.s*.6,p.s*.5);cx.closePath();}
+    cx.fill();cx.restore();}
+  cx.globalAlpha=1;}
+function drawLane(key,lane,x0,w,pos,now,rate){
+  const v=vis[key],g=gradeKey(),gap=gapPx(),pad=16,oh=g==='ilk'?28:26;
+  v.off+=(pos.i-v.off)*.16;
+  const barY=i=>TOPY+(i-v.off)*gap;
+  if(!lane){cx.fillStyle='#929BD0';cx.font="14px 'Atkinson Hyperlegible', sans-serif";cx.textAlign='center';cx.fillText('Fonksiyonu düzelt',x0+w/2,H/2);return;}
+  const L=lane.lv.length;
+  for(let i=pos.i;i<L;i++){const y=barY(i);if(y>H+30)break;if(y<-40)continue;
+    const l=lane.lv[i],cur=i===pos.i&&!pos.done,rem=cur?Math.max(0,1-pos.dmg/l.hp):1;
+    drawObstacle(x0+pad,y,w-pad*2,oh,rem,HUES[(l.k-1)%8],g,cur?fmtShort(Math.max(0,l.hp-pos.dmg)):fmtShort(l.hp),cur,cur?pos.dmg/l.hp:0,l.k*97+(key==='a'?1:2));
+    cx.font="600 10px 'JetBrains Mono', monospace";cx.textAlign='left';cx.fillStyle='rgba(200,208,255,.55)';cx.fillText('n='+l.k,x0+pad+2,y+oh+14);}
+  const fy=barY(L);
+  if(fy<H+20){const cs=8,n=Math.floor((w-pad*2)/cs);for(let i=0;i<n;i++)for(let j=0;j<2;j++){cx.fillStyle=(i+j)%2?'rgba(255,255,255,.75)':'rgba(255,255,255,.08)';cx.fillRect(x0+pad+i*cs,fy+j*cs,cs,cs);}
+    cx.font="800 12px 'Bricolage Grotesque', sans-serif";cx.fillStyle='rgba(238,241,255,.8)';cx.textAlign='center';cx.fillText('BİTİŞ',x0+w/2,fy+32);}
+  drawShards(v);
+  const r=12,bx=x0+w/2;let bottom,squash=0;
+  const restY=pos.done?fy:barY(Math.min(pos.i,L-1));
+  if(phase==='ready'||(phase==='running'&&tRace<0)){bottom=barY(0)-46+Math.sin(now/400)*4;}
+  else if(pos.done){v.y+=(fy-v.y)*.2;bottom=v.y;}
+  else{let ph;if(rate<5)ph=raceT%1;else ph=(now/1000*Math.min(9,3+rate/40))%1;
+    const b=Math.sin(ph*Math.PI);bottom=restY-b*Math.min(70,gap*.68);v.y=bottom;squash=b<.12?(1-b/.12):0;}
+  if(phase!=='ready'){v.trail.push({x:bx,y:bottom-r});if(v.trail.length>9)v.trail.shift();
+    v.trail.forEach((p,i)=>{const a=i/v.trail.length;cx.fillStyle=hexA(LANE[key].base,.18*a);cx.beginPath();cx.arc(p.x,p.y,r*(.4+.5*a),0,7);cx.fill();});}
+  if(!pos.done||phase==='done'){const hgt=Math.max(0,restY-bottom);const sw=r*(1.3-Math.min(1,hgt/80)*.6);
+    cx.fillStyle='rgba(0,0,0,'+(0.35-Math.min(.25,hgt/300))+')';cx.beginPath();cx.ellipse(bx,restY+1,sw,3,0,0,7);cx.fill();}
+  drawBall(bx,bottom,r,key,squash);}
+function onHit(key,lane,pos,x0,w,rate){
+  const v=vis[key],l=lane.lv[Math.min(pos.i,lane.lv.length-1)];
+  const now=performance.now();
+  if(rate<6){popups.push({x:x0+w/2+(Math.random()-.5)*30,y:TOPY+(pos.i-v.off)*gapPx()-30,text:'−'+fmtShort(l.pw),life:50,col:LANE[key].light});
+    for(let i=0;i<6;i++)v.parts.push({x:x0+w/2,y:TOPY+(pos.i-v.off)*gapPx(),vx:(Math.random()-.5)*3,vy:-Math.random()*2.5,rot:0,vr:.3,s:3,life:18,col:LANE[key].light,shape:'lise'});}
+  const minGap=rate<6?0:95;if(now-v.sndT>minGap){SND.hit(key,l.k,rate>=6);v.sndT=now;}}
+function burstConfetti(w){
+  const cols=w==='t'?[LANE.a.base,LANE.b.base,...HUES]:[LANE[w].base,LANE[w].light,...HUES];
+  const xs=w==='a'?[W*.25]:w==='b'?[W*.75]:[W*.25,W*.75];
+  for(const xc of xs)for(let i=0;i<70;i++)confetti.push({x:xc+(Math.random()-.5)*60,y:H*.55,vx:(Math.random()-.5)*9,vy:-6-Math.random()*8,rot:Math.random()*6,vr:(Math.random()-.5)*.3,s:5+Math.random()*7,col:cols[i%cols.length],shape:['ilk','orta','lise'][i%3],life:150+Math.random()*60});}
+function drawFx(){
+  rings=rings.filter(r=>r.life>0);for(const r of rings){r.r+=4;r.life--;cx.strokeStyle=hexA(r.col,r.life/30);cx.lineWidth=3;cx.beginPath();cx.ellipse(r.x,r.y,r.r*1.6,r.r*.5,0,0,7);cx.stroke();}
+  popups=popups.filter(p=>p.life>0);for(const p of popups){p.y-=.8;p.life--;cx.globalAlpha=Math.min(1,p.life/20);cx.font="800 16px 'JetBrains Mono', monospace";cx.textAlign='center';cx.fillStyle=p.col;cx.fillText(p.text,p.x,p.y);}
+  cx.globalAlpha=1;
+  confetti=confetti.filter(p=>p.life>0&&p.y<H+30);
+  for(const p of confetti){p.x+=p.vx;p.y+=p.vy;p.vy+=.18;p.vx*=.99;p.rot+=p.vr;p.life--;cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.globalAlpha=Math.min(1,p.life/40);cx.fillStyle=p.col;cx.beginPath();
+    if(p.shape==='ilk')cx.rect(-p.s/2,-p.s/3,p.s,p.s*.66);else if(p.shape==='orta'){for(let i=0;i<6;i++){const a=Math.PI/3*i;cx.lineTo(p.s*.55*Math.cos(a),p.s*.55*Math.sin(a));}cx.closePath();}else{cx.moveTo(0,-p.s*.6);cx.lineTo(p.s*.55,p.s*.45);cx.lineTo(-p.s*.55,p.s*.45);cx.closePath();}
+    cx.fill();cx.restore();}
+  cx.globalAlpha=1;}
+function drawLive(){
+  gx.clearRect(0,0,GW,GH);if(!laneA||!laneB)return;
+  const L=st.L,pl=26,pr=8,pt=6,pb=16,X=t=>pl+t/raceDur*(GW-pl-pr),Y=p=>pt+(1-p/L)*(GH-pt-pb);
+  gx.strokeStyle='rgba(255,255,255,.10)';gx.lineWidth=1;gx.font="10px 'JetBrains Mono', monospace";gx.fillStyle='rgba(200,208,255,.6)';gx.textAlign='right';
+  [0,Math.round(L/2),L].forEach(p=>{gx.beginPath();gx.moveTo(pl,Y(p));gx.lineTo(GW-pr,Y(p));gx.stroke();gx.fillText(p,pl-5,Y(p)+3);});
+  gx.textAlign='left';gx.fillText('zaman →',pl,GH-3);
+  for(const [k,col] of [['a',LANE.a.base],['b',LANE.b.base]]){gx.strokeStyle=col;gx.lineWidth=2.4;gx.shadowColor=col;gx.shadowBlur=6;gx.beginPath();
+    history.forEach((h,i)=>{const x=X(Math.max(0,h.t)),y=Y(h[k]);i?gx.lineTo(x,y):gx.moveTo(x,y);});gx.stroke();gx.shadowBlur=0;
+    const last=history[history.length-1];if(last){gx.fillStyle=col;gx.beginPath();gx.arc(X(Math.max(0,last.t)),Y(last[k]),3.5,0,7);gx.fill();}}}
+function updateHeads(T){
+  for(const [key,lane] of [['a',laneA],['b',laneB]]){const up=key.toUpperCase();
+    if(!lane){$('pw'+up).textContent='—';$('hit'+up).textContent='—';$('lv'+up).textContent='—';continue;}
+    const pos=laneAt(lane,T),li=Math.min(pos.i,lane.lv.length-1),l=lane.lv[li];
+    $('pw'+up).textContent=fmtShort(l.pw);$('hit'+up).textContent=fmtShort(pos.hitsTot);
+    $('lv'+up).textContent=pos.done?'✓ '+lane.lv.length:(l.k+'/'+lane.lv.length);}}
+
+let lastNow=performance.now(),headTick=0;
+function frame(now){
+  const dt=Math.min(.05,(now-lastNow)/1000);lastNow=now;let rate=0;
+  if(phase==='running'){
+    tRace=(now-t0)/1000-COUNTDOWN;
+    if(tRace<0){const c=Math.ceil(-tRace);if(c!==lastCount){lastCount=c;SND.count(c);}}
+    else if(lastCount!==0){lastCount=0;SND.count(0);}
+    const prevT=raceT;raceT=timeline(tRace);rate=(raceT-prevT)/Math.max(dt,1e-3);
+    if(tRace>=0)history.push({t:tRace,a:progress(laneA,raceT),b:progress(laneB,raceT)});
+    if(raceT>=Math.max(laneA.total,laneB.total)&&tRace>.3){raceT=Math.max(laneA.total,laneB.total);finishRace();}}
+  drawBackground(now);
+  const half=W/2,T=phase==='ready'?0:raceT;
+  const z={i:0,done:false,dmg:0,hitsTot:0};
+  const pa=laneA?laneAt(laneA,T):z,pb=laneB?laneAt(laneB,T):z;
+  if(phase!=='ready')for(const [key,pos,lane,x0] of [['a',pa,laneA,0],['b',pb,laneB,half]]){
+    if(!lane)continue;const v=vis[key];
+    if(pos.i>v.lastK){const k0=v.lastK;const y=TOPY+(k0-v.off)*gapPx();spawnShards(key,x0,half,y,HUES[(lane.lv[k0].k-1)%8]);v.lastK=pos.i;
+      SND.brk(key,lane.lv[k0].k);if(pos.done)SND.finish(key);}
+    if(pos.hitsTot>v.lastHit&&!pos.done&&tRace>=0){onHit(key,lane,pos,x0,half,rate);v.lastHit=pos.hitsTot;}}
+  drawLane('a',laneA,0,half,pa,now,rate);drawLane('b',laneB,half,half,pb,now,rate);
+  drawFx();
+  if(phase==='running'&&tRace<0){const c=Math.ceil(-tRace),f=(-tRace)%1;
+    cx.save();cx.translate(W/2,H*.42);const s=1+.5*f;cx.scale(s,s);cx.globalAlpha=Math.min(1,.3+f);
+    cx.strokeStyle='rgba(255,255,255,.5)';cx.lineWidth=3;cx.beginPath();cx.arc(0,-14,42,-Math.PI/2,-Math.PI/2+Math.PI*2*f);cx.stroke();
+    cx.font="800 56px 'Bricolage Grotesque', sans-serif";cx.textAlign='center';cx.fillStyle='#fff';cx.shadowColor='rgba(166,107,255,.9)';cx.shadowBlur=24;cx.fillText(String(c),0,6);cx.restore();}
+  else if(phase==='running'&&tRace<.9){cx.save();cx.globalAlpha=1-tRace/.9;cx.font="800 48px 'Bricolage Grotesque', sans-serif";cx.textAlign='center';
+    const gg=cx.createLinearGradient(W/2-90,0,W/2+90,0);gg.addColorStop(0,LANE.a.base);gg.addColorStop(1,LANE.b.base);cx.fillStyle=gg;cx.shadowColor='rgba(255,255,255,.6)';cx.shadowBlur=16;cx.fillText('BAŞLA!',W/2,H*.42);cx.restore();}
+  if(phase==='done'){const w=winner();cx.textAlign='center';cx.font="800 24px 'Bricolage Grotesque', sans-serif";cx.shadowBlur=18;
+    if(w==='t'){cx.fillStyle='#fff';cx.shadowColor='#fff';cx.fillText('BERABERE',W/2,44);}
+    else{const x=w==='a'?half/2:half*1.5;cx.fillStyle=LANE[w].light;cx.shadowColor=LANE[w].glow;cx.fillText('★ KAZANAN ★',x,44);}cx.shadowBlur=0;}
+  if(++headTick%3===0)updateHeads(T);
+  drawLive();
+  requestAnimationFrame(frame);}
+
+// ---------- Analysis (charts) ----------
+function niceTicks(lo,hi,n){const span=hi-lo||1;const step0=span/n;const mag=Math.pow(10,Math.floor(Math.log10(step0)));const st=[1,2,5,10].map(m=>m*mag).find(s=>s>=step0)||10*mag;
+  const out=[];for(let v=Math.ceil(lo/st)*st;v<=hi+1e-9;v+=st)out.push(+v.toFixed(10));return out;}
+function axesFrame(o){ // o:{W,H,ml,mr,mt,mb,L,yTicks,Y,logY}
+  let g='';for(const v of o.yTicks){const y=o.Y(v);g+=`<line x1="${o.ml}" x2="${o.W-o.mr}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${o.ml-6}" y="${y+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="JetBrains Mono, monospace">${o.logY?'10'+String(v).split('').map(c=>supMap[c]).join(''):fmtShort(v)}</text>`;}
+  const xs=Math.max(1,Math.ceil(o.L/12));for(let n=1;n<=o.L;n+=xs)g+=`<text x="${o.X(n)}" y="${o.H-o.mb+16}" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="JetBrains Mono, monospace">${n}</text>`;
+  g+=`<text x="${o.W-o.mr}" y="${o.H-2}" text-anchor="end" font-size="11" fill="var(--muted)">engel (n)</text>`;return g;}
+function scaleY(vals,H,mt,mb,forceLog){const pos=vals.filter(v=>v>0);const mx=Math.max(...pos),mn=Math.min(...pos);
+  const logY=forceLog||mx/Math.max(mn,1e-9)>500;
+  if(logY){const y0=Math.floor(Math.log10(mn)),y1=Math.max(y0+1,Math.ceil(Math.log10(mx)));const step=Math.max(1,Math.ceil((y1-y0)/5));const ticks=[];for(let v=y0;v<=y1;v+=step)ticks.push(v);
+    return {logY,ticks,Y:v=>mt+(y1-Math.log10(v))/(y1-y0)*(H-mt-mb),Yt:v=>mt+(y1-v)/(y1-y0)*(H-mt-mb),base:y0};}
+  const ticks=niceTicks(0,mx,5);const top=Math.max(mx,ticks[ticks.length-1]);return {logY,ticks,Y:v=>mt+(1-v/top)*(H-mt-mb),Yt:v=>mt+(1-v/top)*(H-mt-mb),base:0};}
+function lineChart(series,L,extraDash,forceLog,marks){
+  const Wd=640,Hd=280,ml=58,mr=14,mt=14,mb=30;const all=[...series.flatMap(s=>s.v)];if(extraDash)all.push(...extraDash.v);
+  const S=scaleY(all,Hd,mt,mb,forceLog);const X=n=>ml+(n-1)/Math.max(1,L-1)*(Wd-ml-mr);
+  let g=axesFrame({W:Wd,H:Hd,ml,mr,mt,mb,L,yTicks:S.ticks,Y:S.Yt,X,logY:S.logY});
+  const path=v=>v.map((y,i)=>(i?'L':'M')+X(i+1).toFixed(1)+' '+S.Y(y).toFixed(1)).join(' ');
+  if(extraDash)g+=`<path d="${path(extraDash.v)}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  for(const s of series){g+=`<path d="${path(s.v)}" fill="none" stroke="${s.c}" stroke-width="2.6" stroke-linejoin="round"/>`;s.v.forEach((y,i)=>g+=`<circle cx="${X(i+1)}" cy="${S.Y(y)}" r="3" fill="${s.c}"/>`);}
+  for(const m of (marks||[]))g+=`<line x1="${X(m.n)}" x2="${X(m.n)}" y1="${mt}" y2="${Hd-mb}" stroke="var(--ink)" opacity=".3"/><text x="${X(m.n)+4}" y="${mt+11}" font-size="11" fill="var(--ink)">${m.t}</text>`;
+  return `<svg viewBox="0 0 ${Wd} ${Hd}" role="img">${g}</svg>`;}
+function barChart(A,B,L){
+  const Wd=640,Hd=280,ml=58,mr=14,mt=14,mb=30;const S=scaleY([...A,...B],Hd,mt,mb,false);
+  const bw=(Wd-ml-mr)/L;const X=n=>ml+(n-.5)*bw;let g=axesFrame({W:Wd,H:Hd,ml,mr,mt,mb,L,yTicks:S.ticks,Y:S.Yt,X,logY:S.logY});
+  const y0=S.logY?S.Yt(S.base):Hd-mb;const w=Math.max(2,bw*.36);
+  for(let i=0;i<L;i++){for(const [v,c,dx] of [[A[i],'var(--a)',-w],[B[i],'var(--b)',0]]){const y=S.Y(Math.max(v,S.logY?Math.pow(10,S.base):0));
+    g+=`<rect x="${(X(i+1)+dx).toFixed(1)}" y="${Math.min(y,y0).toFixed(1)}" width="${w.toFixed(1)}" height="${Math.max(1,Math.abs(y0-y)).toFixed(1)}" rx="2" fill="${c}"/>`;}}
+  return `<svg viewBox="0 0 ${Wd} ${Hd}" role="img">${g}</svg>`;}
+function donut(lane){
+  const tot=lane.total,size=180,r=70,ri=44,cxp=90,cyp=90;let a0=-Math.PI/2,g='';
+  const segs=[];let other=0;lane.lv.forEach(l=>{const f=l.hits/tot;if(f<.03)other+=l.hits;else segs.push({k:l.k,h:l.hits});});
+  if(other)segs.push({k:0,h:other});
+  if(segs.length===1){const s=segs[0];g+=`<circle cx="${cxp}" cy="${cyp}" r="${(r+ri)/2}" fill="none" stroke="${s.k?HUES[(s.k-1)%8]:'var(--muted)'}" stroke-width="${r-ri}"/>`;}
+  else for(const s of segs){const a1=a0+s.h/tot*Math.PI*2,large=a1-a0>Math.PI?1:0;const p=(a,rr)=>[cxp+rr*Math.cos(a),cyp+rr*Math.sin(a)];
+    const [x1,y1]=p(a0,r),[x2,y2]=p(a1,r),[x3,y3]=p(a1,ri),[x4,y4]=p(a0,ri);
+    g+=`<path d="M${x1} ${y1}A${r} ${r} 0 ${large} 1 ${x2} ${y2}L${x3} ${y3}A${ri} ${ri} 0 ${large} 0 ${x4} ${y4}Z" fill="${s.k?HUES[(s.k-1)%8]:'var(--muted)'}" stroke="var(--card)" stroke-width="1.5"/>`;
+    const am=(a0+a1)/2;if(s.h/tot>.07){const [tx,ty]=p(am,(r+ri)/2);g+=`<text x="${tx}" y="${ty+4}" text-anchor="middle" font-size="11" font-weight="700" fill="#141B2E" font-family="JetBrains Mono, monospace">${s.k?s.k:'…'}</text>`;}
+    a0=a1;}
+  g+=`<text x="${cxp}" y="${cyp-2}" text-anchor="middle" font-size="16" font-weight="800" fill="var(--ink)" font-family="JetBrains Mono, monospace">${fmtShort(tot)}</text><text x="${cxp}" y="${cyp+14}" text-anchor="middle" font-size="10" fill="var(--muted)">vuruş</text>`;
+  return `<svg viewBox="0 0 ${size} ${size}" role="img" style="max-width:200px;margin:0 auto">${g}</svg>`;}
+function crossovers(f,g,L){const out=[];let s=null;for(let n=1;n<=L;n++){const d=Math.sign(f(n)-g(n));if(s!==null&&d!==0&&d!==s)out.push({n,leader:d>0?'a':'b'});if(d!==0)s=d;}return out;}
+function lastShare(lane,k){const s=lane.lv.slice(-k).reduce((a,l)=>a+l.hits,0);return Math.round(100*s/lane.total);}
+function renderAnalysis(){
+  const A=laneA,B=laneB,L=st.L,na=nm('a'),nb=nm('b'),w=winner(),act=curAct();
+  const head=w==='t'?`İki top da ${fmt(A.total)} vuruşta bitirdi: berabere.`:(w==='a'?`${na} ${fmt(A.total)} vuruşta, ${nb} ${fmt(B.total)} vuruşta bitirdi.`:`${nb} ${fmt(B.total)} vuruşta, ${na} ${fmt(A.total)} vuruşta bitirdi.`);
+  const cr=crossovers(fA,fB,L);
+  let gen='';
+  if(L>=2){const rA=fA(L)/fA(L-1),rB=fB(L)/fB(L-1);gen=`Son engelde ${na} gücü bir öncekinin ×${fmt(rA)} katı, ${nb} ×${fmt(rB)} katı. Bu oran <b>basamak çarpanı</b>: uzun yarışta basamak çarpanı büyük olan öne geçer.`;}
+  if(cr.length){const c=cr[cr.length-1];gen+=` Güçler n = ${c.n}’de yer değiştiriyor, o noktadan sonra ${c.leader==='a'?na:nb} daha güçlü.`;}
+  const whyHtml=(act?act.why.map(t=>`<p>${t}</p>`).join(''):'')+(gen?`<p>${gen}</p>`:'');
+  let strip='';for(let l=3;l<=25;l++){let cls='wt';try{const a=buildLane(fA,l,st.rule).total,b=buildLane(fB,l,st.rule).total;cls=a<b?'wa':b<a?'wb':'wt';}catch(_){}
+    strip+=`<button class="${cls}${l===L?' cur':''}" data-len="${l}" aria-label="${l} engellik yarış">${l}</button>`;}
+  const showOp=A.lv.every(l=>l.hp<=1e5&&Number.isInteger(l.pw))&&B.lv.every(l=>Number.isInteger(l.pw));
+  const op=l=>{const q=Math.floor(l.hp/l.pw),r=l.hp-q*l.pw;return `${fmt(l.hp)} ÷ ${fmt(l.pw)} = ${q}`+(r?` k ${r} → ${q+1}`:'');};
+  let rows='';for(let i=0;i<L;i++){const a=A.lv[i],b=B.lv[i];
+    rows+=`<tr><td>${a.k}</td><td>${fmt(a.hp)}</td><td class="ca">${fmt(a.pw)}</td><td class="ca"><b>${fmt(a.hits)}</b></td>${showOp?`<td class="op">${op(a)}</td>`:''}<td class="cb">${fmt(b.pw)}</td><td class="cb"><b>${fmt(b.hits)}</b></td>${showOp?`<td class="op">${op(b)}</td>`:''}</tr>`;}
+  rows+=`<tr><td><b>Toplam</b></td><td></td><td></td><td class="ca"><b>${fmt(A.total)}</b></td>${showOp?'<td></td>':''}<td></td><td class="cb"><b>${fmt(B.total)}</b></td>${showOp?'<td></td>':''}</tr>`;
+  const legend=`<div class="legend"><span><i style="background:var(--a)"></i>${na}</span><span><i style="background:var(--b)"></i>${nb}</span></div>`;
+  const k3=Math.min(3,L);
+  $('analysis').innerHTML=`
+    <h3>Neden?</h3>
+    <p><b>${head}</b></p>
+    <div class="why">${whyHtml}</div>
+    ${act?`<div class="discuss"><div class="label">Tartışma sorusu</div><p>${act.tart}</p></div>`:''}
+    <div class="charts">
+      <div class="chart wide"><h4>Yarış grafiği: toplam vuruş</h4><p class="hint">Her nokta, o engel kırıldığında toplam kaç vuruş yapıldığını gösterir. Çizgiler kesişiyorsa yarışta öne geçen değişmiştir.</p>${legend}
+        ${lineChart([{v:A.lv.map(l=>l.cum),c:'var(--a)'},{v:B.lv.map(l=>l.cum),c:'var(--b)'}],L,null,false)}</div>
+      <div class="chart"><h4>Engel başına vuruş</h4><p class="hint">Sütun grafiği. Kısa sütun = engeli az vuruşla kırmış.</p>${legend}${barChart(A.lv.map(l=>l.hits),B.lv.map(l=>l.hits),L)}</div>
+      <div class="chart"><h4>Güç ve engel canı</h4><p class="hint">Kesikli çizgi engel canı. Güç çizgisi canın üstüne çıkınca engel tek vuruşta kırılır.</p>${legend}
+        ${lineChart([{v:A.lv.map(l=>l.pw),c:'var(--a)'},{v:B.lv.map(l=>l.pw),c:'var(--b)'}],L,{v:A.lv.map(l=>l.hp)},false,cr.map(c=>({n:c.n,t:'kesişme n = '+c.n})))}</div>
+      <div class="chart wide"><h4>Vuruşlar hangi engelde harcandı?</h4><p class="hint">Halka grafiği: her dilim bir engel, rengi sahnedeki engelin rengi. ${na} vuruşlarının %${lastShare(A,k3)}’ini, ${nb} %${lastShare(B,k3)}’ini son ${k3} engelde yaptı.</p>
+        <div class="donuts"><figure>${donut(A)}<figcaption>${na}</figcaption></figure><figure>${donut(B)}<figcaption>${nb}</figcaption></figure></div></div>
+      <div class="chart wide"><h4>Engel sayısına göre kazanan</h4><p class="hint">Her kutu bir yarış uzunluğu, rengi o uzunlukta kimin kazandığını gösterir. Dokunursan yarış o uzunluğa ayarlanır.</p>
+        <div class="legend"><span><i style="background:var(--a-soft);border:1px solid var(--a)"></i>${na}</span><span><i style="background:var(--b-soft);border:1px solid var(--b)"></i>${nb}</span><span><i style="background:var(--soft);border:1px solid var(--line)"></i>Berabere</span></div>
+        <div class="strip">${strip}</div></div>
+    </div>
+    <h4>Engel engel hesap</h4>
+    <div class="tablebox"><table><thead><tr><th>n</th><th>CAN</th><th>GÜÇ</th><th>VURUŞ</th>${showOp?'<th>İŞLEM</th>':''}<th>GÜÇ</th><th>VURUŞ</th>${showOp?'<th>İŞLEM</th>':''}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  $('analysis').hidden=false;$('ph').hidden=true;}
+$('analysis').addEventListener('click',e=>{const b=e.target.closest('[data-len]');if(!b)return;st.L=+b.dataset.len;$('lenR').value=st.L;rebuild();$('cv').scrollIntoView({behavior:'smooth',block:'center'});});
+
+// ---------- Master Class sitesine gömülü çalışma ----------
+// Site içinde açılınca karanlık temaya geçer; sitenin ses düğmesi bu sayfanın efektlerini de açıp kapatır.
+(function(){
+  let gomulu=false;try{gomulu=new URLSearchParams(location.search).has('gomulu')||window.self!==window.top;}catch(_){gomulu=true;}
+  if(gomulu){document.documentElement.setAttribute('data-theme','dark');document.documentElement.classList.add('gomulu');}
+  window.addEventListener('message',e=>{const d=e.data;if(d&&d.mc==='ses'){$('soundC').checked=!!d.acik;if(d.acik)SND.init();}});
+})();
+// ---------- Boot ----------
+applyAct('i1');resize();requestAnimationFrame(frame);
+</script>
+
+</body></html>
