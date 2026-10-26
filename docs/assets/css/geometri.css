@@ -1,0 +1,69 @@
+/* =====================================================================
+   GEOMETRİ ATÖLYESİ — sayılar sitesinin tasarım dilini paylaşır.
+   Düzen: solda araç kutusu, ortada çizim tahtası, sağda görev/ölçü paneli.
+   Dünya: teknik çizim masası. Mavi kâğıt ızgarası, turkuaz pergel izleri.
+   ===================================================================== */
+.logo-isaret.geo { background: var(--turkuaz); color: #04241b; box-shadow: 0 0 24px rgba(53, 224, 176, .45); font-size: 20px; }
+body.geometri nav.menu a[aria-current="page"] .nokta { background: var(--turkuaz); box-shadow: 0 0 10px var(--turkuaz); }
+
+.masa { display: grid; grid-template-columns: 92px minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
+.arac-kutusu { display: grid; gap: 6px; position: sticky; top: 150px; }
+.arac { display: grid; place-items: center; gap: 2px; min-height: 64px; border-radius: 14px; border: 1px solid var(--cizgi); background: var(--panel);
+  color: var(--soluk); font-size: 11.5px; font-weight: 600; line-height: 1.15; text-align: center; padding: 6px 4px; }
+.arac svg { width: 28px; height: 28px; }
+.arac:hover { color: var(--metin); border-color: var(--cizgi-guclu); }
+.arac[aria-pressed="true"] { background: rgba(53, 224, 176, .16); border-color: var(--turkuaz); color: var(--metin); }
+.arac:disabled { opacity: .3; cursor: not-allowed; }
+.arac-ayrac { height: 1px; background: var(--cizgi); margin: 4px 6px; }
+.tahta-kutu { position: relative; border-radius: 22px; overflow: hidden; border: 1px solid var(--cizgi); background: #06122a; height: min(74vh, 720px); min-height: 420px; touch-action: none; }
+.tahta-kutu svg { display: block; width: 100%; height: 100%; user-select: none; -webkit-user-select: none; }
+.tahta-ust { position: absolute; left: 12px; right: 12px; top: 10px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; pointer-events: none; z-index: 2; }
+.tahta-ust > * { pointer-events: auto; }
+.durum-cubugu { background: rgba(8, 18, 39, .88); border: 1px solid var(--cizgi); border-radius: 12px; padding: 8px 12px; font-size: 14px; max-width: 70%; }
+.durum-cubugu b { color: var(--turkuaz); }
+.mini-btnlar { display: flex; gap: 6px; }
+.mini-btn { border: 1px solid var(--cizgi); background: rgba(8, 18, 39, .88); color: var(--metin); border-radius: 10px; min-width: 42px; min-height: 42px; padding: 0 10px; font-weight: 700; }
+.mini-btn:hover { border-color: var(--turkuaz); }
+.mini-btn:disabled { opacity: .35; }
+.gorev-liste { display: grid; gap: 8px; }
+.gorev { text-align: left; border: 1px solid var(--cizgi); background: var(--zemin); border-radius: 14px; padding: 10px 12px; display: grid; gap: 2px; }
+.gorev:hover { border-color: var(--cizgi-guclu); }
+.gorev[aria-pressed="true"] { border-color: var(--turkuaz); background: rgba(53, 224, 176, .1); }
+.gorev b { font-size: 15px; }
+.gorev small { color: var(--soluk); font-size: 13px; }
+.yildiz { color: var(--altin); letter-spacing: 2px; font-size: 14px; }
+.basari { background: linear-gradient(120deg, rgba(53, 224, 176, .25), rgba(53, 224, 176, .06)); border: 1px solid rgba(53, 224, 176, .55); border-radius: 16px; padding: 12px 14px; }
+.olcu-liste { display: grid; gap: 6px; font-family: var(--f-sayi); font-size: 14px; }
+.olcu-liste div { display: flex; justify-content: space-between; gap: 8px; background: var(--zemin); border-radius: 10px; padding: 6px 10px; }
+
+.ucgen-duzen { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.anahtar { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; background: var(--zemin); border: 1px solid var(--cizgi); cursor: pointer; }
+.anahtar input { width: 20px; height: 20px; accent-color: var(--turkuaz); }
+.anahtar i { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.anahtar span { flex: 1; font-weight: 600; font-size: 15px; }
+.anahtar small { color: var(--soluk); font-family: var(--f-sayi); }
+
+.cisim-duzen { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.cisim-sec { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.cisim-sec button { border: 1px solid var(--cizgi); background: var(--zemin); border-radius: 14px; padding: 10px; min-height: 56px; font-weight: 700; color: var(--soluk); }
+.cisim-sec button[aria-pressed="true"] { border-color: var(--turkuaz); background: rgba(53, 224, 176, .12); color: var(--metin); }
+.euler { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; text-align: center; }
+.euler div { background: var(--zemin); border-radius: 12px; padding: 8px; }
+.euler b { display: block; font-family: var(--f-baslik); font-size: 1.6rem; }
+.euler small { color: var(--soluk); font-size: 12px; }
+
+@media (max-width: 1100px) {
+  .masa { grid-template-columns: 80px minmax(0, 1fr); }
+  .masa > .yan-panel { grid-column: 1 / -1; }
+}
+@media (max-width: 960px) {
+  .ucgen-duzen, .cisim-duzen { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .masa { grid-template-columns: minmax(0, 1fr); }
+  .arac-kutusu { position: static; display: flex; overflow-x: auto; gap: 6px; padding-bottom: 4px; }
+  .arac { min-width: 70px; flex: none; }
+  .arac-ayrac { display: none; }
+  .tahta-kutu { height: 62vh; }
+  .durum-cubugu { max-width: 100%; }
+}

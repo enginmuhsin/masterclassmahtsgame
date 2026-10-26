@@ -365,3 +365,7 @@ details.acilir[open] summary { margin-bottom: 10px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+/* Modül sayısı üçün katı değilse son kart satırı doldurur */
+.moduller .modul:last-child:nth-child(3n+1) { grid-column: 1 / -1; }
+@media (max-width: 960px) { .moduller .modul:last-child:nth-child(3n+1) { grid-column: auto; } .moduller .modul:last-child:nth-child(2n+1) { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .moduller .modul:last-child { grid-column: auto; } }

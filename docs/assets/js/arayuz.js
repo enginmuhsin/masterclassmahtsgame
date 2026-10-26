@@ -55,16 +55,16 @@
   MC.modul = (ad, tanim) => { moduller[ad] = { ...tanim, kuruldu: false }; };
   U.git = function (ad, param) { const h = "#" + ad + (param ? "-" + param : ""); if (location.hash === h) yonlendir(); else location.hash = h; };
   function yonlendir() {
-    const ham = (location.hash || "#ana").slice(1);
+    const ham = (location.hash || "#").slice(1);
     const [ad, ...kalan] = ham.split("-");
-    const hedef = moduller[ad] ? ad : "ana", param = kalan.join("-") || null;
+    const hedef = moduller[ad] ? ad : Object.keys(moduller)[0], param = kalan.join("-") || null;
     U.$$(".gorunum").forEach((g) => g.classList.toggle("aktif", g.id === "g-" + hedef));
     U.$$("nav.menu a").forEach((a) => { if (a.dataset.git === hedef) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
     const m = moduller[hedef], el = U.$("#g-" + hedef);
     if (!m.kuruldu) { m.kuruldu = true; m.kur(el); }
     if (m.goster) m.goster(el, param);
     const menu = U.$(`nav.menu a[data-git="${hedef}"]`); if (menu) menu.scrollIntoView({ block: "nearest", inline: "nearest" });
-    document.title = (m.baslik ? m.baslik + " · " : "") + "Master Class Sayılar";
+    document.title = (m.baslik ? m.baslik + " · " : "") + (U.siteAdi || "Master Class Sayılar");
     window.scrollTo({ top: 0, behavior: "auto" });
   }
   U.baslat = function () {

@@ -1,9 +1,10 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v3";
+const SURUM = "mc-v4";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
+  "./assets/css/geometri.css",
   "./assets/css/site.css",
   "./assets/fonts/atkinson-hyperlegible-latin-400-normal.woff2",
   "./assets/fonts/atkinson-hyperlegible-latin-700-normal.woff2",
@@ -40,6 +41,9 @@ const DOSYALAR = [
   "./assets/js/cekirdek.js",
   "./assets/js/dedektor.js",
   "./assets/js/fonksiyon.js",
+  "./assets/js/geo-cisim.js",
+  "./assets/js/geo-cizim.js",
+  "./assets/js/geo-ucgen.js",
   "./assets/js/grafik.js",
   "./assets/js/laboratuvar.js",
   "./assets/js/oyunlar.js",
@@ -72,6 +76,7 @@ const DOSYALAR = [
   "./assets/kutuphane/katex/katex.min.css",
   "./assets/kutuphane/three.min.js",
   "./fonksiyon-yarisi.html",
+  "./geometri/index.html",
   "./index.html",
   "./manifest.webmanifest"
 ];
