@@ -1,1 +1,2 @@
-streamlit
+   streamlit>=1.40
+   plotly>=5.18
