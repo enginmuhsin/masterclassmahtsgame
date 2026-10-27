@@ -9,6 +9,6 @@
    İkisi de boş kalırsa site normal çalışır; yalnızca sıralama ve sayaç gizlenir.
    ===================================================================== */
 window.MC_BULUT = {
-  url: "",
-  anahtar: "",
+  url: "https://kfpziysmsajqidkzaawh.supabase.co",
+  anahtar: "sb_publishable_jzoa489kAPGEComqCF2JSQ_N8gjKPjC",
 };
