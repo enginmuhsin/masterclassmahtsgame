@@ -179,6 +179,7 @@
     const konular = Object.keys(sp.karne);
     s.innerHTML = `<div class="panel"><span class="etiket">Bitiş çizgisi</span><h2>${sp.puan >= 150 ? "Pist rekoru gibi!" : sp.puan >= 60 ? "Güzel sürüş!" : "Bir tur daha?"}</h2>
         <div class="metrikler"><div class="metrik"><small>Puan</small><b>${sp.puan}</b></div><div class="metrik"><small>Doğru</small><b>${sp.dogru}</b></div><div class="metrik"><small>Yanlış</small><b>${sp.yanlis}</b></div><div class="metrik"><small>İsabet</small><b>%${sp.dogru + sp.yanlis ? Math.round(100 * sp.dogru / (sp.dogru + sp.yanlis)) : 0}</b></div></div>
+        <div id="spSiralama"></div>
         ${konular.length ? '<span class="etiket soluk">Konu karnesi</span><div class="grafik-kutu" id="spKarne" style="height:300px"></div>' : ""}
         <div class="satir"><button class="btn btn-ana" id="spTekrar">Yeni Sprint</button><button class="btn btn-ikinci" id="spAyar">Konuları değiştir</button></div></div>
       ${sp.hatalar.length ? `<div class="panel"><span class="etiket">Pit stop: doğrularıyla tekrar et</span><div class="yigin" id="spHatalar"></div></div>` : ""}`;
@@ -190,6 +191,8 @@
       kutu.insertAdjacentHTML("beforeend", `<p>Senin cevabın: <s class="soluk">${U.kacis(sec)}</s> → Doğrusu: <b class="mono">${U.kacis(q.dogru)}</b>${q.aciklama ? `<br><span class="soluk">${q.aciklama}</span>` : ""}</p>`);
       h.appendChild(kutu);
     });
+    if (MC.bulut) MC.bulut.gonderKutusu(U.$("#spSiralama", s), { oyun: "formula-sprint", varyant: String(sp.sure), puan: sp.puan, ikincil: sp.yanlis,
+      ayrinti: { dogru: sp.dogru, yanlis: sp.yanlis, konular: sp.konular }, engel: sp.dogru + sp.yanlis < 3 ? "Sıralamaya göndermek için en az 3 soru cevapla." : null });
     U.$("#spTekrar", s).addEventListener("click", basla);
     U.$("#spAyar", s).addEventListener("click", () => { s.hidden = true; U.$("#spKurulum", el).hidden = false; });
   }

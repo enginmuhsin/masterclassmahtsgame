@@ -352,9 +352,13 @@
     basarildi = true;
     const yildiz = adim <= gorev.par ? 3 : adim <= gorev.par + 3 ? 2 : 1;
     const kayit = U.depoAl("geo_gorev", {}); if (!kayit[gorev.id] || kayit[gorev.id] < yildiz) { kayit[gorev.id] = yildiz; U.depoYaz("geo_gorev", kayit); }
+    const adimlar = U.depoAl("geo_gorev_adim", {}); if (!adimlar[gorev.id] || adim < adimlar[gorev.id]) { adimlar[gorev.id] = adim; U.depoYaz("geo_gorev_adim", adimlar); }
+    const toplamYildiz = GOREVLER.reduce((t, g) => t + (kayit[g.id] || 0), 0), toplamAdim = GOREVLER.reduce((t, g) => t + (kayit[g.id] ? adimlar[g.id] || g.par + 4 : 0), 0);
     Ses.efekt("bitis");
     gorevPaneli(`<div class="basari"><b>Tebrikler, çizim doğru!</b><br>${adim} adımda tamamladın (Öklid'in çözümü ${gorev.par} adım). <span class="yildiz">${"★".repeat(yildiz)}${"☆".repeat(3 - yildiz)}</span>
-      <p class="soluk" style="margin-top:6px">Şimdi <b>Taşı</b> aracıyla sarı noktaları sürükle: inşa her konumda doğru kalır. Göz kararı çizimle cetvel-pergel çizimi arasındaki fark budur.</p></div>`);
+      <p class="soluk" style="margin-top:6px">Şimdi <b>Taşı</b> aracıyla sarı noktaları sürükle: inşa her konumda doğru kalır. Göz kararı çizimle cetvel-pergel çizimi arasındaki fark budur.</p></div>
+      <div id="czSiralama"></div>`);
+    if (MC.bulut) MC.bulut.gonderKutusu(U.$("#czSiralama", el), { oyun: "oklid", varyant: "toplam", puan: toplamYildiz, ikincil: toplamAdim, ayrinti: { yildiz: kayit, adim: adimlar } });
     if (U.animasyon()) gsap.fromTo(U.$(".basari", el), { scale: .9, opacity: 0 }, { scale: 1, opacity: 1, duration: .4, ease: "back.out(2)", overwrite: true });
   }
   function gorevPaneli(ek = "") {

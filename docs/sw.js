@@ -1,11 +1,12 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v4";
+const SURUM = "mc-v5";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
   "./assets/css/geometri.css",
   "./assets/css/site.css",
+  "./assets/css/siralama.css",
   "./assets/fonts/atkinson-hyperlegible-latin-400-normal.woff2",
   "./assets/fonts/atkinson-hyperlegible-latin-700-normal.woff2",
   "./assets/fonts/atkinson-hyperlegible-latin-ext-400-normal.woff2",
@@ -38,6 +39,8 @@ const DOSYALAR = [
   "./assets/js/ana.js",
   "./assets/js/arayuz.js",
   "./assets/js/bilgi.js",
+  "./assets/js/bulut-ayar.js",
+  "./assets/js/bulut.js",
   "./assets/js/cekirdek.js",
   "./assets/js/dedektor.js",
   "./assets/js/fonksiyon.js",
@@ -48,6 +51,7 @@ const DOSYALAR = [
   "./assets/js/laboratuvar.js",
   "./assets/js/oyunlar.js",
   "./assets/js/sahne3d.js",
+  "./assets/js/siralama.js",
   "./assets/js/ses.js",
   "./assets/js/sprint.js",
   "./assets/kutuphane/gsap.min.js",
@@ -88,6 +92,7 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+  if (new URL(e.request.url).origin !== self.location.origin) return; // sıralama sunucusu gibi dış adresler önbelleğe alınmaz
   e.respondWith(
     fetch(e.request).then((yanit) => {
       const kopya = yanit.clone();

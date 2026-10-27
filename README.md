@@ -18,6 +18,13 @@ Site `docs/` klasöründen GitHub Pages ile ücretsiz yayınlanır. Bir kez aç�
 | Bilgi Köşesi | Tanımlar, ispatlar, kavram yanılgıları, açık problemler, algoritmalar |
 | **Geometri Atölyesi** (`geometri/`) | Cetvel-pergel Çizim Masası ve 5 Öklid görevi (otomatik denetim), Üçgen Laboratuvarı (4 merkez, Euler doğrusu, dokuz nokta çemberi), katlanıp açılan 3B cisimler |
 
+## Sıralama tablosu, ziyaret sayacı ve öğretmen paneli
+
+- Öğrenci **takma ad** ve isteğe bağlı **sınıf kodu** ile skor gönderir; ad-soyad, e-posta, IP adresi alınmaz.
+- Her oyunun ve yarış türünün ayrı tablosu vardır (Sayı Avı: zorluk × süre, Formula Sprint: süre, Sayı Izgarası, Sayı Bilmecesi, Fonksiyon Yarışı, Öklid Görevleri).
+- `yonetim.html` öğretmen paneli: onay, ret, takma ad / puan düzeltme, silme, otomatik onay, kayıt açma-kapama, yasaklı kelimeler, CSV indirme, günlük ziyaret grafiği.
+- Altyapı: Supabase (ücretsiz katman). Kurulum: `veritabani/kurulum.sql` dosyasını SQL Editor'da çalıştır, adres ve publishable anahtarı `docs/assets/js/bulut-ayar.js` dosyasına yaz. Bu dosya boşken sıralama ve sayaç gizli kalır.
+
 ## İnternetsiz kullanım (akıllı tahta)
 
 `docs` klasörünün tamamını tahtaya kopyalayıp `index.html` dosyasını tarayıcıyla açmak yeterlidir. Tüm kütüphaneler ve yazı tipleri klasörün içindedir.
@@ -30,7 +37,9 @@ docs/                      → web sitesi (GitHub Pages)
   fonksiyon-yarisi.html    → Fonksiyon Yarışı oyunu
   assets/js/               → cekirdek.js (sayı kuramı), oyunlar.js, dedektor.js, sprint.js, laboratuvar.js, bilgi.js …
   assets/css/              → site.css, fonts.css
-  assets/lib/              → three.js, GSAP, KaTeX (yerel kopyalar)
+  assets/kutuphane/        → three.js, GSAP, KaTeX (yerel kopyalar)
+  yonetim.html             → öğretmen paneli (sıralama yönetimi)
+veritabani/kurulum.sql     → Supabase tabloları, güvenlik kuralları ve fonksiyonları
   assets/fonts/            → yazı tipleri (OFL lisanslı)
 oyun.py.py                 → önceki Streamlit sürümü (Streamlit Cloud'da çalışmaya devam eder)
 ```

@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="assets/css/fonts.css">
 <link rel="stylesheet" href="assets/kutuphane/katex/katex.min.css">
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/siralama.css">
 </head>
 <body>
 <div class="kap">
@@ -40,6 +41,7 @@
       <a href="#sprint" data-git="sprint"><span class="nokta"></span>Formula Sprint</a>
       <a href="#laboratuvar" data-git="laboratuvar"><span class="nokta"></span>Görsel Laboratuvar</a>
       <a href="#bilgi" data-git="bilgi"><span class="nokta"></span>Bilgi Köşesi</a>
+      <a href="#siralama" data-git="siralama" data-bulut hidden><span class="nokta"></span>Sıralama</a>
       <a href="geometri/index.html" class="menu-geo"><span class="nokta" style="background:var(--turkuaz);opacity:1"></span>Geometri Atölyesi ↗</a>
     </nav>
   </header>
@@ -52,11 +54,14 @@
     <section class="gorunum" id="g-sprint" aria-label="Formula Sprint"></section>
     <section class="gorunum" id="g-laboratuvar" aria-label="Görsel Laboratuvar"></section>
     <section class="gorunum" id="g-bilgi" aria-label="Bilgi Köşesi"></section>
+    <section class="gorunum" id="g-siralama" aria-label="Sıralama"></section>
   </main>
 
   <footer class="alt-bilgi">
     <span>Master Class: Sayılar ve DNA'ları · TÜBİTAK 2204-A · Matematik / Algoritma Tasarımı</span>
     <span>İnternetsiz çalışır · Akıllı tahta uyumlu · Sesler kodla üretilir</span>
+    <span class="ziyaret-sayac" id="ziyaretSayac" hidden></span>
+    <a href="yonetim.html" data-bulut hidden>Öğretmen paneli</a>
   </footer>
 </div>
 
@@ -71,6 +76,8 @@
 <script src="assets/js/sahne3d.js"></script>
 <script src="assets/js/grafik.js"></script>
 <script src="assets/js/arayuz.js"></script>
+<script src="assets/js/bulut-ayar.js"></script>
+<script src="assets/js/bulut.js"></script>
 <script src="assets/js/ana.js"></script>
 <script src="assets/js/oyunlar.js"></script>
 <script src="assets/js/fonksiyon.js"></script>
@@ -78,8 +85,10 @@
 <script src="assets/js/sprint.js"></script>
 <script src="assets/js/laboratuvar.js"></script>
 <script src="assets/js/bilgi.js"></script>
+<script src="assets/js/siralama.js"></script>
 <script>
   MC.ui.baslat();
+  MC.bulut.kur();
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 </script>
 </body>

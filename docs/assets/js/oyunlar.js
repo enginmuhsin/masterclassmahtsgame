@@ -230,8 +230,15 @@
       r.sort((a, b) => b.puan - a.puan); U.depoYaz("mc_rekorlar", r.slice(0, 10)); rekorlariGoster();
     }
     const hatalar = oyun.hatalar.length ? oyun.hatalar.map((h) => `<div class="hata-satir">${takim ? (h.takim === 0 ? "Kırmızı · " : "Mavi · ") : ""}<b class="mono">${S.tr(h.n)}</b> → ${h.c.ad}? Cevap: <b>${h.evetDedi ? "EVET" : "HAYIR"}</b> (${h.d})<br>${S.kanit(h.n, h.c.k)}</div>`).join("") : '<p style="color:var(--turkuaz)">Kusursuz tur. Tek hata yok.</p>';
-    el.innerHTML = `<span class="etiket">Süre doldu</span><h2>${baslik}</h2>${ust}<h3>Hata röntgeni</h3><div class="hata-liste">${hatalar}</div>
+    el.innerHTML = `<span class="etiket">Süre doldu</span><h2>${baslik}</h2>${ust}<div id="avSiralama"></div><h3>Hata röntgeni</h3><div class="hata-liste">${hatalar}</div>
       <div class="satir"><button class="btn btn-ana" id="avTekrar">Tekrar Oyna</button><button class="btn btn-ikinci" id="avAyar">Ayarları değiştir</button></div>`;
+    if (MC.bulut) MC.bulut.gonderKutusu(U.$("#avSiralama", el), {
+      oyun: "sayi-avi", varyant: `${{ 200: "kolay", 2000: "orta", 20000: "uzman" }[oyun.aralik]}-${oyun.sure}`,
+      puan: oyun.puan, ikincil: oyun.yanlis, ayrinti: { dogru: oyun.dogru, yanlis: oyun.yanlis, tuzak: oyun.tuzak },
+      engel: takim ? "Takım oyunları sıralamaya gönderilmez. Tabloya girmek için tek oyunculu bir tur oyna."
+        : oyun.mod !== "dengeli" ? "Sıralamaya yalnızca Dengeli puanlamayla oynanan turlar gönderilebilir. Sabit −5 modu alıştırma içindir."
+        : toplam < 3 ? "Sıralamaya göndermek için turda en az 3 soru cevapla." : null,
+    });
     U.$("#avTekrar", el).addEventListener("click", avBaslat);
     U.$("#avAyar", el).addEventListener("click", () => { el.hidden = true; U.$("#avKurulum", avEl).hidden = false; });
     if (U.animasyon()) gsap.fromTo(U.$$(".metrik", el), { y: 20, opacity: 0 }, { y: 0, opacity: 1, stagger: .08, duration: .5, overwrite: true });
@@ -297,7 +304,9 @@
       const hatali = iz.sayilar.filter((n, i) => iz.secili.has(i) !== f(BigInt(n)));
       alt.innerHTML = `<div class="geri ${iz.son > 0 ? "dogru" : "yanlis"}" style="margin-top:14px"><span class="puan-rozet">${iz.son > 0 ? "+" : ""}${iz.son}</span><p>Turkuaz: doğru bulduğun · Kırmızı: yanlış seçtiğin · Kesik çizgili: kaçırdığın.</p></div>
         ${hatali.length ? `<div class="hata-liste" style="margin-top:10px">${hatali.map((n) => `<div class="hata-satir"><b class="mono">${S.tr(n)}</b>: ${S.kanit(n, iz.kat)}</div>`).join("")}</div>` : '<p style="color:var(--turkuaz);margin-top:10px">Hepsini doğru buldun.</p>'}
+        ${iz.tur === 5 ? '<div id="izSiralama" style="margin-top:14px"></div>' : iz.tur < 5 && MC.bulut && MC.bulut.ayarli() ? `<p class="soluk" style="margin-top:10px">Sıralama: 5. turun sonunda toplam puanını tabloya gönderebilirsin (şu an ${iz.tur}/5).</p>` : ""}
         <div class="satir" style="margin-top:14px"><button class="btn btn-ana btn-buyuk" id="izSonraki">Sonraki Tur</button></div>`;
+      if (iz.tur === 5 && MC.bulut) MC.bulut.gonderKutusu(U.$("#izSiralama", alt), { oyun: "sayi-izgarasi", varyant: String(iz.aralik), puan: iz.toplam, ayrinti: { kat: iz.kat } });
       U.$("#izSonraki", alt).addEventListener("click", () => izYeni(iz.kat, iz.aralik, iz.tur + 1, iz.toplam));
     }
   }
@@ -350,9 +359,11 @@
     k.innerHTML = `<div class="satir" style="justify-content:space-between"><h3>Bilmece ${bl.tur}</h3><span class="mono">Toplam puan: ${bl.toplam}</span></div>
       ${bl.ipucu.slice(0, bl.acik).map((m, i) => `<div class="ipucu-kart">İpucu ${i + 1}: ${m}</div>`).join("")}
       ${bl.bitti ? `<div class="geri dogru"><span class="puan-rozet">+${bl.kazanc}</span><p><b>Buldun! Gizli sayı ${bl.n}.</b> ${S.kanit(bl.n, "asal")}</p></div>
+        ${bl.tur === 5 ? '<div id="blSiralama"></div>' : bl.tur < 5 && MC.bulut && MC.bulut.ayarli() ? `<p class="soluk">Sıralama: 5. bilmecenin sonunda toplam puanını tabloya gönderebilirsin (şu an ${bl.tur}/5).</p>` : ""}
         <div class="satir"><button class="btn btn-ana btn-buyuk" id="blYeni">Yeni Bilmece</button></div>` :
       `<p class="soluk">Gizli sayı hangisi?</p><div class="secenekler">${bl.secenek.map((m) => `<button class="secenek" data-m="${m}" ${bl.elenen.has(m) ? "disabled" : ""}>${m}</button>`).join("")}</div>
         ${bl.acik < bl.ipucu.length ? `<div class="satir"><button class="btn btn-ikinci" id="blIpucu">Yeni ipucu aç (${bl.acik}/${bl.ipucu.length})</button></div>` : ""}`}`;
+    if (bl.bitti && bl.tur === 5 && MC.bulut) MC.bulut.gonderKutusu(U.$("#blSiralama", k), { oyun: "sayi-bilmecesi", varyant: "5-tur", puan: bl.toplam });
     const yb = U.$("#blYeni", k); if (yb) yb.addEventListener("click", () => { blYeni(bl.toplam, bl.tur + 1); blCiz(); });
     const ib = U.$("#blIpucu", k); if (ib) ib.addEventListener("click", () => { bl.acik++; Ses.efekt("dokun"); blCiz(); });
     U.$$(".secenek", k).forEach((b) => b.addEventListener("click", () => {

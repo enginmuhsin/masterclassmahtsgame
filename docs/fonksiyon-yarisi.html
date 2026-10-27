@@ -515,7 +515,13 @@ function startRace(pred){
 function finishRace(){
   phase='done';renderControls();renderAnalysis();
   const w=winner();burstConfetti(w);
-  if(prediction&&prediction!==w)SND.sad();else SND.fanfare();}
+  if(prediction&&prediction!==w)SND.sad();else SND.fanfare();
+  tahminKaydet(w);}
+// Her etkinlikte YALNIZCA İLK tahmin sayılır (sıralama tablosu için). Değiştirilmiş etkinlik sayılmaz.
+function tahminKaydet(w){const a=curAct();if(!a||!prediction||st.L!==a.L)return;
+  let k={};try{k=JSON.parse(localStorage.getItem('fy_tahminler')||'{}')||{};}catch(_){}
+  if(!(a.id in k)){k[a.id]=prediction===w;try{localStorage.setItem('fy_tahminler',JSON.stringify(k));}catch(_){}}
+  try{if(window.parent!==window)window.parent.postMessage({mc:'fy-tahmin',toplam:ACTS.length},'*');}catch(_){}}
 $('controls').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
   if(a==='pa')startRace('a');else if(a==='pb')startRace('b');else if(a==='pt')startRace('t');else if(a==='go')startRace(null);
   else if(a==='again')startRace(prediction);else if(a==='reset')resetRace();else if(a==='mode')setStage(true);});

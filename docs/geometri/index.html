@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="../assets/kutuphane/katex/katex.min.css">
 <link rel="stylesheet" href="../assets/css/site.css">
 <link rel="stylesheet" href="../assets/css/geometri.css">
+<link rel="stylesheet" href="../assets/css/siralama.css">
 </head>
 <body class="geometri">
 <div class="kap">
@@ -38,6 +39,7 @@
       <a href="#cizim" data-git="cizim"><span class="nokta"></span>Çizim Masası</a>
       <a href="#ucgen" data-git="ucgen"><span class="nokta"></span>Üçgen Laboratuvarı</a>
       <a href="#cisimler" data-git="cisimler"><span class="nokta"></span>3B Cisimler ve Açınımlar</a>
+      <a href="../index.html#siralama-oklid.toplam" data-bulut hidden><span class="nokta"></span>Sıralama ↗</a>
     </nav>
   </header>
 
@@ -50,6 +52,7 @@
   <footer class="alt-bilgi">
     <span>Master Class Geometri Atölyesi · TÜBİTAK 2204-A</span>
     <span>Cetvel ve pergel · Öklid'in Elemanlar'ı · İnternetsiz çalışır</span>
+    <span class="ziyaret-sayac" id="ziyaretSayac" hidden></span>
   </footer>
 </div>
 
@@ -61,12 +64,16 @@
 <script src="../assets/js/ses.js"></script>
 <script src="../assets/js/sahne3d.js"></script>
 <script src="../assets/js/arayuz.js"></script>
+<script src="../assets/js/bulut-ayar.js"></script>
+<script src="../assets/js/bulut.js"></script>
 <script src="../assets/js/geo-cizim.js"></script>
 <script src="../assets/js/geo-ucgen.js"></script>
 <script src="../assets/js/geo-cisim.js"></script>
 <script>
   MC.ui.siteAdi = "Master Class Geometri";
+  MC.ui.sayfaOnek = "geo-";
   MC.ui.baslat();
+  MC.bulut.kur();
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(() => {});
 </script>
 </body>

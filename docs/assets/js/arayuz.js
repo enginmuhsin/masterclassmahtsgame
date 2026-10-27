@@ -65,6 +65,7 @@
     if (m.goster) m.goster(el, param);
     const menu = U.$(`nav.menu a[data-git="${hedef}"]`); if (menu) menu.scrollIntoView({ block: "nearest", inline: "nearest" });
     document.title = (m.baslik ? m.baslik + " · " : "") + (U.siteAdi || "Master Class Sayılar");
+    if (MC.bulut) MC.bulut.sayfa((U.sayfaOnek || "") + hedef);
     window.scrollTo({ top: 0, behavior: "auto" });
   }
   U.baslat = function () {
