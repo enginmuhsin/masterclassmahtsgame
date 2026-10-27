@@ -1,6 +1,6 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v5";
+const SURUM = "mc-v6";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
@@ -46,6 +46,9 @@ const DOSYALAR = [
   "./assets/js/fonksiyon.js",
   "./assets/js/geo-cisim.js",
   "./assets/js/geo-cizim.js",
+  "./assets/js/geo-soru-hesap.js",
+  "./assets/js/geo-soru-ornek.js",
+  "./assets/js/geo-soru.js",
   "./assets/js/geo-ucgen.js",
   "./assets/js/grafik.js",
   "./assets/js/laboratuvar.js",

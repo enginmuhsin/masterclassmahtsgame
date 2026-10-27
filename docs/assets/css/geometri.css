@@ -67,3 +67,16 @@ body.geometri nav.menu a[aria-current="page"] .nokta { background: var(--turkuaz
   .tahta-kutu { height: 62vh; }
   .durum-cubugu { max-width: 100%; }
 }
+
+/* ---------- Soru Masası ---------- */
+.sq-dosya { cursor: pointer; }
+.sq-uyari { background: rgba(255, 198, 87, .1); border: 1px solid rgba(255, 198, 87, .45); border-radius: 14px; padding: 10px 12px; }
+.sq-kayit { display: flex; gap: 6px; align-items: stretch; }
+.sq-kayit .gorev { flex: 1; min-width: 0; }
+.sq-birak { position: absolute; inset: 12px; border: 3px dashed var(--turkuaz); border-radius: 18px; display: grid; place-items: center;
+  background: rgba(6, 18, 42, .8); font-family: var(--f-baslik); font-size: 1.3rem; color: var(--turkuaz); pointer-events: none; z-index: 3; }
+.sq-soru-metni { font-size: 1.05rem; line-height: 1.55; }
+.arac .kilit { font-size: 11px; line-height: 1; }
+#g-soru textarea.girdi { resize: vertical; font: inherit; line-height: 1.45; }
+#g-soru .yan-panel .panel { gap: 12px; }
+#g-soru .basari b { color: var(--metin); }

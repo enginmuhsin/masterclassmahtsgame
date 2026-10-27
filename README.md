@@ -16,7 +16,7 @@ Site `docs/` klasöründen GitHub Pages ile ücretsiz yayınlanır. Bir kez aç�
 | Formula Sprint | 11 konuda dokunmatik hız yarışı |
 | Görsel Laboratuvar | Bölen dağları (3B), Ulam spirali, Eratosthenes kalburu, (a+b)³ küpü, Fibonacci, Collatz, π(x) |
 | Bilgi Köşesi | Tanımlar, ispatlar, kavram yanılgıları, açık problemler, algoritmalar |
-| **Geometri Atölyesi** (`geometri/`) | Cetvel-pergel Çizim Masası ve 5 Öklid görevi (otomatik denetim), Üçgen Laboratuvarı (4 merkez, Euler doğrusu, dokuz nokta çemberi), katlanıp açılan 3B cisimler |
+| **Geometri Atölyesi** (`geometri/`) | Cetvel-pergel Çizim Masası ve 5 Öklid görevi (otomatik denetim), Üçgen Laboratuvarı (4 merkez, Euler doğrusu, dokuz nokta çemberi), katlanıp açılan 3B cisimler, **Soru Masası** (görselin üzerinden şekil kurma, verilere uydurma, öğrenci çözüm kipi, bağlantıyla paylaşım) |
 
 ## Sıralama tablosu, ziyaret sayacı ve öğretmen paneli
 

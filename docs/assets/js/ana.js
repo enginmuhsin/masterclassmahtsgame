@@ -25,7 +25,7 @@
     ["sprint", "FS", "var(--altin)", "Formula Sprint", "Kuvvetler, kökler, bölünebilme, özdeşlikler, trigonometri ve logaritmada hız yarışı.", "11 konu"],
     ["laboratuvar", "GL", "var(--turkuaz)", "Görsel Laboratuvar", "Bölen dağları, Ulam spirali, Eratosthenes kalburu, (a+b)³ küpü, Fibonacci ve Collatz.", "7 deney"],
     ["bilgi", "BK", "var(--mor)", "Bilgi Köşesi", "Tanımlar, ispatlar, kavram yanılgıları ve hâlâ çözülmemiş ünlü problemler.", "11 konu"],
-    ["geometri", "△", "var(--turkuaz)", "Geometri Atölyesi", "Cetvel-pergel çizim masası ve Öklid görevleri, üçgenin gizli merkezleri, katlanıp açılan 3B cisimler.", "Yeni · 3 bölüm"],
+    ["geometri", "△", "var(--turkuaz)", "Geometri Atölyesi", "Cetvel-pergel çizim masası, Öklid görevleri, üçgenin merkezleri, 3B açınımlar ve görselden soru kuran Soru Masası.", "Yeni · 4 bölüm"],
   ];
   MC.modul("ana", {
     kur(el) {
