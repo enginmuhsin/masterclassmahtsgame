@@ -117,6 +117,7 @@
       <p>$x \mapsto x^2 + c \pmod n$ dizisi bir süre sonra döngüye girer. $n$'nin gizli bir asal böleni $p$ için bu döngü mod $p$'de çok daha erken kapanır (doğum günü problemi: yaklaşık $\sqrt p$ adımda). Ardışık farkların EBOB'u bu anı yakalar ve $p$'yi ortaya çıkarır.</p>
       ${B("Ayakkabı dolabında kayıp eşi bulmak için dolabın yalnızca <b>yarısını</b> aramak yeter, çünkü her bölen çiftinin bir teki √n'nin altındadır. Pollard rho ise dolabı hiç açmadan, iki kişinin aynı ayakkabıyı ne zaman seçtiğine bakarak çifti bulur.")}` },
   ];
+  let bilgiSec = null;
   MC.modul("bilgi", {
     baslik: "Bilgi Köşesi",
     kur(el) {
@@ -130,7 +131,8 @@
         if (U.animasyon()) gsap.fromTo(metin, { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: .3, overwrite: true });
       };
       U.$(".bilgi-menu", el).addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { MC.Ses.efekt("dokun"); sec(b.dataset.id); } });
-      sec("asal");
+      sec("asal"); bilgiSec = sec;
     },
+    goster(el, param) { if (param && bilgiSec && KONU.some((k) => k.id === param)) bilgiSec(param); },
   });
 })();

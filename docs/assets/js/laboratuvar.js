@@ -245,13 +245,16 @@
     ciz(10000);
   }
 
+  let labSec = null;
   MC.modul("laboratuvar", {
     baslik: "Görsel Laboratuvar",
+    /* #laboratuvar-collatz gibi bağlantılar doğrudan o deneyi açar (Öğretmen Masası kullanır) */
+    goster(el, param) { if (param && labSec && DENEYLER.some((d) => d.id === param)) labSec(param); },
     kur(el) {
       el.innerHTML = `<div class="bolum-basi"><span class="etiket">Görsel Laboratuvar</span><h2>Sayıları gözünle gör</h2><p>3B grafikler parmakla döndürülür, iki parmakla ya da fare tekerleğiyle yakınlaştırılır.</p></div>
         <div id="labSekme"></div><div class="sekme-icerik">${DENEYLER.map((d) => `<div id="lab-${d.id}" hidden></div>`).join("")}</div>`;
       const F = { daglar, ulam, elek, kup, fib, collatz, pi };
-      U.sekmeler(U.$("#labSekme", el), DENEYLER, (id) => {
+      labSec = U.sekmeler(U.$("#labSekme", el), DENEYLER, (id) => {
         DENEYLER.forEach((d) => (U.$("#lab-" + d.id, el).hidden = d.id !== id));
         if (!kurulan[id]) { kurulan[id] = true; F[id](U.$("#lab-" + id, el)); }
       });
