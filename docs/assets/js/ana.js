@@ -34,7 +34,7 @@
       el.innerHTML = `
         <div class="hero">
           <div class="hero-metin">
-            <span class="etiket">TÜBİTAK 2204-A · Sayılar Teorisi ve Algoritmalar</span>
+            <span class="etiket">Sayılar Teorisi ve Algoritmalar</span>
             <h1>Sayıların <em>DNA'sını</em> çöz.</h1>
             <p>Her sayı, asal sayılardan yazılmış tek bir şifredir. Yandaki galakside 900 sayı dolaşıyor: kırmızılar asal, altınlar yarı asal. Yükselen kuleler en çok böleni olan sayılar.</p>
             <div class="satir">
