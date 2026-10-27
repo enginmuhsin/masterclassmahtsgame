@@ -25,7 +25,8 @@
     ["sprint", "FS", "var(--altin)", "Formula Sprint", "Kuvvetler, kökler, bölünebilme, özdeşlikler, trigonometri ve logaritmada hız yarışı.", "11 konu"],
     ["laboratuvar", "GL", "var(--turkuaz)", "Görsel Laboratuvar", "Bölen dağları, Ulam spirali, Eratosthenes kalburu, (a+b)³ küpü, Fibonacci ve Collatz.", "7 deney"],
     ["bilgi", "BK", "var(--mor)", "Bilgi Köşesi", "Tanımlar, ispatlar, kavram yanılgıları ve hâlâ çözülmemiş ünlü problemler.", "11 konu"],
-    ["geometri", "△", "var(--turkuaz)", "Geometri Atölyesi", "Cetvel-pergel çizim masası, Öklid görevleri, üçgenin merkezleri, 3B açınımlar ve görselden soru kuran Soru Masası.", "Yeni · 4 bölüm"],
+    ["ayin", "★", "var(--altin)", "Ayın Geometri Sorusu", "Her ay öğretmenin hazırladığı bir olimpiyat sorusu. Şekli incele, Soru Masası'nda yardımcı çizgilerle çöz.", "Eylül 2026"],
+    ["geometri", "△", "var(--turkuaz)", "Geometri Atölyesi", "Cetvel-pergel çizim masası, Öklid görevleri, üçgenin merkezleri, 3B açınımlar ve görselden soru kuran Soru Masası.", "Yeni · 5 bölüm"],
   ];
   MC.modul("ana", {
     kur(el) {
@@ -57,7 +58,7 @@
           </div>
           <div class="moduller">
             ${MODULLER.map(([id, k, r, ad, ac, say]) => `
-              <a class="modul" ${id === "geometri" ? 'href="geometri/index.html"' : `href="#${id}" data-git="${id}"`}>
+              <a class="modul" ${id === "geometri" ? 'href="geometri/index.html"' : id === "ayin" ? 'href="geometri/index.html#ayin"' : `href="#${id}" data-git="${id}"`}>
                 <span class="simge" style="background:${r};color:#081227">${k}</span>
                 <h3>${ad}</h3><p>${ac}</p><span class="sayac">${say}</span>
               </a>`).join("")}

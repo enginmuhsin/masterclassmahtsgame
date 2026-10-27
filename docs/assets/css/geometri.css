@@ -80,3 +80,18 @@ body.geometri nav.menu a[aria-current="page"] .nokta { background: var(--turkuaz
 #g-soru textarea.girdi { resize: vertical; font: inherit; line-height: 1.45; }
 #g-soru .yan-panel .panel { gap: 12px; }
 #g-soru .basari b { color: var(--metin); }
+
+/* ---------- Ayın Geometri Sorusu ---------- */
+nav.menu a.menu-ayin { color: var(--altin); }
+.ayin-duzen { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.ayin-sahne { background: radial-gradient(600px 300px at 50% 0%, rgba(255, 198, 87, .08), transparent 70%), var(--panel); }
+.ayin-ust { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; }
+.ayin-tuval { border-radius: 18px; overflow: hidden; background: #06122a; border: 1px solid var(--cizgi); display: grid; place-items: center; min-height: 320px; }
+.ayin-svg { width: 100%; height: auto; max-height: 64vh; display: block; }
+.ayin-foto { width: 100%; max-height: 70vh; object-fit: contain; display: block; background: #e9edf2; }
+.ayin-kart { border-color: rgba(255, 198, 87, .4); }
+.ayin-imza { display: grid; grid-template-columns: auto 1fr; gap: 0 10px; align-items: baseline; padding: 10px 12px; border-radius: 12px; background: var(--zemin); border: 1px dashed rgba(255, 198, 87, .4); }
+.ayin-imza span { color: var(--soluk); font-size: 13px; }
+.ayin-imza b { font-family: var(--f-baslik); color: var(--altin); }
+.ayin-imza small { grid-column: 2; color: var(--soluk); font-family: var(--f-sayi); font-size: 12px; }
+@media (max-width: 960px) { .ayin-duzen { grid-template-columns: minmax(0, 1fr); } }

@@ -369,3 +369,22 @@ details.acilir[open] summary { margin-bottom: 10px; }
 .moduller .modul:last-child:nth-child(3n+1) { grid-column: 1 / -1; }
 @media (max-width: 960px) { .moduller .modul:last-child:nth-child(3n+1) { grid-column: auto; } .moduller .modul:last-child:nth-child(2n+1) { grid-column: 1 / -1; } }
 @media (max-width: 560px) { .moduller .modul:last-child { grid-column: auto; } }
+
+/* ---------- İmza ve müzik seçimi ---------- */
+.logo .imza { display: block; font-family: var(--f-sayi); font-size: 11px; letter-spacing: .08em; color: var(--altin); opacity: .9; margin-top: 2px; white-space: nowrap; }
+.ses-sec { padding-inline: 8px; min-width: 36px; margin-left: -4px; justify-content: center; }
+.ses-sec svg { width: 16px; height: 16px; transition: transform .2s; }
+.ses-sec[aria-expanded="true"] svg { transform: rotate(180deg); }
+.muzik-menu { position: fixed; z-index: 70; width: min(320px, calc(100vw - 24px)); background: var(--panel); border: 1px solid var(--cizgi-guclu); border-radius: 18px;
+  box-shadow: var(--golge); padding: 8px; display: grid; gap: 4px; animation: giris .2s ease; }
+.muzik-menu .etiket { padding: 6px 10px 2px; }
+.muzik-menu button { display: grid; grid-template-columns: 22px 1fr; gap: 2px 10px; align-items: center; text-align: left; border: 0; background: transparent; color: var(--metin);
+  border-radius: 12px; padding: 10px; min-height: 52px; }
+.muzik-menu button:hover { background: rgba(255, 255, 255, .05); }
+.muzik-menu button[aria-checked="true"] { background: rgba(53, 224, 176, .12); }
+.muzik-menu button i { grid-row: span 2; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--soluk); }
+.muzik-menu button[aria-checked="true"] i { border-color: var(--turkuaz); background: var(--turkuaz); box-shadow: 0 0 10px var(--turkuaz); }
+.muzik-menu b { font-weight: 700; }
+.muzik-menu small { color: var(--soluk); font-size: 12.5px; line-height: 1.3; }
+@media (max-width: 560px) { .logo .imza { font-size: 9.5px; letter-spacing: .04em; } }
+.bildirim { pointer-events: none; }

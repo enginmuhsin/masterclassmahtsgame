@@ -81,6 +81,33 @@
       const fy = U.$("#fyCerceve"); if (fy && fy.contentWindow) fy.contentWindow.postMessage({ mc: "ses", acik: MC.Ses.efektAcik }, "*");
     });
     efektGoster();
+    /* Müzik seçimi menüsü */
+    const ms = U.$("#muzikSec");
+    if (ms) {
+      let menu = null;
+      const kapat = () => { if (menu) { menu.remove(); menu = null; ms.setAttribute("aria-expanded", "false"); } };
+      ms.addEventListener("click", (e) => {
+        e.stopPropagation(); if (menu) return kapat();
+        const P = MC.Ses.PARCALAR;
+        menu = document.createElement("div"); menu.className = "muzik-menu"; menu.setAttribute("role", "menu");
+        menu.innerHTML = `<span class="etiket soluk">Müzik seç</span>` + Object.entries(P).map(([id, p]) => `<button role="menuitemradio" data-p="${id}" aria-checked="${MC.Ses.parca === id}"><i></i><b>${p.ad}</b><small>${p.aciklama}</small></button>`).join("");
+        document.body.appendChild(menu);
+        const r = ms.getBoundingClientRect();
+        menu.style.top = Math.round(r.bottom + 8) + "px";
+        menu.style.left = Math.round(Math.max(12, Math.min(innerWidth - menu.offsetWidth - 12, r.right - menu.offsetWidth))) + "px";
+        ms.setAttribute("aria-expanded", "true");
+        menu.addEventListener("click", (ev) => {
+          const b = ev.target.closest("[data-p]"); if (!b) return;
+          MC.Ses.parcaSec(b.dataset.p);
+          U.$$("[data-p]", menu).forEach((x) => x.setAttribute("aria-checked", x === b));
+          if (mb.getAttribute("aria-pressed") !== "true") mb.click();
+          U.bildir("Müzik: " + MC.Ses.PARCALAR[b.dataset.p].ad);
+        });
+      });
+      document.addEventListener("click", (e) => { if (menu && !menu.contains(e.target)) kapat(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") kapat(); });
+      window.addEventListener("resize", kapat);
+    }
     const tb = U.$("#tamEkranBtn");
     if (tb) tb.addEventListener("click", () => {
       const d = document.documentElement;

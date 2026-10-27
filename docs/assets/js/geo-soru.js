@@ -504,10 +504,10 @@
   }
   function cozPanel() {
     const k = U.$("#sqYan", el), q = coz && coz.soru;
-    const liste = [...MC.soruOrnekleri, ...kayitlar()];
+    const liste = [...(MC.ayinSorulari || []), ...MC.soruOrnekleri, ...kayitlar()];
     const cozulen = U.depoAl("geo_soru_cozulen", {});
     if (!q) {
-      k.innerHTML = `<div class="panel"><span class="etiket" style="color:var(--turkuaz)">Bir soru seç</span><div class="gorev-liste">${liste.map((x) => `<button class="gorev" data-coz="${x.id}"><b>${U.kacis(x.baslik || "Başlıksız soru")}</b><small>${x.ornek ? "Örnek soru" : "Bu cihazda hazırlandı"}${cozulen[x.id] ? " · ✓ çözüldü" : ""}</small></button>`).join("")}</div></div>`;
+      k.innerHTML = `<div class="panel"><span class="etiket" style="color:var(--turkuaz)">Bir soru seç</span><div class="gorev-liste">${liste.map((x) => `<button class="gorev" data-coz="${x.id}"><b>${U.kacis(x.baslik || "Başlıksız soru")}</b><small>${x.ayin ? `<span style="color:var(--altin)">★ Ayın sorusu · ${U.kacis(x.ay)}</span>` : x.ornek ? "Örnek soru" : "Bu cihazda hazırlandı"}${cozulen[x.id] ? " · ✓ çözüldü" : ""}</small></button>`).join("")}</div></div>`;
     } else {
       const birim = q.birim === "°" ? "°" : q.birim;
       k.innerHTML = `
@@ -634,7 +634,20 @@
         try { const q = JSON.parse(b64.oku(param.slice(4))); if (!Array.isArray(q.nesne)) throw 0; history.replaceState(null, "", "#soru"); cozBaslat(q); U.bildir("Paylaşılan soru açıldı."); }
         catch (e) { U.bildir("Bu soru bağlantısı bozuk."); }
       } else if (param === "coz") kipSec("coz");
+      else if (param.startsWith("ayin")) {
+        const id = param.split(".")[1], q = (MC.ayinSorulari || []).find((x) => !id || x.id === id);
+        if (q) { history.replaceState(null, "", "#soru"); cozBaslat(JSON.parse(JSON.stringify(q))); }
+      }
     },
   });
-  MC.geoSoru = { durum: () => ({ kip, S, coz, sonUydur, arac, secim }), _test: { kipSec, aracSec, cozBaslat, uydur, taslakYukle, baglanti, b64, tiklaXY: (x, y) => { const r = svg.getBoundingClientRect(), s = Math.min(r.width / W, r.height / Y); return tikla({ clientX: r.left + (r.width - W * s) / 2 + x * s, clientY: r.top + (r.height - Y * s) / 2 + y * s, pointerId: 1 }); } } };
+  /* Başka bölümler için durağan çizim (ör. Ayın Sorusu): mantıksal 1000×700 düzleminde SVG içeriği ve sınır kutusu */
+  function statikSvg(q) {
+    const yedek = { S, ekran, secim, olcumler, hs, konum, fare };
+    S = { ...q, gorsel: null }; ekran = 1; secim = []; olcumler = []; fare = null; hs = H.hesapla(S.nesne);
+    const icerik = svgYaz(false).replace(/<rect x="0" y="0" width="1000" height="700"[^>]*\/>/, ""), nlar = S.nesne.filter((o) => o.tur === "nokta").map((o) => hs.P(o.id)).filter(Boolean);
+    ({ S, ekran, secim, olcumler, hs, konum, fare } = yedek);
+    const x0 = Math.min(...nlar.map((p) => p.x)), x1 = Math.max(...nlar.map((p) => p.x)), y0 = Math.min(...nlar.map((p) => p.y)), y1 = Math.max(...nlar.map((p) => p.y));
+    return { icerik, kutu: { x: x0 - 70, y: y0 - 70, w: x1 - x0 + 140, h: y1 - y0 + 140 } };
+  }
+  MC.geoSoru = { statikSvg, cozBaslat: (q) => cozBaslat(JSON.parse(JSON.stringify(q))), durum: () => ({ kip, S, coz, sonUydur, arac, secim }), _test: { kipSec, aracSec, cozBaslat, uydur, taslakYukle, baglanti, b64, tiklaXY: (x, y) => { const r = svg.getBoundingClientRect(), s = Math.min(r.width / W, r.height / Y); return tikla({ clientX: r.left + (r.width - W * s) / 2 + x * s, clientY: r.top + (r.height - Y * s) / 2 + y * s, pointerId: 1 }); } } };
 })();

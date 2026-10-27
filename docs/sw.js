@@ -1,6 +1,6 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v6";
+const SURUM = "mc-v7";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
@@ -36,7 +36,9 @@ const DOSYALAR = [
   "./assets/fonts/unbounded-latin-ext-700-normal.woff2",
   "./assets/fonts/unbounded-latin-ext-900-normal.woff2",
   "./assets/img/simge.svg",
+  "./assets/img/ayin/2026-09.jpg",
   "./assets/js/ana.js",
+  "./assets/js/ayin-sorulari.js",
   "./assets/js/arayuz.js",
   "./assets/js/bilgi.js",
   "./assets/js/bulut-ayar.js",
@@ -44,6 +46,7 @@ const DOSYALAR = [
   "./assets/js/cekirdek.js",
   "./assets/js/dedektor.js",
   "./assets/js/fonksiyon.js",
+  "./assets/js/geo-ayin.js",
   "./assets/js/geo-cisim.js",
   "./assets/js/geo-cizim.js",
   "./assets/js/geo-soru-hesap.js",

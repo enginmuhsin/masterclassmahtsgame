@@ -18,6 +18,14 @@ Site `docs/` klasöründen GitHub Pages ile ücretsiz yayınlanır. Bir kez aç�
 | Bilgi Köşesi | Tanımlar, ispatlar, kavram yanılgıları, açık problemler, algoritmalar |
 | **Geometri Atölyesi** (`geometri/`) | Cetvel-pergel Çizim Masası ve 5 Öklid görevi (otomatik denetim), Üçgen Laboratuvarı (4 merkez, Euler doğrusu, dokuz nokta çemberi), katlanıp açılan 3B cisimler, **Soru Masası** (görselin üzerinden şekil kurma, verilere uydurma, öğrenci çözüm kipi, bağlantıyla paylaşım) |
 
+## Ayın Geometri Sorusu
+
+`docs/assets/js/ayin-sorulari.js` dosyasındaki listenin başına her ay yeni bir soru eklenir (Soru Masası biçiminde, ölçekli şekil ve öğretmenin el yazısı kâğıdının fotoğrafıyla). Geometri Atölyesi'nde “★ Ayın Sorusu” bölümünde görünür ve Soru Masası'nda çözülür.
+
+## Müzik
+
+Beş üretken parça (ses dosyası yok, hepsi kodla üretilir): Yıldız Tozu, Lo-fi Çalışma, Retro Oyun, Piyano Düşünce, Fibonacci Ritmi. Müzik düğmesinin yanındaki ▾ menüsünden seçilir.
+
 ## Sıralama tablosu, ziyaret sayacı ve öğretmen paneli
 
 - Öğrenci **takma ad** ve isteğe bağlı **sınıf kodu** ile skor gönderir; ad-soyad, e-posta, IP adresi alınmaz.

@@ -19,13 +19,14 @@
   <header class="ust">
     <a class="logo" href="#cizim" data-git="cizim" aria-label="Geometri ana bölüm">
       <span class="logo-isaret geo">△</span>
-      <span><b>MASTER CLASS</b><small>Geometri Atölyesi</small></span>
+      <span><b>MASTER CLASS</b><small>Geometri Atölyesi</small><span class="imza">designed by Muhsin ENGİN</span></span>
     </a>
     <div class="ses-grup">
       <a class="ses-btn" href="../index.html" title="Sayılar bölümüne dön"><span aria-hidden="true">←</span><span class="yazi">Sayılar</span></a>
       <button class="ses-btn" id="muzikBtn" aria-pressed="false" title="Arka plan müziği">
         <span class="dalga" aria-hidden="true"><i></i><i></i><i></i></span><span class="yazi">Müzik</span>
       </button>
+      <button class="ses-btn ses-sec" id="muzikSec" aria-haspopup="menu" aria-expanded="false" title="Müzik seç" aria-label="Müzik seç"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
       <button class="ses-btn" id="efektBtn" aria-pressed="true" title="Ses efektleri">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="efektDalga" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
         <span class="yazi">Efektler</span>
@@ -36,6 +37,7 @@
       </button>
     </div>
     <nav class="menu" aria-label="Geometri bölümleri">
+      <a href="#ayin" data-git="ayin" class="menu-ayin"><span class="nokta"></span>★ Ayın Sorusu</a>
       <a href="#cizim" data-git="cizim"><span class="nokta"></span>Çizim Masası</a>
       <a href="#ucgen" data-git="ucgen"><span class="nokta"></span>Üçgen Laboratuvarı</a>
       <a href="#cisimler" data-git="cisimler"><span class="nokta"></span>3B Cisimler ve Açınımlar</a>
@@ -49,6 +51,7 @@
     <section class="gorunum" id="g-ucgen" aria-label="Üçgen Laboratuvarı"></section>
     <section class="gorunum" id="g-cisimler" aria-label="3B Cisimler ve Açınımlar"></section>
     <section class="gorunum" id="g-soru" aria-label="Soru Masası"></section>
+    <section class="gorunum" id="g-ayin" aria-label="Ayın Geometri Sorusu"></section>
   </main>
 
   <footer class="alt-bilgi">
@@ -74,6 +77,8 @@
 <script src="../assets/js/geo-soru-hesap.js"></script>
 <script src="../assets/js/geo-soru-ornek.js"></script>
 <script src="../assets/js/geo-soru.js"></script>
+<script src="../assets/js/ayin-sorulari.js"></script>
+<script src="../assets/js/geo-ayin.js"></script>
 <script>
   MC.ui.siteAdi = "Master Class Geometri";
   MC.ui.sayfaOnek = "geo-";
