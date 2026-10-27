@@ -12,6 +12,7 @@
   const ADLAR = "ABCDEFGHKLMNOPRSTUVYZ";
 
   /* ---------------- Durum ---------------- */
+  let gorselSuruk = null;
   let el, svg, kutu, ekran = 1, kip = "hazirla", arac = "parca", secim = [], fare = null, surukle = null, cizgiKalem = null;
   let S = null;                  // ekrandaki soru
   let taslak = null;             // öğretmenin hazırladığı soru
@@ -22,7 +23,7 @@
   const px = (n) => n / ekran;   // ekranda n piksel görünen mantıksal uzunluk
 
   function bosSoru() {
-    return { id: "s" + Date.now().toString(36), baslik: "", metin: "", ipuclari: [], cozum: "", cevapMetin: "", birim: "°", nesne: [], gorsel: null, opaklik: 0.55, gorselGoster: true, gorselOgrenci: false, olcek: null, uyduruldu: false, sayac: 0 };
+    return { id: "s" + Date.now().toString(36), baslik: "", metin: "", ipuclari: [], cozum: "", cevapMetin: "", birim: "°", nesne: [], gorsel: null, opaklik: 0.55, gorselGoster: true, gorselOgrenci: false, gorselKonum: { k: 1, dx: 0, dy: 0 }, istenen: "", olceksizGoster: false, olcek: null, uyduruldu: false, sayac: 0 };
   }
   function yeniId() { S.sayac = (S.sayac || S.nesne.length) + 1; let id; do { id = "o" + S.sayac++; } while (bul(id)); return id; }
   function yeniAd() { const kul = new Set(S.nesne.filter((o) => o.tur === "nokta").map((o) => o.ad)); for (let k = 0; ; k++) for (const h of ADLAR) { const a = h + (k ? MC.sayi.alt(k) : ""); if (!kul.has(a)) return a; } }
@@ -51,7 +52,7 @@
     olcAci: '<path d="M4 19h16M4 19L15 6"/><path d="M10 19a6 6 0 0 0-2-4.5"/>',
   };
   const ARAC = {
-    tasi: { ad: "Taşı", istek: [], ip: "Noktayı sürükle. Çizgi ya da çember üstündeki nokta yalnızca onun üzerinde kayar." },
+    tasi: { ad: "Taşı", istek: [], ip: "Noktayı sürükle; çizgi ya da çember üstündeki nokta yalnızca onun üzerinde kayar. Boş yeri sürüklersen görsel kayar." },
     nokta: { ad: "Nokta", istek: [], ip: "Boş yere dokun: serbest nokta. Çizginin ya da çemberin üstüne: o çizgiye bağlı nokta. İki çizginin kesiştiği yere: kesişim noktası." },
     parca: { ad: "Doğru parçası", istek: ["n", "n"], ip: "İki nokta seç ya da görseldeki köşelere dokun." },
     dogru: { ad: "Doğru", istek: ["n", "n"], ip: "İki yönde sonsuz uzanan doğru: iki nokta seç." },
@@ -173,6 +174,7 @@
     if (arac === "tasi") {
       const n = noktaBul(p, 22);
       if (n && !n.turet && kip === "hazirla") { anlik(); surukle = n.id; try { svg.setPointerCapture(e.pointerId); } catch (_) {} }
+      else if (!n && kip === "hazirla" && S.gorsel && S.gorselGoster) { S.gorselKonum = S.gorselKonum || { k: 1, dx: 0, dy: 0 }; gorselSuruk = { x: p.x, y: p.y, dx: S.gorselKonum.dx, dy: S.gorselKonum.dy }; try { svg.setPointerCapture(e.pointerId); } catch (_) {} }
       return;
     }
     if (arac === "sil") {
@@ -218,8 +220,8 @@
     konum = {};
     p.push(`<rect x="-2000" y="-2000" width="${W + 4000}" height="${Y + 4000}" fill="${RENK.kagit}"/>`);
     if (S.gorsel && S.gorselGoster && (kip === "hazirla" || S.gorselOgrenci)) {
-      const g = S.gorsel, s = Math.min(W / g.w, Y / g.h), gw = g.w * s, gh = g.h * s;
-      p.push(`<image href="${g.src}" x="${(W - gw) / 2}" y="${(Y - gh) / 2}" width="${gw}" height="${gh}" opacity="${kip === "hazirla" ? S.opaklik : 0.35}" preserveAspectRatio="xMidYMid meet"/>`);
+      const g = S.gorsel, gk = S.gorselKonum || { k: 1, dx: 0, dy: 0 }, s = Math.min(W / g.w, Y / g.h) * gk.k, gw = g.w * s, gh = g.h * s;
+      p.push(`<image href="${g.src}" x="${(W - gw) / 2 + gk.dx}" y="${(Y - gh) / 2 + gk.dy}" width="${gw}" height="${gh}" opacity="${kip === "hazirla" ? S.opaklik : 0.35}" preserveAspectRatio="xMidYMid meet"/>`);
     }
     if (izgara) { for (let x = 0; x <= W; x += 50) p.push(`<line x1="${x}" y1="0" x2="${x}" y2="${Y}" stroke="rgba(91,140,255,.10)"/>`); for (let y = 0; y <= Y; y += 50) p.push(`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(91,140,255,.10)"/>`); }
     p.push(`<rect x="0" y="0" width="${W}" height="${Y}" fill="none" stroke="rgba(150,180,255,.12)" stroke-width="${px(1)}"/>`);
@@ -318,8 +320,8 @@
   function araclariCiz() {
     const gruplar = kip === "hazirla" ? HAZIRLA : COZ;
     U.$("#sqAraclar", el).innerHTML = gruplar.map((g) => g.map((a) => {
-      const kilit = (a === "olcUz" || a === "olcAci") && !(coz && coz.cozuldu);
-      return `<button class="arac" data-a="${a}" aria-pressed="${a === arac}" ${kilit ? "disabled" : ""} title="${ARAC[a].ad}${kilit ? " (cevabı bulunca açılır)" : ""}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IKON[a]}</svg>${ARAC[a].ad}${kilit ? '<span class="kilit" aria-hidden="true">🔒</span>' : ""}</button>`;
+      const olceksiz = coz && coz.soru.olceksizGoster, kilit = (a === "olcUz" || a === "olcAci") && (!(coz && coz.cozuldu) || olceksiz);
+      return `<button class="arac" data-a="${a}" aria-pressed="${a === arac}" ${kilit ? "disabled" : ""} title="${ARAC[a].ad}${kilit ? (olceksiz ? " (şekil ölçeksiz çizildi)" : " (cevabı bulunca açılır)") : ""}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IKON[a]}</svg>${ARAC[a].ad}${kilit ? '<span class="kilit" aria-hidden="true">🔒</span>' : ""}</button>`;
     }).join("")).join('<div class="arac-ayrac"></div>');
   }
   function aracSec(a) { arac = a; secim = []; U.$$("#sqAraclar .arac", el).forEach((b) => b.setAttribute("aria-pressed", b.dataset.a === a)); durumYaz(); ciz(); }
@@ -347,10 +349,14 @@
     const k = H.kisitlar(S.nesne);
     const sayi = k.uz.length + k.aci.length + Object.values(k.centik).reduce((t, g) => t + Math.max(0, g.length - 1), 0) + Object.values(k.yay).reduce((t, g) => t + Math.max(0, g.length - 1), 0);
     if (!sayi) { if (!sessiz) U.bildir("Önce şekle en az bir veri yaz: uzunluk, açı ya da eşitlik işareti."); return null; }
+    if (S.istenen && S.istenen.trim() && !H.formulDerle(S.istenen)) { if (!sessiz) U.bildir("İstenen formül okunamadı. Örnek: |AC|-|DC| · A(BCD) · m(ABC)"); return null; }
+    const adlar = new Set(S.nesne.filter((o) => o.tur === "nokta").map((o) => o.ad)), eksik = H.formulAdlar(H.formulDerle(S.istenen)).filter((a) => !adlar.has(a));
+    if (eksik.length) { if (!sessiz) U.bildir(`Formüldeki ${eksik.join(", ")} noktası şekilde yok.`); return null; }
     anlik();
-    const s = H.uydur(S.nesne, { olcek: S.olcek || undefined });
+    const ayar = { olcek: S.olceksizGoster ? undefined : S.olcek || undefined, istenen: S.istenen && S.istenen.trim() ? S.istenen : undefined };
+    const s = H.uydur(S.nesne, ayar);
     const tek = s.basarili && s.cevap ? H.teklik(S.nesne, s, 4) : { tek: null };
-    if (s.basarili) { S.nesne = s.nesne.concat(S.nesne.filter((o) => o.ogr)); S.olcek = s.olcek; }
+    if (s.basarili && !S.olceksizGoster) { S.nesne = s.nesne.concat(S.nesne.filter((o) => o.ogr)); S.olcek = s.olcek; }
     sonUydur = { ...s, tek: tek.tek };
     yenile();
     if (kip === "hazirla") { S.uyduruldu = s.basarili; veriListesi(); uydurSonucu(); U.depoYaz("geo_soru_taslak", { ...S, gorsel: null }); }
@@ -365,13 +371,13 @@
         Veriler çelişiyor olabilir (örn. açılar toplamı 180°'yi aşıyor) ya da bir etiket yanlış iki noktaya bağlanmış. Etiketleri kontrol et, Geri al ile önceki şekle dön.</div>`;
       return;
     }
-    k.innerHTML = `<div class="basari"><b>Şekil verilere uyduruldu.</b> Artık ölçekli: yazdığın her açı ve uzunluk şekilde gerçekten öyle.
+    k.innerHTML = `<div class="basari">${S.olceksizGoster ? "<b>Veriler tutarlı.</b> Cevap ölçekli bir kopya üzerinde hesaplandı; senin çizdiğin şekil olduğu gibi kaldı." : "<b>Şekil verilere uyduruldu.</b> Artık ölçekli: yazdığın her açı ve uzunluk şekilde gerçekten öyle."}
       ${d.length ? `<br>Bulunan değerler: ${d.map(([a, v]) => `<b>${a} = ${H.guzelYaz(v)}</b>`).join(" · ")}` : ""}
       ${s.cevap ? `<br>İstenen: <b>${H.guzelYaz(s.cevap.deger)}${s.cevap.birim === "°" ? "°" : s.cevap.birim ? " " + s.cevap.birim : ""}</b>` : ""}
       ${s.tek === false ? '<div class="sq-uyari" style="margin-top:8px"><b>Dikkat:</b> Şekil farklı biçimlerde kurulunca istenen değer değişiyor. Veriler cevabı tek başına belirlemiyor; bir veri eksik olabilir.</div>' : ""}
       ${s.cevap ? '<div class="satir" style="margin-top:8px"><button class="btn btn-kucuk btn-ikinci" id="sqCevapAl">Bu değeri doğru cevap yap</button></div>' : ""}</div>`;
     const b = U.$("#sqCevapAl", k);
-    if (b) b.addEventListener("click", () => { const g = U.$("#sqCevap", el); g.value = H.guzelYaz(s.cevap.deger); S.cevapMetin = g.value; const bs = U.$("#sqBirim", el); bs.value = s.cevap.birim === "°" ? "°" : s.cevap.birim ? "birim" : ""; S.birim = bs.value; U.bildir("Doğru cevap yazıldı. Kendin de kontrol et."); });
+    if (b) b.addEventListener("click", () => { const g = U.$("#sqCevap", el); g.value = H.guzelYaz(s.cevap.deger); S.cevapMetin = g.value; const bs = U.$("#sqBirim", el); bs.value = s.cevap.birim || ""; S.birim = bs.value; U.bildir("Doğru cevap yazıldı. Kendin de kontrol et."); });
   }
   function veriListesi() {
     const k = U.$("#sqVeriler", el); if (!k) return;
@@ -431,17 +437,21 @@
         <div class="satir"><label class="btn btn-ikinci btn-kucuk sq-dosya">Görsel yükle<input type="file" accept="image/*" id="sqGorselDosya" hidden></label>
         ${S.gorsel ? '<button class="btn btn-hayalet btn-kucuk" id="sqGorselSil">Görseli kaldır</button>' : '<span class="soluk" style="font-size:13px">ya da Ctrl+V ile yapıştır, tahtaya sürükle</span>'}</div>
         ${S.gorsel ? `<label class="alan"><span>Görselin saydamlığı</span><input type="range" id="sqOpak" min="0.1" max="1" step="0.05" value="${S.opaklik}"></label>
+        <label class="alan"><span>Görseli büyüt (şekil küçükse; boş yeri Taşı aracıyla sürükleyerek kaydır)</span><input type="range" id="sqGorselK" min="1" max="5" step="0.1" value="${(S.gorselKonum || {}).k || 1}"></label>
         <label class="anahtar"><input type="checkbox" id="sqGorselGoster" ${S.gorselGoster ? "checked" : ""}><span>Görseli göster</span></label>` : ""}
       </div>
       <div class="panel"><span class="etiket" style="color:var(--turkuaz)">2 · Veriler</span><div id="sqVeriler"></div>
+        <label class="alan"><span>İstenen formül (isteğe bağlı)</span><input class="girdi mono" id="sqIstenen" maxlength="60" value="${U.kacis(S.istenen || "")}" placeholder="|AC|-|DC| · A(BCD) · m(PQC)"></label>
+        <p class="soluk" style="font-size:12.5px">Tek bir açı ya da uzunluk isteniyorsa şekle “?” yazman yeter. Alan, fark, toplam gibi istekler için formül yaz: <span class="mono">|AB|</span> uzunluk, <span class="mono">m(ABC)</span> açı, <span class="mono">A(ABC)</span> alan, <span class="mono">Çevre(ABC)</span>.</p>
         <button class="btn btn-ana" id="sqUydur">Şekli verilere uydur</button>
+        <label class="anahtar"><input type="checkbox" id="sqOlceksiz" ${S.olceksizGoster ? "checked" : ""}><span>Öğrenciye benim çizdiğim (ölçeksiz) şekli göster</span></label>
         <p class="soluk" style="font-size:13px">Göz kararı çizilmiş şekli yazdığın ölçülere getirir; x gibi bilinmeyenleri ve “?” ile işaretlenen istenen değeri hesaplar.</p>
         <div id="sqUydurSonuc"></div></div>
       <div class="panel"><span class="etiket" style="color:var(--turkuaz)">3 · Soru</span>
         <label class="alan"><span>Başlık</span><input class="girdi" id="sqBaslik" maxlength="60" value="${U.kacis(S.baslik)}" placeholder="örn. İkizkenar üçgende açı"></label>
         <label class="alan"><span>Soru metni</span><textarea class="girdi" id="sqMetin" rows="3" maxlength="600" placeholder="ABC üçgeninde …  Buna göre x kaç derecedir?">${U.kacis(S.metin)}</textarea></label>
         <div class="satir" style="flex-wrap:nowrap;align-items:flex-end"><label class="alan" style="flex:1"><span>Doğru cevap</span><input class="girdi mono" id="sqCevap" maxlength="20" value="${U.kacis(S.cevapMetin)}" placeholder="30 · 2√3 · 3/2"></label>
-          <label class="alan" style="width:110px"><span>Birim</span><select class="girdi" id="sqBirim">${[["°", "derece"], ["birim", "birim"], ["cm", "cm"], ["cm²", "cm²"], ["", "yok"]].map(([v, a]) => `<option value="${v}" ${S.birim === v ? "selected" : ""}>${a}</option>`).join("")}</select></label></div>
+          <label class="alan" style="width:110px"><span>Birim</span><select class="girdi" id="sqBirim">${[["°", "derece"], ["birim", "birim"], ["birim²", "birim²"], ["cm", "cm"], ["cm²", "cm²"], ["", "yok"]].map(([v, a]) => `<option value="${v}" ${S.birim === v ? "selected" : ""}>${a}</option>`).join("")}</select></label></div>
         <label class="alan"><span>İpuçları (her satıra bir ipucu, sırayla açılır)</span><textarea class="girdi" id="sqIpucu" rows="3" maxlength="900">${U.kacis(S.ipuclari.join("\n"))}</textarea></label>
         <label class="alan"><span>Çözüm (öğrenci doğru cevabı bulunca görünür)</span><textarea class="girdi" id="sqCozum" rows="3" maxlength="900">${U.kacis(S.cozum)}</textarea></label></div>
       <div class="panel"><span class="etiket" style="color:var(--turkuaz)">4 · Kaydet ve paylaş</span>
@@ -458,10 +468,13 @@
     bag("#sqGorselDosya", "change", (e) => gorselOku(e.target.files[0]));
     bag("#sqGorselSil", "click", () => { S.gorsel = null; hazirlaPanel(); yenile(); });
     bag("#sqOpak", "input", (e) => { S.opaklik = +e.target.value; ciz(); });
+    bag("#sqGorselK", "input", (e) => { S.gorselKonum = S.gorselKonum || { k: 1, dx: 0, dy: 0 }; const eski = S.gorselKonum.k, yeni = +e.target.value; S.gorselKonum.dx *= yeni / eski; S.gorselKonum.dy *= yeni / eski; S.gorselKonum.k = yeni; ciz(); });
     bag("#sqGorselGoster", "change", (e) => { S.gorselGoster = e.target.checked; ciz(); });
     bag("#sqGorselSakla", "change", (e) => { S.gorselSakla = e.target.checked; });
     bag("#sqGorselOgr", "change", (e) => { S.gorselOgrenci = e.target.checked; if (e.target.checked) { S.gorselSakla = true; U.$("#sqGorselSakla", k).checked = true; } });
     bag("#sqUydur", "click", () => uydur());
+    bag("#sqIstenen", "input", (e) => { S.istenen = e.target.value; const v = e.target.value.trim(); e.target.style.borderColor = !v || H.formulDerle(v) ? "" : "var(--kirmizi)"; });
+    bag("#sqOlceksiz", "change", (e) => { S.olceksizGoster = e.target.checked; U.bildir(e.target.checked ? "Öğrenci senin çizdiğin şekli görecek; ölçüm araçları kapalı kalacak. Cevap yine ölçekli hesapla denetlenir." : "Öğrenci ölçekli şekli görecek."); });
     bag("#sqBaslik", "input", (e) => (S.baslik = e.target.value));
     bag("#sqMetin", "input", (e) => (S.metin = e.target.value));
     bag("#sqCevap", "input", (e) => (S.cevapMetin = e.target.value));
@@ -485,7 +498,7 @@
   function cozBaslat(q) {
     q = Object.assign(bosSoru(), q);
     q.nesne = q.nesne.filter((o) => !o.ogr);
-    if (!q.uyduruldu) { const s = H.uydur(q.nesne, { olcek: q.olcek || undefined }); if (s.basarili) { q.nesne = s.nesne; q.olcek = s.olcek; q.uyduruldu = true; } }
+    if (!q.uyduruldu && !q.olceksizGoster) { const s = H.uydur(q.nesne, { olcek: q.olcek || undefined }); if (s.basarili) { q.nesne = s.nesne; q.olcek = s.olcek; q.uyduruldu = true; } }
     coz = { soru: q, deneme: 0, ipucu: 0, cozuldu: false };
     kipSec("coz", true);
   }
@@ -503,7 +516,7 @@
           <p class="soluk" style="font-size:13px"><span style="color:var(--altin)">Sarı</span>: verilenler · <span style="color:#ff6fa0">Pembe</span>: istenen · <span style="color:var(--turkuaz)">Çentik ve yaylar</span>: eşitlikler</p></div>
         <div class="panel" id="sqCevapPanel"><span class="etiket" style="color:var(--turkuaz)">Cevabın</span>
           ${coz.cozuldu ? `<div class="basari"><b>Doğru! Cevap ${U.kacis(q.cevapMetin)}${U.kacis(birim)}.</b> ${coz.deneme === 1 ? "İlk denemede buldun." : `${coz.deneme}. denemede buldun.`}${q.cozum ? `<p style="margin-top:8px">${U.kacis(q.cozum)}</p>` : ""}
-            <p class="soluk" style="margin-top:8px">Ölçüm araçları açıldı: şekil ölçekli çizildiği için cevabını ölçerek de doğrulayabilirsin.</p></div>`
+            <p class="soluk" style="margin-top:8px">${q.olceksizGoster ? "Bu şekil ölçeksiz çizildi; bu yüzden ölçüm araçları kapalı. Kâğıttaki gibi akıl yürütmeyle çözüldü." : "Ölçüm araçları açıldı: şekil ölçekli çizildiği için cevabını ölçerek de doğrulayabilirsin."}</p></div>`
           : `<form class="satir" id="sqCevapForm" style="flex-wrap:nowrap" novalidate><input class="girdi mono" id="sqOgrCevap" maxlength="20" autocomplete="off" placeholder="örn. 30 · 2√3 · 3/2" aria-label="Cevabın"><span class="mono soluk">${U.kacis(birim)}</span><button class="btn btn-ana" type="submit">Kontrol et</button></form>
              <p class="soluk" style="font-size:13px">Kök için √ ya da “kök” yaz: 2√3, 2 kök 3. Kesir: 3/2. Ölçüm araçları cevabı bulunca açılır.</p><div id="sqGeriBildirim" aria-live="polite"></div>`}
         </div>
@@ -580,6 +593,7 @@
     svg.addEventListener("pointermove", (ev) => {
       fare = koordinat(ev);
       if (cizgiKalem) { const s = cizgiKalem.yol[cizgiKalem.yol.length - 1]; if (Math.hypot(s[0] - fare.x, s[1] - fare.y) > px(2.5)) { cizgiKalem.yol.push([+fare.x.toFixed(1), +fare.y.toFixed(1)]); ciz(false); } return; }
+      if (gorselSuruk) { S.gorselKonum.dx = gorselSuruk.dx + fare.x - gorselSuruk.x; S.gorselKonum.dy = gorselSuruk.dy + fare.y - gorselSuruk.y; ciz(false); return; }
       if (surukle) {
         const o = bul(surukle);
         if (o.uzerinde) { const h = P(o.uzerinde); if (h) o.t = H.parametre(h, fare); } else { o.x = fare.x; o.y = fare.y; }
@@ -587,7 +601,7 @@
       }
       if (secim.length) ciz();
     });
-    const birak = () => { if (surukle) { surukle = null; degisti(); } if (cizgiKalem) { cizgiKalem = null; degisti(); } };
+    const birak = () => { gorselSuruk = null; if (surukle) { surukle = null; degisti(); } if (cizgiKalem) { cizgiKalem = null; degisti(); } };
     svg.addEventListener("pointerup", birak); svg.addEventListener("pointercancel", birak);
     svg.addEventListener("pointerleave", () => { fare = null; if (secim.length) ciz(); });
     U.$("#sqGeri", el).addEventListener("click", geriAl);

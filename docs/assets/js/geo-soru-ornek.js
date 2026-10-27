@@ -391,5 +391,117 @@ MC.soruOrnekleri = [
   ],
   "cevapMetin": "40",
   "ornek": true
- }
+ },
+{
+ "id": "ornek-ayin-sorusu",
+ "baslik": "Ayın olimpiyat sorusu",
+ "birim": "°",
+ "ornek": true,
+ "cevapMetin": "30",
+ "metin": "ABC bir üçgen; B, P, C noktaları doğrusal. |AP| = |PC| ve |AC| = |BP|, m(ACB) = 20° olmak üzere m(ABC) = x kaç derecedir? (Hazırlayan: Muhsin ENGİN)",
+ "ipuclari": [
+  "APC üçgeni ikizkenar: m(PAC) kaç derece?",
+  "m(APB) dış açıdır. Kaç derece?",
+  "APB üçgeninde |BP| = |AC| bilgisini kullan: sinüs teoremi ya da uygun bir yardımcı üçgen."
+ ],
+ "cozum": "m(PAC) = 20°, m(APB) = 40°. |AP| = a ise |AC| = |BP| = 2a·cos20°. APB üçgeninde sinüs teoremi: sin(140° − x) / sin x = 2cos20°. x = 30° bu eşitliği sağlar: sin110° / sin30° = 2cos20°.",
+ "nesne": [
+  {
+   "id": "A",
+   "tur": "nokta",
+   "ad": "A",
+   "x": 560,
+   "y": 250
+  },
+  {
+   "id": "B",
+   "tur": "nokta",
+   "ad": "B",
+   "x": 150,
+   "y": 560
+  },
+  {
+   "id": "C",
+   "tur": "nokta",
+   "ad": "C",
+   "x": 900,
+   "y": 560
+  },
+  {
+   "id": "AB",
+   "tur": "parca",
+   "p": "A",
+   "q": "B"
+  },
+  {
+   "id": "BC",
+   "tur": "parca",
+   "p": "B",
+   "q": "C"
+  },
+  {
+   "id": "AC",
+   "tur": "parca",
+   "p": "A",
+   "q": "C"
+  },
+  {
+   "id": "P",
+   "tur": "nokta",
+   "ad": "P",
+   "uzerinde": "BC",
+   "t": 0.57
+  },
+  {
+   "id": "AP",
+   "tur": "parca",
+   "p": "A",
+   "q": "P"
+  },
+  {
+   "id": "cAP",
+   "tur": "centik",
+   "a": "A",
+   "b": "P",
+   "n": 1
+  },
+  {
+   "id": "cPC",
+   "tur": "centik",
+   "a": "P",
+   "b": "C",
+   "n": 1
+  },
+  {
+   "id": "cAC",
+   "tur": "centik",
+   "a": "A",
+   "b": "C",
+   "n": 2
+  },
+  {
+   "id": "cBP",
+   "tur": "centik",
+   "a": "B",
+   "b": "P",
+   "n": 2
+  },
+  {
+   "id": "aACB",
+   "tur": "aci",
+   "a": "A",
+   "v": "C",
+   "c": "B",
+   "metin": "20"
+  },
+  {
+   "id": "aABC",
+   "tur": "aci",
+   "a": "A",
+   "v": "B",
+   "c": "C",
+   "metin": "x"
+  }
+ ]
+}
 ];

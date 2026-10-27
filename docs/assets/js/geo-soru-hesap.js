@@ -84,8 +84,10 @@
   /* ---------------- İfadeler ---------------- */
   // "2x+10" → {sabit:10, kat:{x:2}} · "40°" → {sabit:40, kat:{}} · "?" → {soru:true} · çözülemezse null
   H.ifade = function (metin) {
-    let s = String(metin || "").replace(/\s+/g, "").replace(/[°º]/g, "").replace(/−/g, "-").replace(/,/g, ".").replace(/(cm|birim|br|m)$/i, "");
+    let s = String(metin || "").replace(/\s+/g, "").replace(/[°º]/g, "").replace(/−/g, "-").replace(/,/g, ".").replace(/kök/gi, "√").replace(/(cm|birim|br|m)$/i, "");
     if (!s) return null;
+    // 5√2 → 7.0710678… (kök değerli veriler sabit sayıya çevrilir)
+    s = s.replace(/(\d+(?:\.\d+)?)?√(\d+(?:\.\d+)?)/g, (m, a, b) => String((a ? parseFloat(a) : 1) * Math.sqrt(parseFloat(b))));
     if (s === "?") return { soru: true, sabit: 0, kat: {} };
     if (!/^[+-]?(\d+(\.\d+)?|\d*(\.\d+)?[a-zçğıöşüα-ω])([+-](\d+(\.\d+)?|\d*(\.\d+)?[a-zçğıöşüα-ω]))*$/i.test(s)) return null;
     const sonuc = { sabit: 0, kat: {} };
@@ -163,11 +165,11 @@
       else dur.harita[vi.o.id][vi.alan] = x[i];
     });
   }
-  function artiklar(dur, k, bas, agirlik) {
+  function artiklar(dur, k, bas, agirlik, uzYok) {
     const { P } = H.hesapla(dur.nesne), s = Math.exp(dur.logs), r = [];
     const nk = (id) => P(id);
     const ceza = 8;
-    for (const { o, e } of k.uz) { const a = nk(o.a), b = nk(o.b); r.push(a && b ? (G.uz(a, b) - s * H.ifadeDeger(e, dur.d)) / LUZ : ceza); }
+    if (!uzYok) for (const { o, e } of k.uz) { const a = nk(o.a), b = nk(o.b); r.push(a && b ? (G.uz(a, b) - s * H.ifadeDeger(e, dur.d)) / LUZ : ceza); }
     for (const { o, e } of k.aci) { const a = nk(o.a), v = nk(o.v), c = nk(o.c); const ac = a && v && c ? G.aci(a, v, c) : NaN; r.push(isFinite(ac) ? (ac - H.ifadeDeger(e, dur.d)) / LACI : ceza); }
     for (const grup of Object.values(k.centik)) for (let i = 1; i < grup.length; i++) {
       const [a, b, c, d] = [nk(grup[0].a), nk(grup[0].b), nk(grup[i].a), nk(grup[i].b)];
@@ -179,13 +181,13 @@
     }
     // Değişken açılar ve uzunluklar pozitif kalsın
     for (const { e } of k.aci) { const d = H.ifadeDeger(e, dur.d); if (d < 1) r.push((1 - d) / LACI); else if (d > 179) r.push((d - 179) / LACI); else r.push(0); }
-    for (const { e } of k.uz) { const d = H.ifadeDeger(e, dur.d); r.push(d < 1e-3 ? (1e-3 - d) * 10 : 0); }
+    if (!uzYok) for (const { e } of k.uz) { const d = H.ifadeDeger(e, dur.d); r.push(d < 1e-3 ? (1e-3 - d) * 10 : 0); }
     // Noktalar üst üste binmesin; geçersiz noktalar cezalandırılsın
     const nlar = dur.nesne.filter((o) => o.tur === "nokta");
     for (const o of nlar) if (!nk(o.id)) r.push(ceza);
     for (let i = 0; i < nlar.length; i++) for (let j = i + 1; j < nlar.length; j++) {
       const a = nk(nlar[i].id), b = nk(nlar[j].id); if (!a || !b) continue;
-      const d = G.uz(a, b); r.push(d < 24 ? (24 - d) / 24 : 0);
+      const d = G.uz(a, b); r.push(d < 8 ? 0.4 * (8 - d) / 8 : 0);
     }
     // Hafif çapa: şekil izlenen görselden uzaklaşmasın (yalnızca serbest noktalar)
     if (agirlik) for (const o of dur.nesne) if (o.tur === "nokta" && !o.turet && !o.uzerinde) {
@@ -214,6 +216,26 @@
     return { x, c };
   }
 
+  /* Şekil tahtadan taşarsa ya da çok küçük kalırsa benzerlik dönüşümüyle ortala.
+     Açılar değişmez; uzunluklar ölçekle birlikte büyüdüğü için oranlar korunur. */
+  function tahtayaSigdir(kopya, dur, alan) {
+    const { hesap, P } = H.hesapla(kopya), nlar = kopya.filter((o) => o.tur === "nokta" && P(o.id)).map((o) => P(o.id));
+    if (nlar.length < 2) return;
+    let x0 = Math.min(...nlar.map((p) => p.x)), x1 = Math.max(...nlar.map((p) => p.x)), y0 = Math.min(...nlar.map((p) => p.y)), y1 = Math.max(...nlar.map((p) => p.y));
+    for (const o of kopya) if (o.tur === "cember" && hesap[o.id] && hesap[o.id].gecerli) { const h = hesap[o.id]; x0 = Math.min(x0, h.x - h.r); x1 = Math.max(x1, h.x + h.r); y0 = Math.min(y0, h.y - h.r); y1 = Math.max(y1, h.y + h.r); }
+    const w = x1 - x0, h = y1 - y0, kenar = 40;
+    const tasiyor = x0 < kenar || y0 < kenar || x1 > alan.W - kenar || y1 > alan.Y - kenar, kucuk = w < alan.W * 0.25 && h < alan.Y * 0.25;
+    if (!tasiyor && !kucuk) return;
+    const k = Math.min((alan.W - 2 * kenar) * 0.92 / Math.max(w, 1e-9), (alan.Y - 2 * kenar) * 0.92 / Math.max(h, 1e-9));
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    for (const o of kopya) {
+      if (o.tur !== "nokta" || o.turet) continue;
+      if (!o.uzerinde) { o.x = alan.W / 2 + (o.x - cx) * k; o.y = alan.Y / 2 + (o.y - cy) * k; }
+      else { const ust = kopya.find((x) => x.id === o.uzerinde); if (ust && ust.turet) o.t *= k; }
+    }
+    dur.logs += Math.log(k);
+  }
+
   /* Ana fonksiyon. Dönüş: {nesne, olcek, degerler, hata: {uz, aci} en büyük sapmalar, basarili, cevap} */
   H.uydur = function (nesne, ayar = {}) {
     const k = H.kisitlar(nesne);
@@ -231,11 +253,25 @@
     const x0 = v.map((vi) => vi.alan === "logs" ? dur.logs : vi.alan.startsWith("d:") ? (ayar.d0 && ayar.d0[vi.alan.slice(2)]) ?? (k.aci.some(({ e }) => e.kat[vi.alan.slice(2)]) ? 30 : 5) : vi.o[vi.alan]);
     const eps = v.map((vi) => vi.eps);
     let x = x0;
-    for (const w of [0.08, 0.01, 0.0005]) {
+    // 1. aşama: yalnızca açılar ve eşitlikler (ölçekten bağımsız biçim)
+    if (k.aci.length || Object.keys(k.centik).length || Object.keys(k.yay).length) {
+      for (const w of [0.08, 0.01]) { const f = (xx) => { uygula(dur, v, xx); return artiklar(dur, k, bas, w, true); }; x = lm(f, x, eps, ayar.tur || 150).x; }
+      uygula(dur, v, x);
+      // Ölçeği biçimden en küçük kareler ile bul: s = Σ L·E / Σ E²
+      if (k.uz.length && !ayar.olcek) {
+        const { P } = H.hesapla(kopya); let pay = 0, payda = 0;
+        for (const { o, e } of k.uz) { const E = H.ifadeDeger(e, dur.d), a = P(o.a), b = P(o.b); if (a && b && E > 0) { pay += G.uz(a, b) * E; payda += E * E; } }
+        if (payda > 0 && pay > 0) { dur.logs = Math.log(pay / payda); x = v.map((vi, i) => vi.alan === "logs" ? dur.logs : x[i]); }
+      }
+      for (const o of kopya) if (o.tur === "nokta" && !o.turet && !o.uzerinde) bas[o.id] = { x: o.x, y: o.y };
+    }
+    // 2. aşama: bütün veriler
+    for (const w of [0.01, 0.0005]) {
       const f = (xx) => { uygula(dur, v, xx); return artiklar(dur, k, bas, w); };
       x = lm(f, x, eps, ayar.tur || 150).x;
     }
     uygula(dur, v, x);
+    tahtayaSigdir(kopya, dur, ayar.alan || { W: 1000, Y: 700 });
     const { P } = H.hesapla(kopya), s = Math.exp(dur.logs);
     let hUz = 0, hAci = 0;
     for (const { o, e } of k.uz) { const a = P(o.a), b = P(o.b), hedef = H.ifadeDeger(e, dur.d); hUz = Math.max(hUz, a && b ? Math.abs(G.uz(a, b) / s - hedef) / Math.max(Math.abs(hedef), 1e-6) : 1); }
@@ -246,13 +282,55 @@
     const basarili = !gecersiz && hUz < 0.004 && hAci < 0.15;
     // Serbest noktaların son konumlarını yaz
     for (const o of kopya) if (o.tur === "nokta" && !o.turet && !o.uzerinde) { o.x = +o.x.toFixed(3); o.y = +o.y.toFixed(3); }
-    const sonuc = { nesne: kopya, olcek: s, degerler: { ...dur.d }, hata: { uz: hUz, aci: hAci }, basarili, gecersiz, kisit: k };
+    const sonuc = { nesne: kopya, olcek: s, degerler: { ...dur.d }, hata: { uz: hUz, aci: hAci }, basarili, gecersiz, kisit: k, istenen: ayar.istenen ? H.formulDerle(ayar.istenen) : null };
     sonuc.cevap = H.cevapHesapla(sonuc);
     return sonuc;
   };
-  /* İstenen: "?" etiketi varsa onun ölçüsü; yoksa x (ya da tek değişken) */
+  /* ---------------- İstenen formül ----------------
+     |AC| − |DC| · A(BCD) ya da Alan(BCD) · m(PQC) ya da ∠PQC · Çevre(ABC) · 2·|AB| + √2 …  */
+  const AD = /[A-ZÇĞİÖŞÜ][0-9₀-₉']*/g;
+  function adBol(g) { const t = g.replace(/[\u0302\u0311^ˆ∠\s]/g, ""), l = t.match(AD) || []; return l.join("") === t ? l : null; }
+  H.formulDerle = function (metin) {
+    let s = String(metin || "").trim(); if (!s) return null;
+    s = s.replace(/−/g, "-").replace(/,/g, ".").replace(/[×·]/g, "*").replace(/kök/gi, "√").replace(/\s+/g, "");
+    const olcu = []; let hata = false;
+    const ekle = (tur, g, en) => { const l = adBol(g); if (!l || l.length < en) { hata = true; return "0"; } olcu.push({ tur, adlar: l }); return `_o(${olcu.length - 1})`; };
+    let js = s
+      .replace(/(?:Alan|alan|A|S)\(([^()]+)\)/g, (m, g) => ekle("alan", g, 3))
+      .replace(/(?:Çevre|çevre|Ç)\(([^()]+)\)/g, (m, g) => ekle("cevre", g, 3))
+      .replace(/m\(([^()]+)\)/g, (m, g) => ekle("aci", g, 3))
+      .replace(/∠([A-ZÇĞİÖŞÜ][0-9₀-₉']*[A-ZÇĞİÖŞÜ][0-9₀-₉']*[A-ZÇĞİÖŞÜ][0-9₀-₉']*)/g, (m, g) => ekle("aci", g, 3))
+      .replace(/\|([^|]+)\|/g, (m, g) => ekle("uz", g, 2));
+    if (hata || !olcu.length) return null;
+    js = js.replace(/\^/g, "**").replace(/(\d|\))(?=√|_o|\()/g, "$1*").replace(/√(\d+(?:\.\d+)?|\([^()]*\)|_o\(\d+\))/g, "_k($1)");
+    if (!/^[0-9+\-*/().,_ok]*$/.test(js) || /√/.test(js)) return null;
+    let f; try { f = Function("_o", "_k", '"use strict";return (' + js + ")"); } catch (e) { return null; }
+    const turler = new Set(olcu.map((o) => o.tur));
+    return { metin, olcu, f, birim: turler.has("alan") ? "birim²" : turler.size === 1 && turler.has("aci") ? "°" : "birim" };
+  };
+  H.formulDeger = function (d, nesne, olcek) {
+    if (!d) return NaN;
+    const { P } = H.hesapla(nesne), harita = {};
+    for (const o of nesne) if (o.tur === "nokta" && !o.ogr) harita[o.ad] = P(o.id);
+    const al = (ad) => { const q = harita[ad]; if (!q) throw new Error("nokta yok: " + ad); return q; };
+    try {
+      const deger = d.olcu.map((o) => {
+        const q = o.adlar.map(al);
+        if (o.tur === "uz") return G.uz(q[0], q[q.length - 1]) / olcek;
+        if (o.tur === "aci") return G.aci(q[0], q[1], q[2]);
+        if (o.tur === "cevre") return q.reduce((t, a, i) => t + G.uz(a, q[(i + 1) % q.length]), 0) / olcek;
+        let A = 0; q.forEach((a, i) => { const b = q[(i + 1) % q.length]; A += a.x * b.y - b.x * a.y; }); return Math.abs(A) / 2 / olcek / olcek;
+      });
+      const v = d.f((i) => deger[i], Math.sqrt);
+      return typeof v === "number" ? v : NaN;
+    } catch (e) { return NaN; }
+  };
+  H.formulAdlar = (d) => d ? [...new Set(d.olcu.flatMap((o) => o.adlar))] : [];
+
+  /* İstenen: önce formül, sonra "?" etiketi, sonra x (ya da tek değişken) */
   H.cevapHesapla = function (s) {
     const k = s.kisit, { P } = H.hesapla(s.nesne);
+    if (s.istenen) { const v = H.formulDeger(s.istenen, s.nesne, s.olcek); return isFinite(v) ? { deger: v, birim: s.istenen.birim, ad: "formul" } : null; }
     if (k.soru) {
       const o = k.soru;
       if (o.tur === "uz") { const a = P(o.a), b = P(o.b); return a && b ? { deger: G.uz(a, b) / s.olcek, birim: k.uz.length ? "birim" : "", ad: "uz", kaynak: o.id } : null; }
@@ -275,7 +353,7 @@
         return o;
       });
       const d0 = Object.fromEntries(Object.keys(ilk.degerler).map((d) => [d, ilk.degerler[d] * (0.6 + rastgele() * 0.8)]));
-      const s = H.uydur(sarsik, { olcek: ilk.olcek * (0.7 + rastgele() * 0.6), d0, tur: 100 });
+      const s = H.uydur(sarsik, { olcek: ilk.olcek * (0.7 + rastgele() * 0.6), d0, tur: 100, istenen: ilk.istenen && ilk.istenen.metin });
       if (s.basarili && s.cevap) cevaplar.push(s.cevap.deger);
     }
     const en = Math.max(...cevaplar), ek = Math.min(...cevaplar);
