@@ -4,7 +4,7 @@
 
 ## Web sitesi
 
-**https://enginmuhsin.github.io/masterclassmahtsgame/**
+**https://masterclass.muhsinengin.com/**  (eski adres https://enginmuhsin.github.io/masterclassmahtsgame/ yeni adrese yönlenir)
 
 Site `docs/` klasöründen GitHub Pages ile ücretsiz yayınlanır. Bir kez açıldıktan sonra internetsiz de çalışır; akıllı tahtada “uygulama olarak yükle” seçeneğiyle kurulabilir.
 
