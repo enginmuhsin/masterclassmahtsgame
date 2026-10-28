@@ -51,10 +51,10 @@ MC.haftaninSorulari = {
    "zorluk": 2,
    "baslangic": "2026-10-26",
    "cozumTarihi": "2026-11-01",
-   "metin": "ABCD bir kare ve BCE, karenin dışında kalan bir eşkenar üçgendir. AE doğru parçası BD köşegenini F noktasında kesiyor. m(AFB) = x kaç derecedir?",
+   "metin": "ABCD bir kare ve BCE, karenin dışında kalan bir eşkenar üçgendir. [AE] doğru parçası [BD] köşegenini F noktasında kesiyor. s(AFB) = x kaç derecedir?",
    "ipuclari": [
     "|AB| ile |BE| arasında nasıl bir ilişki var?",
-    "m(ABE) kaç derecedir? Buna göre ABE üçgeni nasıl bir üçgen?",
+    "s(ABE) kaç derecedir? Buna göre ABE üçgeni nasıl bir üçgen?",
     "ABF üçgeninde iki açıyı bulduysan üçüncüsü hazır."
    ],
    "cevapMetin": "120",

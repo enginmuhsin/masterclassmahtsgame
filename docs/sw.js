@@ -1,6 +1,6 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v13";
+const SURUM = "mc-v14";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
