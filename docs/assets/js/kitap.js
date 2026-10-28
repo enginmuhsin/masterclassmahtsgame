@@ -14,7 +14,7 @@
   const HARF = ["A", "B", "C", "D", "E"];
   const DURUM = { taslak: "Taslak", incelemede: "İncelemede", onaylandi: "Onaylandı", duzeltilecek: "Düzeltilecek", cikarildi: "Çıkarıldı" };
   const KARAR = { onay: "Onay", duzelt: "Düzeltilmeli", cikar: "Çıkarılsın", yorum: "Yorum" };
-  let yetki = null, icerik = [], gorusler = [], hakemler = [], secili = null, sekme = "icerik", secim = {}, acikGoster = false;
+  let aktifKitap = null, yetki = null, icerik = [], gorusler = [], hakemler = [], secili = null, sekme = "icerik", secim = {}, acikGoster = false;
   const ana = () => U.$("#kpAna");
 
   /* ---------------- Oturum ---------------- */
@@ -84,7 +84,11 @@
     if (yetki === "yonetici") hakemler = await api("/rest/v1/kitap_hakemler?select=*&order=eklenme");
   }
   const sorular = () => icerik.filter((x) => x.tur === "soru");
-  const bolumler = () => icerik.filter((x) => x.tur === "bolum").sort((a, b) => a.sira - b.sira);
+  const tumBolumler = () => icerik.filter((x) => x.tur === "bolum").sort((a, b) => (a.veri.kitapSira || 0) - (b.veri.kitapSira || 0) || a.sira - b.sira);
+  const kitapAdi = (b) => (b && b.veri && b.veri.kitap) || "Kitap";
+  const kitaplar = () => [...new Set(tumBolumler().map(kitapAdi))];
+  const bolumler = () => tumBolumler().filter((b) => !aktifKitap || kitapAdi(b) === aktifKitap);
+  const kitabinSorulari = () => sorular().filter((s) => bolumler().some((b) => b.id === s.bolum) || (!tumBolumler().some((b) => b.id === s.bolum) && kitaplar().length <= 1));
   const gorusOf = (id) => gorusler.filter((g) => g.icerik_id === id);
   const benimGorus = (id) => gorusOf(id).filter((g) => g.yazar === benimId());
   function benimId() { try { return JSON.parse(atob(oturum.erisim.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).sub; } catch (e) { return null; } }
@@ -108,6 +112,7 @@
     ustCiz();
     if (!yetki) { ana().innerHTML = `<div class="panel st-giris"><h2>Henüz yetkin yok</h2><p class="soluk">Giriş yaptın (${U.kacis(oturum.eposta)}) ama bu e-posta hakem listesinde değil. Yazar seni eklediğinde sayfayı yenile; içerik burada görünecek.</p></div>`; return; }
     try { await yukle(); } catch (e) { const m = hataYaz(e); if (m) ana().innerHTML = `<div class="panel st-giris"><p class="hata-metin">${U.kacis(m)}</p></div>`; return; }
+    if (!aktifKitap || !kitaplar().includes(aktifKitap)) aktifKitap = kitaplar()[0] || null;
     if (!secili) { const s = sorular().sort((a, b) => a.bolum.localeCompare(b.bolum) || a.sira - b.sira)[0]; secili = (bolumler()[0] || s || {}).id || null; }
     ciz();
   }
@@ -133,13 +138,14 @@
   }
   function listeCiz() {
     const k = U.$("#kpListe"); if (!k) return;
-    const toplam = sorular().length, incelenen = sorular().filter((s) => benimGorus(s.id).length).length;
-    k.innerHTML = `<div class="kp-ilerleme"><b>${incelenen}/${toplam}</b> soruyu inceledin<div class="kp-cubuk"><i style="width:${toplam ? (100 * incelenen) / toplam : 0}%"></i></div></div>` +
+    const ks = kitabinSorulari(), toplam = ks.length, incelenen = ks.filter((s) => benimGorus(s.id).length).length, kl = kitaplar();
+    k.innerHTML = (kl.length > 1 ? `<div class="kp-kitaplar">${kl.map((a) => `<button class="kp-kitap ${a === aktifKitap ? "secili" : ""}" data-kitap="${U.kacis(a)}">${U.kacis(a)}</button>`).join("")}</div>` : "") + `<div class="kp-ilerleme"><b>${incelenen}/${toplam}</b> soruyu inceledin<div class="kp-cubuk"><i style="width:${toplam ? (100 * incelenen) / toplam : 0}%"></i></div></div>` +
       bolumler().concat(sorular().filter((s) => !bolumler().some((b) => b.id === s.bolum)).map((s) => ({ id: s.bolum, veri: { ad: s.bolum }, sanal: true })).filter((b, i, a) => a.findIndex((x) => x.id === b.id) === i)).map((b) => `
         <div class="kp-bolum"><button class="kp-oge ${secili === b.id ? "secili" : ""}" data-sec="${b.sanal ? "" : b.id}" ${b.sanal ? "disabled" : ""}><b>${U.kacis(b.veri.ad || b.id)}</b>${b.sanal ? "" : '<small>Konu özeti ve örnekler</small>'}</button>
         ${testler(b.id).map(([t, l]) => `<div class="kp-test"><span class="etiket soluk">${U.kacis(t)}</span><div class="kp-kutular">${l.map((s) => { const o = ozetDurum(s), ben = benimGorus(s.id).length; return `<button class="kp-kutu ${o.renk} ${secili === s.id ? "secili" : ""} ${ben ? "ben" : ""}" data-sec="${s.id}" title="${U.kacis(t)} · Soru ${s.sira} · ${DURUM[s.durum]} · ${o.sayi} görüş">${s.sira}</button>`; }).join("")}</div></div>`).join("")}</div>`).join("") +
       `<p class="soluk kp-lejant"><i class="yesil"></i>onay <i class="turuncu"></i>itiraz <i class="kirmizi"></i>cevap çelişkisi <i class="gri"></i>görüş yok · altı çizili: senin incelediğin</p>`;
-    k.onclick = (e) => { const b = e.target.closest("[data-sec]"); if (b && b.dataset.sec) { secili = b.dataset.sec; acikGoster = false; listeCiz(); detayCiz(); if (innerWidth < 900) U.$("#kpDetay").scrollIntoView({ behavior: "smooth" }); } };
+    k.onclick = (e) => { const kt = e.target.closest("[data-kitap]"); if (kt) { aktifKitap = kt.dataset.kitap; secili = (bolumler()[0] || {}).id || null; acikGoster = false; listeCiz(); detayCiz(); return; }
+      const b = e.target.closest("[data-sec]"); if (b && b.dataset.sec) { secili = b.dataset.sec; acikGoster = false; listeCiz(); detayCiz(); if (innerWidth < 900) U.$("#kpDetay").scrollIntoView({ behavior: "smooth" }); } };
   }
   const svgHtml = (v, ad) => (v && v.kutu ? `<svg class="kp-svg" viewBox="${v.kutu.x} ${v.kutu.y} ${v.kutu.w} ${v.kutu.h}" role="img" aria-label="${U.kacis(ad || "Şekil")}">${v.icerik}</svg>` : "");
   function detayCiz() {
@@ -226,7 +232,11 @@
   function aktarCiz(k) {
     k.innerHTML = `<div class="panel"><span class="etiket" style="color:var(--altin)">Bölüm dosyası yükle</span>
       <p class="soluk">Claude'un hazırladığı bölüm dosyasını (.json) seç. Aynı kimlikli bölüm ve sorular güncellenir; hakem görüşleri korunur. Dosya bu tarayıcıdan doğrudan veritabanına gider, GitHub'a girmez.</p>
-      <label class="btn btn-ana sq-dosya">Dosya seç<input type="file" accept=".json,application/json" id="kpDosya" hidden></label><div id="kpAktarSonuc" style="margin-top:10px"></div></div>`;
+      <label class="btn btn-ana sq-dosya">Dosya seç<input type="file" accept=".json,application/json" id="kpDosya" hidden></label><div id="kpAktarSonuc" style="margin-top:10px"></div></div>
+      <div class="panel"><span class="etiket soluk">Yüklü bölümler</span>${tumBolumler().map((b) => `<div class="satir" style="align-items:center"><span style="flex:1"><span class="soluk">${U.kacis(kitapAdi(b))} · </span><b>${U.kacis(b.veri.ad)}</b> <span class="soluk">(${sorular().filter((x) => x.bolum === b.id).length} soru)</span></span><button class="btn btn-hayalet btn-kucuk" data-bsil="${U.kacis(b.id)}">Bölümü sil</button></div>`).join("") || '<p class="soluk">Yok.</p>'}
+      <p class="soluk" style="font-size:13px">Silme, bölümün bütün sorularını ve onlara yazılmış hakem görüşlerini de siler. İki kez basman gerekir.</p></div>`;
+    k.onclick = async (e) => { const b = e.target.closest("[data-bsil]"); if (!b) return; if (!b.dataset.emin) { b.dataset.emin = 1; b.textContent = "Emin misin? Tekrar bas"; return; }
+      try { await api(`/rest/v1/kitap_icerik?bolum=eq.${encodeURIComponent(b.dataset.bsil)}`, { yontem: "DELETE", ek: { Prefer: "return=minimal" } }); await yukle(); secili = null; aktarCiz(k); U.bildir("Bölüm silindi."); } catch (err) { const m = hataYaz(err); if (m) U.bildir(m); } };
     U.$("#kpDosya", k).addEventListener("change", async (e) => {
       const f = e.target.files[0], s = U.$("#kpAktarSonuc", k); if (!f) return;
       try {
@@ -234,7 +244,8 @@
         const satir = d.icerik.map((x) => ({ id: x.id, tur: x.tur, bolum: x.bolum, sira: x.sira || 0, veri: x.veri, durum: x.durum || "incelemede" }));
         s.innerHTML = `<p class="soluk">${satir.length} kayıt yükleniyor…</p>`;
         for (let i = 0; i < satir.length; i += 25) await api("/rest/v1/kitap_icerik?on_conflict=id", { yontem: "POST", govde: satir.slice(i, i + 25), ek: { Prefer: "resolution=merge-duplicates,return=minimal" } });
-        await yukle(); s.innerHTML = `<div class="basari"><b>${satir.length} kayıt yüklendi.</b> ${satir.filter((x) => x.tur === "soru").length} soru, ${satir.filter((x) => x.tur === "bolum").length} bölüm.</div>`;
+        await yukle(); const mesaj = `<div class="basari"><b>${satir.length} kayıt yüklendi.</b> ${satir.filter((x) => x.tur === "soru").length} soru, ${satir.filter((x) => x.tur === "bolum").length} bölüm.</div>`;
+        aktarCiz(k); U.$("#kpAktarSonuc", k).innerHTML = mesaj;
         MC.Ses.efekt("seri");
       } catch (err) { s.innerHTML = `<p class="hata-metin">${U.kacis(hataYaz(err) || err.message)}</p>`; }
     });
@@ -243,7 +254,7 @@
   /* ---------------- Yazar: yazdır ---------------- */
   function yazdirCiz(k) {
     k.innerHTML = `<div class="panel"><span class="etiket" style="color:var(--altin)">Yazdır / PDF</span><p class="soluk">Bölümü kitap sayfası düzeninde yazdır ya da “PDF olarak kaydet” ile PDF yap. Çıkarılan sorular basılmaz.</p>
-      <div class="yigin">${bolumler().map((b) => `<div class="satir"><b style="flex:1">${U.kacis(b.veri.ad)}</b><button class="btn btn-ikinci btn-kucuk" data-yaz="${b.id}" data-tip="kitap">Öğrenci kitabı</button><button class="btn btn-hayalet btn-kucuk" data-yaz="${b.id}" data-tip="cevap">Cevap anahtarı + çözümler</button><button class="btn btn-hayalet btn-kucuk" data-yaz="${b.id}" data-tip="hakem">Hakem raporu</button></div>`).join("") || '<p class="soluk">Bölüm yok.</p>'}</div></div>`;
+      <div class="yigin">${tumBolumler().map((b) => `<div class="satir"><b style="flex:1"><span class="soluk" style="font-weight:600">${U.kacis(kitapAdi(b))} · </span>${U.kacis(b.veri.ad)}</b><button class="btn btn-ikinci btn-kucuk" data-yaz="${b.id}" data-tip="kitap">Öğrenci kitabı</button><button class="btn btn-hayalet btn-kucuk" data-yaz="${b.id}" data-tip="cevap">Cevap anahtarı + çözümler</button><button class="btn btn-hayalet btn-kucuk" data-yaz="${b.id}" data-tip="hakem">Hakem raporu</button></div>`).join("") || '<p class="soluk">Bölüm yok.</p>'}</div></div>`;
     k.onclick = (e) => { const b = e.target.closest("[data-yaz]"); if (b) yazdir(b.dataset.yaz, b.dataset.tip); };
   }
   function yazdir(bolumId, tip) {
@@ -255,7 +266,8 @@
       if (tip === "hakem") return `<section class="yz-test"><h2>${U.kacis(t)} · Hakem raporu</h2>${l.map((s) => { const o = ozetDurum(s); return `<div class="yz-cozum"><b>Soru ${s.sira}</b> · ${DURUM[s.durum]} · anahtar ${s.veri.dogru} · ${o.onay} onay${o.celiski ? " · <b>CEVAP ÇELİŞKİSİ</b>" : ""}${gorusOf(s.id).map((g) => `<div>— ${U.kacis(g.yazar_ad)}: ${KARAR[g.karar]}${g.cevap ? ` (cevap ${g.cevap})` : ""}${g.metin ? ": " + U.kacis(g.metin) : ""}</div>`).join("")}</div>`; }).join("")}</section>`;
       return `<section class="yz-test"><h2>${U.kacis(t)}</h2><div class="yz-sorular">${l.map((s) => `<div class="yz-soru"><div class="yz-no">${s.sira}</div><div>${svgHtml(s.veri.svg)}<div class="yz-metin">${s.veri.metin}</div><div class="yz-sec">${s.veri.secenekler.map((x, j) => `<span><b>${HARF[j]})</b> ${x}</span>`).join("")}</div></div></div>`).join("")}</div></section>`;
     }).join("");
-    const bas = tip === "kitap" ? `<section class="yz-bolum"><h1>${U.kacis(v.ad)}</h1>${v.giris || ""}${(v.kutular || []).map((x) => `<div class="kp-kural"><b>${U.kacis(x.baslik)}</b>${x.svg ? svgHtml(x.svg) : ""}<div>${x.metin}</div></div>`).join("")}${(v.ornekler || []).map((o, i) => `<div class="kp-ornek"><b>Çözümlü örnek ${i + 1}</b>${o.svg ? svgHtml(o.svg) : ""}<p>${o.metin}</p>${o.cozum}</div>`).join("")}</section>` : `<h1>${U.kacis(v.ad)}</h1>`;
+    const ust = `<div class="yz-kitap">${U.kacis(kitapAdi(b))}</div>`;
+    const bas = ust + (tip === "kitap" ? `<section class="yz-bolum"><h1>${U.kacis(v.ad)}</h1>${v.giris || ""}${(v.kutular || []).map((x) => `<div class="kp-kural"><b>${U.kacis(x.baslik)}</b>${x.svg ? svgHtml(x.svg) : ""}<div>${x.metin}</div></div>`).join("")}${(v.ornekler || []).map((o, i) => `<div class="kp-ornek"><b>Çözümlü örnek ${i + 1}</b>${o.svg ? svgHtml(o.svg) : ""}<p>${o.metin}</p>${o.cozum}</div>`).join("")}</section>` : `<h1>${U.kacis(v.ad)}</h1>`);
     let y = U.$("#kpYazdir"); if (!y) { y = document.createElement("div"); y.id = "kpYazdir"; document.body.appendChild(y); }
     y.innerHTML = bas + sorularHtml; U.tex(y);
     document.body.classList.add("kp-yazdiriliyor");

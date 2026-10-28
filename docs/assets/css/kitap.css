@@ -3,6 +3,9 @@
    ===================================================================== */
 .kp-masa { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; }
 .kp-liste { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; display: grid; gap: 14px; }
+.kp-kitaplar { display: grid; gap: 6px; }
+.kp-kitap { text-align: left; font: inherit; font-weight: 700; font-size: 14px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--cizgi); background: transparent; color: var(--soluk); cursor: pointer; }
+.kp-kitap.secili { background: var(--altin); color: #2a1a00; border-color: var(--altin); }
 .kp-ilerleme { font-size: 14px; display: grid; gap: 6px; }
 .kp-cubuk { height: 6px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
 .kp-cubuk i { display: block; height: 100%; background: var(--altin); }
@@ -66,11 +69,16 @@
   body.kp-yazdiriliyor > *:not(#kpYazdir) { display: none !important; }
   body.kp-yazdiriliyor { background: #fff !important; color: #000; padding: 0; }
   body.kp-yazdiriliyor #kpYazdir { display: block; color: #000; font-size: 11pt; line-height: 1.45; }
+  #kpYazdir .yz-kitap { font-size: 9pt; letter-spacing: .08em; text-transform: uppercase; color: #555; margin-bottom: 2pt; }
   #kpYazdir h1 { font-size: 20pt; margin: 0 0 8pt; color: #000; }
   #kpYazdir h2 { font-size: 14pt; margin: 14pt 0 8pt; color: #000; border-bottom: 1.5pt solid #000; padding-bottom: 3pt; break-after: avoid; }
   #kpYazdir .kp-kural { background: #f2f2f2; color: #000; break-inside: avoid; }
   #kpYazdir .kp-ornek { border-color: #999; break-inside: avoid; }
   #kpYazdir .kp-svg { background: #fff; filter: invert(1) hue-rotate(180deg) brightness(1.1); max-height: 62mm; width: auto; max-width: 100%; margin: 4pt auto; }
+  .yz-bolum { columns: 2; column-gap: 8mm; }
+  .yz-bolum > h1, .yz-bolum > p:first-of-type { column-span: all; }
+  .yz-bolum .kp-kural, .yz-bolum .kp-ornek { break-inside: avoid; margin-bottom: 4mm; }
+  .yz-bolum .kp-svg { max-height: 42mm; }
   .yz-test { break-before: page; }
   #kpYazdir > h1 + .yz-test { break-before: auto; }
   .yz-sorular { columns: 2; column-gap: 10mm; column-rule: .5pt solid #999; }
