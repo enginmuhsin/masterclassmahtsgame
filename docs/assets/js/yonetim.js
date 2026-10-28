@@ -119,7 +119,8 @@
   /* ---------------- Panel ---------------- */
   async function panelCiz() {
     ana.innerHTML = `<div class="bolum-basi"><span class="etiket">Öğretmen paneli</span><h2>Sıralama yönetimi</h2>
-        <p>Onay bekleyen skorları onayla ya da reddet. Uygunsuz takma adı veya hatalı puanı satırın içinde düzeltip <b>Kaydet</b>'e bas. Onaylanan skor anında öğrencilerin sıralama sayfasında görünür.</p></div>
+        <p>Onay bekleyen skorları onayla ya da reddet. Uygunsuz takma adı veya hatalı puanı satırın içinde düzeltip <b>Kaydet</b>'e bas. Onaylanan skor anında öğrencilerin sıralama sayfasında görünür.</p>
+        <div class="satir" style="margin-top:10px"><a class="btn btn-ana" href="studyo/">★ Çözüm Stüdyosu</a><span class="soluk" style="font-size:14px;align-self:center">Geometri çözüm atölyen ve soru arşivin (yalnızca sen görürsün)</span></div></div>
       <div class="metrikler" id="ynMetrik"></div>
       <div id="ynSekme" style="margin-top:16px"></div>
       <div class="sekme-icerik"><div id="yn-bekleyen"></div><div id="yn-tum" hidden></div><div id="yn-ziyaret" hidden></div><div id="yn-ayar" hidden></div></div>`;
