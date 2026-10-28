@@ -16,7 +16,8 @@
          [{ "baslik", "metin" (HTML), "ekle": [Soru Masası nesneleri], "vurgu": [id], "gizle": [id], "bolge": [["A","B","E"]] }]
          gizle: o adımda görünmesi kalabalık yapacak önceki etiketler (yalnızca o adımda gizlenir).
          Yeni nokta türleri: {turet:"dondur", m, a, derece} (saat yönünün tersine döndürme),
-         {turet:"yansit", a, p, q} (pq doğrusuna göre yansıma), ayrıca orta, kesisim, uzerinde.
+         {turet:"yansit", a, p, q} (pq doğrusuna göre yansıma), {turet:"tasi", a1, a2, b1, b2, y, ters?}
+         (üçgen kopyalama: eşit [a1a2] → [b1b2] eşliğinde y'nin görüntüsü), ayrıca orta, kesisim, uzerinde.
      node araclar/haftanin-sorulari.js svg [--hepsi]
          Geometri sorularının ve çözüm adımlarının durağan çizimini Soru Masası'nın kendi çizicisiyle
          üretir (Playwright ile geometri sayfası açılır). Haftanın Soruları sayfası bu SVG'leri gösterir.
@@ -65,7 +66,7 @@ function kontrol(veri, sessiz) {
       q.adimlar.forEach((a, i) => {
         if (!a.metin) hata.push(`${k}: adım ${i + 1} metni yok`);
         for (const o of a.ekle || []) { if (!o.id || ids.has(o.id)) hata.push(`${k}: adım ${i + 1} nesne kimliği eksik ya da tekrar: ${o.id}`); ids.add(o.id); }
-        for (const o of a.ekle || []) for (const r of ["a", "b", "c", "v", "p", "q", "m", "uzerinde"]) if (o[r] && !ids.has(o[r])) hata.push(`${k}: adım ${i + 1} ${o.id}.${r} = ${o[r]} bulunamadı`);
+        for (const o of a.ekle || []) for (const r of ["a", "b", "c", "v", "p", "q", "m", "uzerinde", "a1", "a2", "b1", "b2", "y"]) if (o[r] && !ids.has(o[r])) hata.push(`${k}: adım ${i + 1} ${o.id}.${r} = ${o[r]} bulunamadı`);
         for (const id of [...(a.vurgu || []), ...(a.gizle || []), ...(a.bolge || []).flat()]) if (!ids.has(id)) hata.push(`${k}: adım ${i + 1} vurgu/bölge ${id} bulunamadı`);
         if (!a.svg) hata.push(`${k}: adım ${i + 1} svg yok (node araclar/haftanin-sorulari.js svg)`);
       });

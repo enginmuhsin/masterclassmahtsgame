@@ -104,3 +104,25 @@ nav.menu a.menu-ayin { color: var(--altin); }
 .sq-adim-nokta { display: inline-flex; gap: 5px; }
 .sq-adim-nokta i { width: 9px; height: 9px; border-radius: 50%; background: var(--cizgi-guclu, rgba(150,180,255,.3)); }
 .sq-adim-nokta i.dolu { background: var(--altin); }
+/* Çözüm Stüdyosu */
+.st-isaret { background: var(--altin); color: #2a1a00; box-shadow: 0 0 24px rgba(255, 198, 87, .45); font-size: 20px; }
+.studyo #muzikBtn { display: none; }
+.studyo .masa { grid-template-columns: 92px minmax(0, 1fr) 380px; }
+.studyo .arac-kutusu { max-height: calc(100vh - 40px); overflow-y: auto; }
+.st-giris { max-width: 460px; margin: 30px auto; display: grid; gap: 12px; }
+.st-eposta { font-size: 13px; align-self: center; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.st-ust { border-top: 4px solid var(--altin); display: grid; gap: 8px; }
+.st-radar-grup { margin-top: 10px; }
+.st-radar-grup ul { margin: 6px 0 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14.5px; }
+.st-radar-grup li { cursor: pointer; border-radius: 6px; padding: 1px 4px; }
+.st-radar-grup li:hover, .st-radar-grup li.secili { background: rgba(255, 198, 87, .14); }
+.st-radar-grup i { color: var(--soluk); }
+.st-yeni { color: var(--altin); font-size: 12px; font-weight: 700; }
+.st-oneri { display: grid; gap: 4px; padding: 10px 0; border-top: 1px solid var(--cizgi, rgba(150,180,255,.15)); font-size: 14.5px; }
+.st-oneri .btn { justify-self: start; }
+.st-kayit.acik { box-shadow: 0 0 0 2px var(--turkuaz); }
+.st-adimlar { margin: 6px 0 10px; padding-left: 20px; display: grid; gap: 8px; }
+.st-adimlar li { display: grid; gap: 2px; }
+.st-adimlar small { color: var(--soluk); }
+@media (max-width: 1250px) { .studyo .masa { grid-template-columns: 80px minmax(0, 1fr); } .studyo .masa > .yan-panel { grid-column: 1 / -1; } }
+.sq-birak[hidden] { display: none; }

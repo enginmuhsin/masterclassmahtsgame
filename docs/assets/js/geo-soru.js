@@ -10,6 +10,10 @@
   const RENK = { kagit: "#06122a", parca: "#eef3ff", dogru: "#5b8cff", cember: "#35e0b0", turev: "#a66bff", ogr: "#35e0b0", kalem: "#ff8a1f",
     nokta: "#eef3ff", uzerinde: "#5b8cff", kesisim: "#ff4d61", veri: "#ffc657", soru: "#ff6fa0", esit: "#35e0b0", secili: "#ffc657", olcu: "#ffc657", not: "#ff8a1f" };
   const ADLAR = "ABCDEFGHKLMNOPRSTUVYZ";
+  /* Çözüm Stüdyosu (yalnızca studyo/ sayfasında, öğretmen girişiyle): ek araçlar, adım kaydı, ayrı yerel kayıt anahtarları */
+  const STUDYO = () => !!window.MC_STUDYO;
+  const DEPO_TASLAK = () => (STUDYO() ? "studyo_taslak" : "geo_soru_taslak"), DEPO_KAYIT = () => (STUDYO() ? "studyo_yerel" : "geo_sorular");
+  const kayitAcik = () => kip === "hazirla" && !!(MC.studyo && MC.studyo.kayit);
 
   /* ---------------- Durum ---------------- */
   let gorselSuruk = null;
@@ -28,7 +32,7 @@
   }
   function yeniId() { S.sayac = (S.sayac || S.nesne.length) + 1; let id; do { id = "o" + S.sayac++; } while (bul(id)); return id; }
   function yeniAd() { const kul = new Set(S.nesne.filter((o) => o.tur === "nokta").map((o) => o.ad)); for (let k = 0; ; k++) for (const h of ADLAR) { const a = h + (k ? MC.sayi.alt(k) : ""); if (!kul.has(a)) return a; } }
-  function ekle(o) { o.id = yeniId(); if (kip === "coz") o.ogr = true; if (o.tur === "nokta" && !o.ad) o.ad = yeniAd(); S.nesne.push(o); return o.id; }
+  function ekle(o) { o.id = yeniId(); if (kip === "coz" || kayitAcik()) o.ogr = true; if (o.tur === "nokta" && !o.ad) o.ad = yeniAd(); S.nesne.push(o); return o.id; }
 
   /* ---------------- Araçlar ---------------- */
   const IKON = {
@@ -51,6 +55,9 @@
     kalem: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>',
     olcUz: '<path d="M3 15h18M3 11v8M21 11v8"/><path d="M8 7h8" stroke-dasharray="2 2"/>',
     olcAci: '<path d="M4 19h16M4 19L15 6"/><path d="M10 19a6 6 0 0 0-2-4.5"/>',
+    dondur: '<circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M19 12a7 7 0 1 1-2.05-4.95"/><path d="M17 3v4.5h-4.5"/>',
+    yansit: '<path d="M12 3v18" stroke-dasharray="2 2.5"/><path d="M9 7L4 12l5 5z"/><path d="M15 7l5 5-5 5z"/>',
+    bolge: '<path d="M4 19L12 5l8 14z" fill="currentColor" fill-opacity=".3"/>',
   };
   const ARAC = {
     tasi: { ad: "Taşı", istek: [], ip: "Noktayı sürükle; çizgi ya da çember üstündeki nokta yalnızca onun üzerinde kayar. Boş yeri sürüklersen görsel kayar." },
@@ -72,7 +79,11 @@
     kalem: { ad: "Kalem", istek: [], ip: "Serbestçe yaz ve çiz. Kâğıttaki karalama gibi." },
     olcUz: { ad: "Uzunluk ölç", istek: ["N", "N"], ip: "İki nokta seç." },
     olcAci: { ad: "Açı ölç", istek: ["N", "N", "N"], ip: "Kol, köşe, kol sırasıyla üç nokta seç." },
+    dondur: { ad: "Döndür", istek: ["N", "N"], ip: "Önce döndürülecek noktayı, sonra merkezi seç; açıyı yaz (artı: saat yönünün tersine)." },
+    yansit: { ad: "Yansıt", istek: ["N", "l"], ip: "Önce noktayı, sonra ayna olacak doğru parçasını seç." },
+    bolge: { ad: "Üçgen boya", istek: ["N", "N", "N"], ip: "Çözüm adımında renklendirilecek üçgenin üç köşesini seç." },
   };
+  const STUDYO_ARAC = [["yardimci", "dondur", "yansit", "orta", "paralel", "dik"], ["not", "bolge"]];
   const HAZIRLA = [["tasi", "nokta", "parca", "dogru", "cember", "adver"], ["uz", "aci", "centik", "yay"], ["sil"]];
   const COZ = [["yardimci", "paralel", "dik", "orta"], ["not", "kalem", "sil"], ["olcUz", "olcAci"]];
 
@@ -103,7 +114,7 @@
   }
   function bagimlilar(id, set = new Set([id])) {
     let degisti = true;
-    while (degisti) { degisti = false; for (const o of S.nesne) if (!set.has(o.id) && (["a", "b", "c", "v", "p", "q", "m", "uzerinde", "nokta", "dogru"].some((k) => set.has(o[k])) || (o.noktalar || []).some((k) => set.has(k)))) { set.add(o.id); degisti = true; } }
+    while (degisti) { degisti = false; for (const o of S.nesne) if (!set.has(o.id) && (["a", "b", "c", "v", "p", "q", "m", "uzerinde", "nokta", "dogru", "a1", "a2", "b1", "b2", "y"].some((k) => set.has(o[k])) || (o.noktalar || []).some((k) => set.has(k)))) { set.add(o.id); degisti = true; } }
     return set;
   }
   const anlikAl = () => JSON.stringify({ nesne: S.nesne, sayac: S.sayac });
@@ -155,7 +166,7 @@
         if (!v) { if (eski) S.nesne = S.nesne.filter((o) => o !== eski); break; }
         if (!ogr && v.trim() === "?") S.nesne.filter((o) => (o.tur === "uz" || o.tur === "aci") && !o.ogr && o.metin.trim() === "?" && o !== eski).forEach((o) => { S.nesne = S.nesne.filter((x) => x !== o); });
         if (eski) eski.metin = v;
-        else ekle(tur === "uz" ? { tur, a: s[0], b: s[1], metin: v } : { tur, a: s[0], v: s[1], c: s[2], metin: v });
+        else ekle(tur === "uz" ? { tur, a: s[0], b: s[1], metin: v } : { tur, a: s[0], v: s[1], c: s[2], metin: v, ...(ogr ? { ogr: true } : {}) });
         break;
       }
       case "centik": case "yay": {
@@ -164,6 +175,17 @@
         else ekle(arac === "centik" ? { tur: "centik", a: s[0], b: s[1], n: 1 } : { tur: "yay", a: s[0], v: s[1], c: s[2], n: 1 });
         break;
       }
+      case "dondur": {
+        const v = await metinSor("Döndürme açısı", "Derece yaz. Artı: saat yönünün tersine, eksi: saat yönünde. Örn. 60 · −90", "60");
+        if (v === null) break; const d = parseFloat(v.replace("−", "-").replace(",", "."));
+        if (!isFinite(d)) { U.bildir("Açıyı sayı olarak yaz: 60, -90"); break; }
+        ekle({ tur: "nokta", turet: "dondur", a: s[0], m: s[1], derece: d }); break;
+      }
+      case "yansit": {
+        const l = bul(s[1]); if (!l.p || !l.q) { U.bildir("Ayna olarak iki ucu belli bir doğru parçası seç."); break; }
+        ekle({ tur: "nokta", turet: "yansit", a: s[0], p: l.p, q: l.q }); break;
+      }
+      case "bolge": ekle({ tur: "bolge", noktalar: s.slice(), ogr: true }); break;
       case "olcUz": { const a = P(s[0]), b = P(s[1]); olcumler.push({ tur: "uz", a: s[0], b: s[1] }); U.bildir(`|${bul(s[0]).ad}${bul(s[1]).ad}| ≈ ${H.yuvarla(G.uz(a, b) / (S.olcek || 40))} birim`); break; }
       case "olcAci": { olcumler.push({ tur: "aci", a: s[0], v: s[1], c: s[2] }); U.bildir(`m(${s.map((i) => bul(i).ad).join("")}) ≈ ${H.yuvarla(G.aci(P(s[0]), P(s[1]), P(s[2])))}°`); break; }
     }
@@ -194,6 +216,7 @@
       if (n && gerekN) id = n.id; else if (l && gerekL) id = l.o.id; else if (gerekN && !l) id = noktaAlYaDaKoy(p);
     } else if (sira === "n") id = noktaAlYaDaKoy(p);
     else if (sira === "N") { const n = noktaBul(p, 22); if (n) id = n.id; else { U.bildir("Bir noktaya dokun."); return; } }
+    else if (sira === "l") { const l = cizgilerYakin(p, 14, true)[0]; if (l) id = l.o.id; else { U.bildir("Bir doğru parçasına dokun."); return; } }
     if (!id) return;
     if (secim.includes(id)) return;
     if (!secim.length) { gecmis.push(surum); ileri = []; }
@@ -314,9 +337,10 @@
     yenile(); durumYaz();
     if (kip === "hazirla") {
       S.uyduruldu = false; veriListesi();
-      clearTimeout(kayitZaman); kayitZaman = setTimeout(() => { const t = { ...S, gorsel: null }; U.depoYaz("geo_soru_taslak", t); }, 400);
+      clearTimeout(kayitZaman); kayitZaman = setTimeout(() => { const t = { ...S, gorsel: null }; U.depoYaz(DEPO_TASLAK(), t); }, 400);
     }
     U.$("#sqGeri", el).disabled = !gecmis.length; U.$("#sqIleri", el).disabled = !ileri.length;
+    if (MC.studyo && kip === "hazirla") MC.studyo.degisti();
   }
   function durumYaz() {
     const a = ARAC[arac], kalan = a.istek.length - secim.length;
@@ -325,7 +349,7 @@
 
   /* ---------------- Araç kutusu ---------------- */
   function araclariCiz() {
-    const gruplar = kip === "hazirla" ? HAZIRLA : COZ;
+    const gruplar = kip === "hazirla" ? (STUDYO() ? [...HAZIRLA, ...STUDYO_ARAC] : HAZIRLA) : COZ;
     U.$("#sqAraclar", el).innerHTML = gruplar.map((g) => g.map((a) => {
       const olceksiz = coz && coz.soru.olceksizGoster, kilit = (a === "olcUz" || a === "olcAci") && (!(coz && coz.cozuldu) || olceksiz);
       return `<button class="arac" data-a="${a}" aria-pressed="${a === arac}" ${kilit ? "disabled" : ""} title="${ARAC[a].ad}${kilit ? (olceksiz ? " (şekil ölçeksiz çizildi)" : " (cevabı bulunca açılır)") : ""}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IKON[a]}</svg>${ARAC[a].ad}${kilit ? '<span class="kilit" aria-hidden="true">🔒</span>' : ""}</button>`;
@@ -366,7 +390,7 @@
     if (s.basarili && !S.olceksizGoster) { S.nesne = s.nesne.concat(S.nesne.filter((o) => o.ogr)); S.olcek = s.olcek; }
     sonUydur = { ...s, tek: tek.tek };
     yenile();
-    if (kip === "hazirla") { S.uyduruldu = s.basarili; veriListesi(); uydurSonucu(); U.depoYaz("geo_soru_taslak", { ...S, gorsel: null }); }
+    if (kip === "hazirla") { S.uyduruldu = s.basarili; veriListesi(); uydurSonucu(); U.depoYaz(DEPO_TASLAK(), { ...S, gorsel: null }); }
     if (!sessiz) Ses.efekt(s.basarili ? "seri" : "yanlis");
     return sonUydur;
   }
@@ -400,15 +424,15 @@
   }
 
   /* ---------------- Kayıt, paylaşım ---------------- */
-  const kayitlar = () => U.depoAl("geo_sorular", []);
+  const kayitlar = () => U.depoAl(DEPO_KAYIT(), []);
   function kaydet() {
     if (!S.metin.trim() && !S.baslik.trim()) { U.bildir("Önce sorunun başlığını ya da metnini yaz."); return; }
     if (!isFinite(H.cevapOku(S.cevapMetin))) { U.bildir("Doğru cevabı sayı olarak yaz (örn. 30, 2√3, 3/2)."); return; }
     const l = kayitlar().filter((x) => x.id !== S.id), kopya = JSON.parse(JSON.stringify(S));
     if (!kopya.gorselSakla) kopya.gorsel = null;
     l.unshift(kopya);
-    try { localStorage.setItem("geo_sorular", JSON.stringify(l.slice(0, 60))); U.bildir("Soru bu cihaza kaydedildi."); Ses.efekt("seri"); }
-    catch (e) { kopya.gorsel = null; l[0] = kopya; U.depoYaz("geo_sorular", l.slice(0, 60)); U.bildir("Kaydedildi (görsel çok büyük olduğu için görselsiz)."); }
+    try { localStorage.setItem(DEPO_KAYIT(), JSON.stringify(l.slice(0, 60))); U.bildir("Soru bu cihaza kaydedildi."); Ses.efekt("seri"); }
+    catch (e) { kopya.gorsel = null; l[0] = kopya; U.depoYaz(DEPO_KAYIT(), l.slice(0, 60)); U.bildir("Kaydedildi (görsel çok büyük olduğu için görselsiz)."); }
     hazirlaPanel();
   }
   const b64 = { yaz: (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""),
@@ -438,7 +462,7 @@
   /* ---------------- Hazırla paneli ---------------- */
   function hazirlaPanel() {
     const k = U.$("#sqYan", el), l = kayitlar();
-    k.innerHTML = `
+    k.innerHTML = (STUDYO() ? '<div id="sqStudyo" class="yigin"></div>' : "") + `
       <div class="panel"><span class="etiket" style="color:var(--turkuaz)">1 · Görsel</span>
         <p class="soluk">Sorunun fotoğrafını ya da ekran görüntüsünü koy; şekli üzerinden geç. Görsel bu cihazdan çıkmaz.</p>
         <div class="satir"><label class="btn btn-ikinci btn-kucuk sq-dosya">Görsel yükle<input type="file" accept="image/*" id="sqGorselDosya" hidden></label>
@@ -471,6 +495,7 @@
         <button class="btn btn-hayalet btn-kucuk" id="sqYeni">Yeni boş soru</button></div>
       ${l.length ? `<div class="panel"><span class="etiket soluk">Bu cihazdaki sorular</span><div class="gorev-liste">${l.map((q) => `<div class="sq-kayit"><button class="gorev" data-ac="${q.id}"><b>${U.kacis(q.baslik || "Başlıksız soru")}</b><small>Cevap: ${U.kacis(q.cevapMetin)}${q.birim === "°" ? "°" : " " + U.kacis(q.birim || "")}</small></button><button class="mini-btn" data-sil="${q.id}" title="Sil" aria-label="Sil">×</button></div>`).join("")}</div></div>` : ""}`;
     veriListesi(); uydurSonucu();
+    if (STUDYO() && MC.studyo) MC.studyo.ciz(U.$("#sqStudyo", k));
     const bag = (id, olay, f) => { const x = U.$(id, k); if (x) x.addEventListener(olay, f); };
     bag("#sqGorselDosya", "change", (e) => gorselOku(e.target.files[0]));
     bag("#sqGorselSil", "click", () => { S.gorsel = null; hazirlaPanel(); yenile(); });
@@ -497,7 +522,7 @@
     k.onclick = (e) => {
       const ac = e.target.closest("[data-ac]"), sil = e.target.closest("[data-sil]");
       if (ac) { const q = kayitlar().find((x) => x.id === ac.dataset.ac); if (q) taslakYukle(q); }
-      if (sil) { if (sil.dataset.emin) { U.depoYaz("geo_sorular", kayitlar().filter((x) => x.id !== sil.dataset.sil)); hazirlaPanel(); } else { sil.dataset.emin = "1"; sil.textContent = "Sil?"; setTimeout(() => { if (sil.isConnected) { delete sil.dataset.emin; sil.textContent = "×"; } }, 3000); } }
+      if (sil) { if (sil.dataset.emin) { U.depoYaz(DEPO_KAYIT(), kayitlar().filter((x) => x.id !== sil.dataset.sil)); hazirlaPanel(); } else { sil.dataset.emin = "1"; sil.textContent = "Sil?"; setTimeout(() => { if (sil.isConnected) { delete sil.dataset.emin; sil.textContent = "×"; } }, 3000); } }
     };
   }
 
@@ -671,7 +696,7 @@
       if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "y") { ev.preventDefault(); yinele(); }
       if (ev.key === "Escape") { secim = []; ciz(); durumYaz(); }
     });
-    const eski = U.depoAl("geo_soru_taslak", null);
+    const eski = U.depoAl(DEPO_TASLAK(), null);
     taslak = Object.assign(bosSoru(), eski && Array.isArray(eski.nesne) ? eski : {});
     kipSec("hazirla", true);
   }
@@ -716,5 +741,9 @@
     const { ek, yeni, gizle } = adimNesneleri(q, k);
     return statikSvg({ ...q, nesne: q.nesne.filter((o) => !o.ogr).concat(ek), vurgu: [...yeni], gizle: [...gizle] });
   }
-  MC.geoSoru = { statikSvg, adimSvg, cozBaslat: (q) => cozBaslat(JSON.parse(JSON.stringify(q))), durum: () => ({ kip, S, coz, sonUydur, arac, secim }), _test: { kipSec, aracSec, cozBaslat, uydur, taslakYukle, baglanti, b64, tiklaXY: (x, y) => { const r = svg.getBoundingClientRect(), s = Math.min(r.width / W, r.height / Y); return tikla({ clientX: r.left + (r.width - W * s) / 2 + x * s, clientY: r.top + (r.height - Y * s) / 2 + y * s, pointerId: 1 }); } } };
+  /* Çözüm Stüdyosu için iç erişim */
+  const ic = { S: () => S, kip: () => kip, degisti, anlik, ciz, yenile, ekle: (o) => ekle(o), yeniAd, P: (id) => P(id), bul: (id) => bul(id),
+    uydur: (sessiz) => uydur(sessiz), sonUydur: () => sonUydur, cozBaslat: (q) => cozBaslat(q), adimGit: (k) => adimGit(k), taslakYukle, kipSec: (k) => kipSec(k, true),
+    hazirlaPanel: () => hazirlaPanel(), vurgula: (ids) => { vurgu = new Set(ids || []); ciz(); }, araclariCiz: () => { araclariCiz(); aracSec(arac); }, aracSec: (a) => aracSec(a) };
+  MC.geoSoru = { ic, statikSvg, adimSvg, cozBaslat: (q) => cozBaslat(JSON.parse(JSON.stringify(q))), durum: () => ({ kip, S, coz, sonUydur, arac, secim }), _test: { kipSec, aracSec, cozBaslat, uydur, taslakYukle, baglanti, b64, tiklaXY: (x, y) => { const r = svg.getBoundingClientRect(), s = Math.min(r.width / W, r.height / Y); return tikla({ clientX: r.left + (r.width - W * s) / 2 + x * s, clientY: r.top + (r.height - Y * s) / 2 + y * s, pointerId: 1 }); } } };
 })();

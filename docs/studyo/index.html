@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Çözüm Stüdyosu · Master Class</title>
+<meta name="theme-color" content="#081227">
+<link rel="icon" href="../assets/img/simge.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/kutuphane/katex/katex.min.css">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/geometri.css">
+</head>
+<body class="studyo">
+<div class="kap">
+  <header class="ust">
+    <a class="logo" href="#soru" aria-label="Çözüm Stüdyosu">
+      <span class="logo-isaret st-isaret">★</span>
+      <span><b>MASTER CLASS</b><small>Çözüm Stüdyosu</small><span class="imza">designed by Muhsin ENGİN</span></span>
+    </a>
+    <div class="ses-grup">
+      <span id="stKullanici" class="satir" style="gap:8px"></span>
+      <a class="ses-btn" href="https://muhsinengin.com/" title="muhsinengin.com ana sayfa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span class="yazi">Ana sayfa</span></a>
+      <a class="ses-btn" href="../hafta/" title="Haftanın Soruları"><span aria-hidden="true">★</span><span class="yazi">Haftanın Soruları</span></a>
+      <a class="ses-btn" href="../yonetim.html" title="Yönetim"><span aria-hidden="true">⚙</span><span class="yazi">Yönetim</span></a>
+      <button class="ses-btn" id="muzikBtn" aria-pressed="false" hidden><span class="dalga" aria-hidden="true"><i></i><i></i><i></i></span><span class="yazi">Müzik</span></button>
+      <button class="ses-btn" id="efektBtn" aria-pressed="true" title="Ses efektleri">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="efektDalga" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+        <span class="yazi">Efektler</span>
+      </button>
+      <button class="ses-btn tam-ekran-btn" id="tamEkranBtn" title="Tam ekran (akıllı tahta için)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        <span class="yazi">Tam ekran</span>
+      </button>
+    </div>
+  </header>
+  <main>
+    <div id="stKapi"></div>
+    <section class="gorunum" id="g-soru" aria-label="Çözüm Stüdyosu" hidden></section>
+  </main>
+  <footer class="alt-bilgi"><span>Master Class · Çözüm Stüdyosu</span><span>Yalnızca yetkili öğretmen</span></footer>
+</div>
+<script src="../assets/kutuphane/gsap.min.js"></script>
+<script src="../assets/kutuphane/katex.min.js"></script>
+<script src="../assets/kutuphane/katex/auto-render.min.js"></script>
+<script>window.MC_STUDYO = true;</script>
+<script src="../assets/js/cekirdek.js"></script>
+<script src="../assets/js/ses.js"></script>
+<script src="../assets/js/arayuz.js"></script>
+<script src="../assets/js/bulut-ayar.js"></script>
+<script src="../assets/js/bulut.js"></script>
+<script src="../assets/js/geo-soru-hesap.js"></script>
+<script src="../assets/js/geo-soru-ornek.js"></script>
+<script src="../assets/js/haftanin-sorulari.js"></script>
+<script>MC.uc = MC.uc || { AZ_HAREKET: matchMedia("(prefers-reduced-motion: reduce)").matches };</script>
+<script src="../assets/js/geo-soru.js"></script>
+<script src="../assets/js/studyo.js"></script>
+<script>
+  MC.ui.siteAdi = "Çözüm Stüdyosu";
+  MC.ui.sayfaOnek = "studyo-";
+  MC.studyo.basla();
+</script>
+</body>
+</html>

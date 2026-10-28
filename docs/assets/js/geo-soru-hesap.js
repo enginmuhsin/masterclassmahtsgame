@@ -43,6 +43,7 @@
   /* ---------------- Konum hesabı ----------------
      nokta  : {x,y} | {uzerinde, t} | {turet:"kesisim", a, b, i} | {turet:"orta", a, b}
               | {turet:"dondur", m, a, derece, k?} | {turet:"yansit", a, p, q}
+              | {turet:"tasi", a1, a2, b1, b2, y, ters?}  (üçgen kopyalama: [a1a2] → [b1b2] eşliğinde y'nin görüntüsü)
      bolge  : {noktalar:[...]}  (çözüm adımlarında vurgulanan çokgen)
      parca  : {p, q, sonsuz?} | {turet:"dik"|"paralel", nokta, dogru}
      cember : {m, p}
@@ -65,6 +66,13 @@
         const m = P(o.m), a = P(o.a); if (!m || !a) return gec;
         const r = -o.derece * Math.PI / 180, k = o.k || 1, x = (a.x - m.x) * k, y = (a.y - m.y) * k;
         return { gecerli: true, x: m.x + x * Math.cos(r) - y * Math.sin(r), y: m.y + x * Math.sin(r) + y * Math.cos(r) };
+      }
+      if (o.turet === "tasi") {         // eşlik taşıması: [a1a2] → [b1b2] (eşit uzunlukta) giderken y noktasının görüntüsü; ters: aynalı
+        const a1 = P(o.a1), a2 = P(o.a2), b1 = P(o.b1), b2 = P(o.b2), y = P(o.y); if (!a1 || !a2 || !b1 || !b2 || !y) return gec;
+        let q = { x: y.x, y: y.y };
+        if (o.ters) { const d = G.birim(a2.x - a1.x, a2.y - a1.y); if (!d) return gec; const t = (q.x - a1.x) * d.x + (q.y - a1.y) * d.y, h = { x: a1.x + d.x * t, y: a1.y + d.y * t }; q = { x: 2 * h.x - q.x, y: 2 * h.y - q.y }; }
+        const th = Math.atan2(b2.y - b1.y, b2.x - b1.x) - Math.atan2(a2.y - a1.y, a2.x - a1.x), c = Math.cos(th), s = Math.sin(th), x = q.x - a1.x, yy = q.y - a1.y;
+        return { gecerli: true, x: b1.x + x * c - yy * s, y: b1.y + x * s + yy * c };
       }
       if (o.turet === "yansit") {       // a noktasının pq doğrusuna göre yansıması
         const a = P(o.a), p = P(o.p), q = P(o.q); if (!a || !p || !q) return gec;
