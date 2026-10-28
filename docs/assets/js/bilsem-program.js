@@ -8,7 +8,30 @@
    ===================================================================== */
 "use strict";
 window.MC = window.MC || {};
-MC.bilsemTakvim = { baslangic: "2026-09-14", tatiller: ["2026-11-16", "2027-01-25", "2027-02-01", "2027-03-08"], bitis: "2027-06-25" };
+/* 2026-2027 MEB çalışma takvimi (Cumhuriyet, MEB duyurusu) ve 2027 resmî/dinî tatiller (Diyanet takvimi).
+   tatiller: öğretim haftası sayılmayan haftaların pazartesileri. Her yıl güncellenir. */
+MC.bilsemTakvim = {
+  baslangic: "2026-09-14", bitis: "2027-06-25",
+  tatiller: ["2026-11-16", "2027-01-25", "2027-02-01", "2027-03-08"],
+  donemler: [
+    { bas: "2026-11-16", bit: "2026-11-20", ad: "1. ara tatil" },
+    { bas: "2027-01-25", bit: "2027-02-05", ad: "Yarıyıl tatili" },
+    { bas: "2027-03-08", bit: "2027-03-12", ad: "2. ara tatil (Ramazan Bayramı)" },
+    { bas: "2027-06-26", bit: "2027-09-12", ad: "Yaz tatili" },
+  ],
+  resmi: [
+    { t: "2026-10-28", ad: "Cumhuriyet Bayramı arifesi · öğleden sonra tatil", yarim: true },
+    { t: "2026-10-29", ad: "Cumhuriyet Bayramı" },
+    { t: "2027-01-01", ad: "Yılbaşı" },
+    { t: "2027-03-08", ad: "Ramazan Bayramı arifesi · öğleden sonra", yarim: true },
+    { t: "2027-03-09", ad: "Ramazan Bayramı 1. gün" }, { t: "2027-03-10", ad: "Ramazan Bayramı 2. gün" }, { t: "2027-03-11", ad: "Ramazan Bayramı 3. gün" },
+    { t: "2027-04-23", ad: "Ulusal Egemenlik ve Çocuk Bayramı" },
+    { t: "2027-05-01", ad: "Emek ve Dayanışma Günü" },
+    { t: "2027-05-15", ad: "Kurban Bayramı arifesi · öğleden sonra", yarim: true },
+    { t: "2027-05-16", ad: "Kurban Bayramı 1. gün" }, { t: "2027-05-17", ad: "Kurban Bayramı 2. gün" }, { t: "2027-05-18", ad: "Kurban Bayramı 3. gün" },
+    { t: "2027-05-19", ad: "Kurban Bayramı 4. gün · Atatürk'ü Anma, Gençlik ve Spor Bayramı" },
+  ],
+};
 MC.bilsemProgram = {
  "des": {
   "ad": "Destek Eğitim",

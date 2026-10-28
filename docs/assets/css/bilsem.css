@@ -159,3 +159,36 @@
 .e-buyuk { font: 800 clamp(1.6rem, 4vw, 2.6rem)/1.1 var(--f-sayi); color: var(--renk); }
 
 .e-kontrol [hidden], .etk-alan [hidden] { display: none !important; }
+
+/* Saat, akademik takvim, geçmiş haftalar ve defter takibi */
+.om-ust-saat { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.05; padding: 4px 12px; border-radius: 14px; border: 1px solid var(--cizgi); font-family: var(--f-sayi); min-width: 70px; }
+.om-ust-saat b { font-size: 1.05rem; }
+.om-ust-saat small { font-size: .72rem; color: var(--soluk); }
+.om-takvim { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between; margin-bottom: 14px; padding: 14px 18px; }
+.om-saat-kutu { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.om-saat { font-family: var(--f-sayi); font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.om-tarih { font-size: 1.1rem; color: var(--soluk); }
+.om-durum { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; text-align: right; }
+.om-bugun { font-weight: 800; font-size: 1.05rem; }
+.om-bugun.tatil { color: var(--altin); }
+.om-sonraki { color: var(--soluk); font-size: .95rem; }
+.hafta-gez { display: inline-flex; gap: 6px; align-items: center; }
+.om-tatil-not { margin: 6px 0 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 198, 87, .12); border: 1px solid rgba(255, 198, 87, .4); font-size: .95rem; }
+.om-yazildi { margin-left: auto; }
+.serit button.tatilli::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--altin); }
+.serit button.yazildi::before { content: ""; position: absolute; left: 2px; right: 2px; top: -6px; height: 3px; border-radius: 2px; background: var(--turkuaz); }
+.serit button.gorunen { height: 42px; opacity: 1; box-shadow: 0 0 0 2px var(--altin); background: var(--tr); }
+.serit-alt { margin-top: 12px; }
+.om-defter { margin-top: 18px; display: grid; gap: 12px; }
+.om-defter .ust-satir { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; justify-content: space-between; }
+.om-ozet { font-size: 1rem; }
+.om-eksik { color: var(--kirmizi, #ff4d61); font-weight: 800; }
+.om-liste { display: grid; gap: 6px; max-height: 520px; overflow-y: auto; padding-right: 4px; }
+.om-satir { display: grid; grid-template-columns: 34px 130px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--panel-2); border-left: 4px solid var(--kirmizi, #ff4d61); }
+.om-satir.tamam { border-left-color: var(--turkuaz); opacity: .7; }
+.om-tik input { width: 22px; height: 22px; accent-color: var(--turkuaz); }
+.om-h { background: none; border: 0; color: var(--metin); text-align: left; font: inherit; cursor: pointer; display: grid; padding: 0; }
+.om-h small { color: var(--soluk); font-size: .8rem; }
+.om-k { font-size: .95rem; line-height: 1.35; display: grid; gap: 2px; }
+.om-tatil { color: var(--altin); font-size: .8rem; }
+@media (max-width: 700px) { .om-satir { grid-template-columns: 30px minmax(0, 1fr); } .om-satir .om-k, .om-satir .btn { grid-column: 2; } .om-durum { align-items: flex-start; text-align: left; } .om-ust-saat { display: none; } }

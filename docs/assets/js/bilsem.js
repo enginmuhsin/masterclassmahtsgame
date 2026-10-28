@@ -39,11 +39,39 @@
     return { no: HAFTALAR.length, bitti: true };
   }
 
+  /* ---------- Resmî tatiller, tatil dönemleri, canlı saat ---------- */
+  const GUNLER = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+  const AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  const RESMI = (T.resmi || []).map((r) => ({ ...r, d: gun(r.t) }));
+  const DONEM = (T.donemler || []).map((r) => ({ ...r, b: gun(r.bas), e: gun(r.bit) }));
+  const gunBasi = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const gunFark = (a, b) => Math.round((gunBasi(b) - gunBasi(a)) / 864e5);
+  const uzunTarih = (d) => `${d.getDate()} ${AYLAR[d.getMonth()]} ${d.getFullYear()} ${GUNLER[d.getDay()]}`;
+  const kisaGun = (d) => `${d.getDate()} ${AY[d.getMonth()]} ${GUNLER[d.getDay()].slice(0, 3)}`;
+  /* Bir öğretim haftasına (pazartesi–cuma) denk gelen resmî tatil günleri */
+  const haftaTatilleri = (w) => { const s = HAFTALAR[w - 1]; if (!s) return []; const e = new Date(s.getFullYear(), s.getMonth(), s.getDate() + 4); return RESMI.filter((r) => r.d >= s && r.d <= e); };
+  function takvimDurum(simdi = new Date()) {
+    const g = gunBasi(simdi), resmi = RESMI.find((r) => +r.d === +g), donem = DONEM.find((r) => g >= r.b && g <= r.e);
+    const hafta = buHafta(simdi), hs = g.getDay() === 0 || g.getDay() === 6;
+    const gelecek = [...RESMI.filter((r) => r.d > g).map((r) => ({ ad: r.ad, d: r.d })), ...DONEM.filter((r) => r.b > g).map((r) => ({ ad: r.ad, d: r.b }))].sort((a, b) => a.d - b.d)[0];
+    let bugun = donem ? `${donem.ad} (${kisaGun(donem.e)} sonuna kadar)` : resmi ? resmi.ad : hs ? "Hafta sonu" : hafta.bitti ? "Ders yılı bitti" : hafta.once ? "Ders yılı başlamadı" : `${hafta.no}. öğretim haftası`;
+    return { bugun, resmi, donem, hafta, gelecek, kalan: gelecek ? gunFark(g, gelecek.d) : null };
+  }
+  function saatGuncelle() {
+    const d = new Date(), saat = d.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    const ust = document.getElementById("omUstSaat"); if (ust) ust.innerHTML = `<b>${saat.slice(0, 5)}</b><small>${d.getDate()} ${AY[d.getMonth()]}</small>`;
+    const k = document.getElementById("omSaat"); if (!k) return;
+    k.textContent = saat;
+    const t = document.getElementById("omTarih"); if (t && t.dataset.g !== String(d.getDate())) { t.dataset.g = String(d.getDate()); t.textContent = uzunTarih(d); const dr = document.getElementById("omDurum"); if (dr) dr.innerHTML = durumHtml(takvimDurum(d)); }
+  }
+  const durumHtml = (td) => `<span class="om-bugun${td.resmi || td.donem ? " tatil" : ""}">${U.kacis(td.bugun)}</span>${td.gelecek ? `<span class="om-sonraki">Sıradaki: <b>${U.kacis(td.gelecek.ad)}</b> · ${kisaGun(td.gelecek.d)}${td.kalan === 1 ? " · yarın" : td.kalan > 1 ? ` · ${td.kalan} gün sonra` : ""}</span>` : ""}`;
+  setInterval(saatGuncelle, 1000); setTimeout(saatGuncelle, 0);
+
   /* ---------- Yardımcılar ---------- */
   const hepsi = (p) => P[p].temalar.flatMap((t) => t.ciktilar.map((c) => ({ ...c, tema: t })));
   const bul = (id) => { const p = String(id).split(".")[0]; if (!P[p]) return null; const c = hepsi(p).find((x) => x.id === id); return c ? { p, c } : null; };
   const haftaninKazanimi = (p, w) => hepsi(p).find((c) => w >= c.hafta[0] && w <= c.hafta[1]);
-  const depo = () => U.depoAl(DEPO, { program: "byf", notlar: {}, baglantilar: {}, isaret: {} });
+  const depo = () => { const d = U.depoAl(DEPO, { program: "byf", notlar: {}, baglantilar: {}, isaret: {} }); d.defter = d.defter || {}; return d; };
   const depoGuncelle = (f) => { const d = depo(); f(d); U.depoYaz(DEPO, d); };
   const temaRenk = ["#5b8cff", "#35e0b0", "#ffc657", "#ff8a1f", "#ff4d61", "#a66bff", "#4cc3ff", "#f472b6"];
   const etkinlikleri = (id) => ((AKIS[id] && AKIS[id].etkinlik) || []).filter((e) => ETK[e]);
@@ -62,50 +90,71 @@
   /* ===================================================================
      1) MASA — yıllık plan
      =================================================================== */
-  let masaEl = null;
+  let masaEl = null, gorunen = null, yalnizEksik = false;
   function masaCiz(p) {
-    const el = masaEl, pr = P[p], bh = buHafta(), w = bh.no, simdi = haftaninKazanimi(p, w);
+    const el = masaEl, pr = P[p], bh = buHafta(), w = bh.no;
+    if (!gorunen || gorunen < 1 || gorunen > HAFTALAR.length) gorunen = w;
+    const g = gorunen, simdi = haftaninKazanimi(p, g), td = takvimDurum(), tat = haftaTatilleri(g);
+    const gecmisSon = bh.once ? 0 : bh.tatil ? w - 1 : w;  // defteri dolmuş olması gereken son hafta
+    const defter = depo().defter[p] || {}, yazildi = Array.from({ length: gecmisSon }, (_, i) => i + 1).filter((i) => defter[i]).length;
     el.style.setProperty("--renk", pr.renk);
     const temaRenkleri = {}; pr.temalar.forEach((t, i) => (temaRenkleri[t.no] = temaRenk[i % temaRenk.length]));
-    const durum = bh.once ? "Ders yılı 14 Eylül'de başlıyor" : bh.bitti ? "Ders yılı bitti" : bh.tatil ? `Tatil · sıradaki ${w}. hafta` : `${w}. öğretim haftası`;
+    const durum = g !== w ? `${g}. öğretim haftası · ${g < w ? "geçmiş hafta" : "ileri hafta"}` : bh.once ? "Ders yılı 14 Eylül'de başlıyor" : bh.bitti ? "Ders yılı bitti" : bh.tatil ? `Tatil · sıradaki ${w}. hafta` : `${w}. öğretim haftası · bu hafta`;
     const hucre = [];
     for (let i = 1; i <= HAFTALAR.length; i++) {
       const c = haftaninKazanimi(p, i);
-      hucre.push(`<button type="button" data-h="${i}" style="--tr:${c ? temaRenkleri[c.tema.no] : "#33405e"}" ${i === w ? 'aria-current="true"' : ""} class="${i < w ? "gecti" : ""}" aria-label="${i}. hafta${c ? ": " + U.kacis(c.kod) : ""}"></button>`);
+      const ht = haftaTatilleri(i);
+      hucre.push(`<button type="button" data-h="${i}" style="--tr:${c ? temaRenkleri[c.tema.no] : "#33405e"}" ${i === w ? 'aria-current="true"' : ""} class="${i < w ? "gecti" : ""}${i === g && g !== w ? " gorunen" : ""}${ht.length ? " tatilli" : ""}${i <= gecmisSon && (depo().defter[p] || {})[i] ? " yazildi" : ""}" aria-label="${i}. hafta${c ? ": " + U.kacis(c.kod) : ""}${ht.length ? " · resmî tatil" : ""}"></button>`);
     }
     el.innerHTML = `
       <div class="bolum-basi"><span class="etiket">BİLSEM Matematik · 2026-2027</span>
         <h2>Kazanımı deftere yaz, sonra sınıfta yaşat</h2>
-        <p>Grubunu seç. Bu haftanın kazanımı en üstte; kartın üstündeki <b>Deftere kopyala</b> resmî cümleyi e-Okul'a hazır kopyalar, <b>Etkinliğe git</b> o kazanımı akıllı tahtada işleyecek etkinliği açar.</p></div>
+        <p>Grubunu seç. Bu haftanın kazanımı en üstte; kartın üstündeki <b>Deftere kopyala</b> resmî cümleyi e-Okul'a hazır kopyalar, <b>Etkinliğe git</b> o kazanımı akıllı tahtada işleyecek etkinliği açar. Geçmiş haftaların defterini sonradan dolduracaksan <b>Defter takibi</b> listesini kullan.</p></div>
+      <section class="panel om-takvim" aria-label="Saat ve akademik takvim"><div class="om-saat-kutu"><span class="om-saat" id="omSaat">${new Date().toLocaleTimeString("tr-TR")}</span><span class="om-tarih" id="omTarih" data-g="${new Date().getDate()}">${uzunTarih(new Date())}</span></div>
+        <div class="om-durum" id="omDurum">${durumHtml(td)}</div></section>
       <div class="grup-sec" role="group" aria-label="Öğrenci grubu">${Object.entries(P).map(([k, v]) => `<button type="button" data-p="${k}" style="--renk:${v.renk}" aria-pressed="${k === p}"><b>${v.kisa}</b><small>${U.kacis(v.ad)}</small></button>`).join("")}</div>
       <section class="panel bu-hafta" aria-label="Bu haftanın kazanımı">
-        <div class="ust-satir"><span class="hafta-etiket">${pr.kisa} · ${durum}${w && !bh.bitti ? " · " + haftaAraligi(w) : ""}</span>${simdi ? `<span class="soluk">Tema ${simdi.tema.no}: ${U.kacis(baslikDuzelt(simdi.tema.ad))}</span>` : ""}</div>
+        <div class="ust-satir"><span class="hafta-etiket">${pr.kisa} · ${durum}${g && !(bh.bitti && g === w) ? " · " + haftaAraligi(g) : ""}</span>
+          <span class="hafta-gez"><button type="button" class="mini-btn" data-gez="-1" ${g <= 1 ? "disabled" : ""} title="Önceki hafta" aria-label="Önceki hafta">‹</button>${g !== w ? `<button type="button" class="btn btn-hayalet btn-kucuk" data-gez="0">Bu haftaya dön</button>` : ""}<button type="button" class="mini-btn" data-gez="1" ${g >= HAFTALAR.length ? "disabled" : ""} title="Sonraki hafta" aria-label="Sonraki hafta">›</button></span></div>
+        ${simdi ? `<span class="soluk" style="font-size:14px">Tema ${simdi.tema.no}: ${U.kacis(baslikDuzelt(simdi.tema.ad))}</span>` : ""}
+        ${tat.length ? `<p class="om-tatil-not">⚑ Bu hafta resmî tatil: ${tat.map((r) => `<b>${kisaGun(r.d)}</b> ${U.kacis(r.ad)}`).join(" · ")}. ${tat.some((r) => !r.yarim) ? "Tam gün tatile denk gelen dersin defteri doldurulmaz" : ""}${tat.some((r) => r.yarim) ? `${tat.some((r) => !r.yarim) ? "; arife" : "Arife"} günü öğleden önceki dersler yapılır` : ""}.</p>` : ""}
         ${simdi ? `<span class="kod">${simdi.kod}</span><h3>${U.kacis(simdi.ad)}</h3>
           <div class="kz-dugmeler">
             <a class="btn btn-etkinlik btn-buyuk" href="#kazanim-${simdi.id}">Etkinliğe git →</a>
             <button class="btn btn-ikinci" data-kopya="${simdi.id}">Deftere kopyala</button>
             <button class="btn btn-hayalet" data-kopya="${simdi.id}" data-tam="1">Basamaklarıyla kopyala</button>
+            ${g <= gecmisSon ? `<label class="anahtar om-yazildi"><input type="checkbox" data-yazildi="${g}" ${defter[g] ? "checked" : ""}> Deftere yazıldı</label>` : ""}
           </div>` : `<p class="soluk">Bu hafta için planda kazanım yok.</p>`}
       </section>
       <div class="serit-kap">
         <div class="serit" style="--n:${HAFTALAR.length}" id="serit">${hucre.join("")}</div>
         <div class="serit-alt"><span>14 Eyl</span><span>Yarıyıl</span><span>25 Haz</span></div>
-        <p class="serit-ipucu" id="seritIpucu">Şeritteki bir haftaya dokun: o haftanın kazanımı görünür. Renkler temaları gösterir.</p>
+        <p class="serit-ipucu" id="seritIpucu">Şeritteki bir haftaya dokun: o haftanın kazanımı yukarıda açılır. Renkler temaları, alttaki nokta resmî tatili, üstteki çizgi deftere yazılan haftayı gösterir.</p>
       </div>
+      ${gecmisSon ? `<section class="panel om-defter" aria-label="Defter takibi">
+        <div class="ust-satir"><span class="etiket" style="color:var(--renk)">Defter takibi · ${pr.kisa}</span>
+          <span class="om-ozet"><b>${yazildi}/${gecmisSon}</b> geçmiş hafta deftere yazıldı${gecmisSon - yazildi ? ` · <span class="om-eksik">${gecmisSon - yazildi} hafta eksik</span>` : " ✓"}</span>
+          <label class="anahtar"><input type="checkbox" id="omYalnizEksik" ${yalnizEksik ? "checked" : ""}> Yalnız eksikler</label></div>
+        <div class="om-liste">${Array.from({ length: gecmisSon }, (_, i) => gecmisSon - i).filter((i) => !yalnizEksik || !defter[i]).map((i) => { const c = haftaninKazanimi(p, i), ht = haftaTatilleri(i);
+          return `<div class="om-satir${defter[i] ? " tamam" : ""}"><label class="om-tik"><input type="checkbox" data-yazildi="${i}" ${defter[i] ? "checked" : ""} aria-label="${i}. hafta deftere yazıldı"></label>
+            <button type="button" class="om-h" data-git-hafta="${i}"><b>${i}. hafta</b><small>${haftaAraligi(i)}</small></button>
+            <span class="om-k">${c ? `<span class="kod">${c.kod}</span> ${U.kacis(c.ad.length > 110 ? c.ad.slice(0, 108) + "…" : c.ad)}` : '<span class="soluk">Planda kazanım yok</span>'}${ht.length ? `<small class="om-tatil">⚑ ${ht.map((r) => kisaGun(r.d) + " " + U.kacis(r.ad)).join(" · ")}</small>` : ""}</span>
+            ${c ? `<button class="btn btn-ikinci btn-kucuk" data-kopya="${c.id}">Kopyala</button>` : ""}</div>`; }).join("") || '<p class="soluk">Eksik hafta yok. 👏</p>'}</div>
+        <p class="e-not">İşaretler yalnızca bu tarayıcıda tutulur. Defteri e-Okul'a yazdıkça kutuyu işaretle; geriye dönük doldururken “Yalnız eksikler” ile kalanları gör.</p></section>` : ""}
       ${pr.temalar.map((t) => `<section class="tema" style="--tr:${temaRenkleri[t.no]}">
         <div class="tema-bas"><span class="no">TEMA ${t.no}</span><h3>${U.kacis(baslikDuzelt(t.ad))}</h3><p>${U.kacis(t.aciklama)}</p></div>
         <div class="kz-liste">${t.ciktilar.map((c) => kart(c, c === simdi)).join("")}</div></section>`).join("")}
-      <p class="e-not" style="margin-top:20px">Haftalar, örnek yıllık planlardaki sürelerle 2026-2027 çalışma takvimine (16-20 Kasım ve 8-12 Mart ara tatilleri, 25 Ocak-5 Şubat yarıyıl) yerleştirildi. Kendi planın farklıysa kazanımı listeden seçmen yeterli.</p>`;
+      <p class="e-not" style="margin-top:20px">Haftalar, örnek yıllık planlardaki sürelerle MEB 2026-2027 çalışma takvimine (16-20 Kasım ve 8-12 Mart ara tatilleri, 25 Ocak-5 Şubat yarıyıl) yerleştirildi; resmî tatiller (29 Ekim, 1 Ocak, 23 Nisan, Kurban Bayramı ve 19 Mayıs) haftalarda işaretlidir. Kendi planın farklıysa kazanımı listeden seçmen yeterli.</p>`;
     const ipucu = U.$("#seritIpucu", el);
     U.$("#serit", el).addEventListener("click", (e) => {
       const b = e.target.closest("button[data-h]"); if (!b) return;
-      const c = haftaninKazanimi(p, +b.dataset.h);
-      if (c) U.git("kazanim", c.id);
+      gorunen = +b.dataset.h; Ses.efekt("sec"); masaCiz(p); const k = U.$(".bu-hafta", masaEl); if (k) k.scrollIntoView({ behavior: "smooth", block: "center" });
     });
     U.$("#serit", el).addEventListener("pointerover", (e) => {
       const b = e.target.closest("button[data-h]"); if (!b) return;
       const h = +b.dataset.h, c = haftaninKazanimi(p, h);
-      ipucu.innerHTML = `<b>${h}. hafta</b> · ${haftaAraligi(h)}${c ? ` · <span class="kod">${c.kod}</span> ${U.kacis(c.ad)}` : ""}`;
+      const ht = haftaTatilleri(h);
+      ipucu.innerHTML = `<b>${h}. hafta</b> · ${haftaAraligi(h)}${c ? ` · <span class="kod">${c.kod}</span> ${U.kacis(c.ad)}` : ""}${ht.length ? ` · ⚑ ${ht.map((r) => kisaGun(r.d) + " " + U.kacis(r.ad)).join(" · ")}` : ""}`;
     });
     if (U.animasyon()) gsap.fromTo(U.$$(".kz-kart", el), { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .35, stagger: .02, overwrite: true });
   }
@@ -125,9 +174,18 @@
       masaEl = el;
       el.addEventListener("click", (e) => {
         const g = e.target.closest(".grup-sec button[data-p]");
-        if (g) { depoGuncelle((d) => (d.program = g.dataset.p)); Ses.efekt("sec"); history.replaceState(null, "", "#masa-" + g.dataset.p); masaCiz(g.dataset.p); return; }
+        if (g) { depoGuncelle((d) => (d.program = g.dataset.p)); Ses.efekt("sec"); history.replaceState(null, "", "#masa-" + g.dataset.p); gorunen = null; masaCiz(g.dataset.p); return; }
         const k = e.target.closest("[data-kopya]");
         if (k) { const b = bul(k.dataset.kopya); if (b) kopyala(defterMetni(b.c, !!k.dataset.tam), "Kazanım kopyalandı: deftere yapıştırabilirsin"); }
+        const gz = e.target.closest("[data-gez]");
+        if (gz) { const bh = buHafta(); gorunen = +gz.dataset.gez === 0 ? bh.no : (gorunen || bh.no) + +gz.dataset.gez; Ses.efekt("dokun"); masaCiz(depo().program); }
+        const gh = e.target.closest("[data-git-hafta]");
+        if (gh) { gorunen = +gh.dataset.gitHafta; Ses.efekt("sec"); masaCiz(depo().program); const b = U.$(".bu-hafta", el); if (b) b.scrollIntoView({ behavior: "smooth", block: "center" }); }
+      });
+      el.addEventListener("change", (e) => {
+        const y = e.target.closest("[data-yazildi]");
+        if (y) { const p = depo().program, h = +y.dataset.yazildi; depoGuncelle((d) => { d.defter = d.defter || {}; d.defter[p] = d.defter[p] || {}; if (y.checked) d.defter[p][h] = 1; else delete d.defter[p][h]; }); Ses.efekt(y.checked ? "dogru" : "dokun"); masaCiz(p); }
+        if (e.target.id === "omYalnizEksik") { yalnizEksik = e.target.checked; masaCiz(depo().program); }
       });
     },
     goster(el, param) {
