@@ -264,9 +264,13 @@
     for (const o of L) {
       const h = P(o.id); if (!h || o.tur !== "parca") continue;
       const [a, b] = dogruUclari(h), v = secili.has(o.id) || vurgu.has(o.id);
-      const renk = v ? RENK.secili : o.ogr ? RENK.ogr : o.turet ? RENK.turev : o.sonsuz ? RENK.dogru : RENK.parca;
-      const kesik = (o.ogr || o.turet) && !vurgu.has(o.id) ? ` stroke-dasharray="${px(10)} ${px(7)}"` : "";
+      const renk = v ? RENK.secili : o.renk || (o.ogr ? RENK.ogr : o.turet ? RENK.turev : o.sonsuz ? RENK.dogru : RENK.parca);
+      const kesik = (o.ogr || o.turet || o.kesik) && !vurgu.has(o.id) ? ` stroke-dasharray="${px(10)} ${px(7)}"` : "";
       p.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${renk}" stroke-width="${px(v ? 5 : o.sonsuz || o.ogr || o.turet ? 2.2 : 3.2)}" stroke-linecap="round"${kesik}/>`);
+      if (o.ok) { // yön oku (ışın, rota): parçanın ortasında p → q yönünde
+        const ux = b.x - a.x, uy = b.y - a.y, n = Math.hypot(ux, uy) || 1, dx = ux / n, dy = uy / n, mx = (a.x + b.x) / 2 + dx * px(7), my = (a.y + b.y) / 2 + dy * px(7), k = px(13);
+        p.push(`<path d="M${mx} ${my} L${mx - dx * k - dy * k * .55} ${my - dy * k + dx * k * .55} L${mx - dx * k + dy * k * .55} ${my - dy * k - dx * k * .55}Z" fill="${renk}"/>`);
+      }
     }
     // Kalem
     for (const o of L) if (o.tur === "kalem" && o.yol.length) p.push(`<path d="M${o.yol.map((q) => q.join(" ")).join(" L")}" fill="none" stroke="${RENK.kalem}" stroke-width="${px(3)}" stroke-linecap="round" stroke-linejoin="round"/>`);
@@ -322,11 +326,16 @@
     }
     // Noktalar
     for (const o of L) {
-      const h = P(o.id); if (!h || o.tur !== "nokta") continue;
+      const h = P(o.id); if (!h || o.tur !== "nokta" || o.isaretsiz) continue;
       const v = secili.has(o.id) || vurgu.has(o.id), renk = v ? RENK.secili : o.ogr ? RENK.ogr : o.turet ? RENK.kesisim : o.uzerinde ? RENK.uzerinde : RENK.nokta;
       p.push(`<circle cx="${h.x}" cy="${h.y}" r="${px(v ? 8 : 5.5)}" fill="${renk}" stroke="${RENK.kagit}" stroke-width="${px(2)}"/>`);
       const d = G.birim(h.x - ag.x, h.y - ag.y) || { x: 0.7, y: -0.7 };
       p.push(metin(h.x + d.x * px(20), h.y + d.y * px(20), o.ad, vurgu.has(o.id) ? RENK.secili : o.ogr ? RENK.ogr : "#eef3ff", 18, 800));
+    }
+    // Bağlam yazıları (yeni nesil sorular: “ayna”, “güneş ışını”, “kuzey” …) — işaretsiz bir noktaya bağlıdır
+    for (const o of L) {
+      if (o.tur !== "yazi") continue; const h = P(o.n); if (!h) continue;
+      p.push(metin(h.x, h.y, o.metin, o.renk || "#9fb3d9", o.boy || 15, 600, o.yatik ? ' font-style="italic"' : ""));
     }
     return p.join("");
   }

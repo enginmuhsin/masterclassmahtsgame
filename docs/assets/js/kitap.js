@@ -124,7 +124,7 @@
         <p>${yon ? "Hakemlerin görüşleri her sorunun altında birikir. Kırmızı: bir hakemin cevabı anahtarla uyuşmuyor. Turuncu: düzeltme ya da çıkarma önerisi var. Yeşil: onaylandı." : "Her soruyu önce kendin çöz ve cevabını işaretle; cevap anahtarı ve çözüm ondan sonra açılır. Sonra kararını ve notunu bırak. Notların yalnızca yazar ve diğer hakemlerce görülür."}</p></div>
       ${yon ? '<div id="kpSekme" style="margin-bottom:14px"></div>' : ""}
       <div id="kpIc"></div>`;
-    if (yon) U.segment(U.$("#kpSekme"), [["icerik", "İçerik ve görüşler"], ["hakem", `Hakemler · ${hakemler.length}`], ["aktar", "İçe aktar"], ["yazdir", "Yazdır"]], sekme, (v) => { sekme = v; icCiz(); });
+    if (yon) U.segment(U.$("#kpSekme"), [["icerik", "İçerik ve görüşler"], ["hakem", `Hakemler · ${hakemler.length}`], ["aktar", "İçe aktar"], ["analiz", "Madde analizi"], ["yazdir", "Yazdır"]], sekme, (v) => { sekme = v; icCiz(); });
     icCiz();
   }
   function icCiz() {
@@ -132,6 +132,7 @@
     if (sekme === "hakem" && yetki === "yonetici") return hakemCiz(k);
     if (sekme === "aktar" && yetki === "yonetici") return aktarCiz(k);
     if (sekme === "yazdir" && yetki === "yonetici") return yazdirCiz(k);
+    if (sekme === "analiz" && yetki === "yonetici") return analizCiz(k);
     if (!icerik.length) { k.innerHTML = `<div class="panel"><p class="soluk">Henüz içerik yok.${yetki === "yonetici" ? " <b>İçe aktar</b> sekmesinden bölüm dosyasını (.json) yükle." : ""}</p></div>`; return; }
     k.innerHTML = `<div class="kp-masa"><nav class="panel kp-liste" id="kpListe" aria-label="İçindekiler"></nav><div id="kpDetay" class="yigin"></div></div>`;
     listeCiz(); detayCiz();
@@ -171,7 +172,7 @@
         ${yon ? `<div class="satir"><label class="anahtar"><input type="checkbox" id="kpAcik" ${acikGoster ? "checked" : ""}> Cevap anahtarını ve çözümü göster</label>
             <label class="alan" style="flex-direction:row;align-items:center;gap:8px"><span>Durum</span><select class="girdi" id="kpDurum">${Object.entries(DURUM).map(([d, a]) => `<option value="${d}" ${x.durum === d ? "selected" : ""}>${a}</option>`).join("")}</select></label>
             ${v.sekil ? '<button class="btn btn-hayalet btn-kucuk" id="kpStudyo">Çözüm Stüdyosu\'nda aç</button>' : ""}</div>` : ""}
-        ${acik ? `<div class="kp-cozum"><span class="etiket" style="color:var(--turkuaz)">Cevap ${v.dogru}${cozdu && !yon ? (sec === v.dogru ? " · senin cevabın da bu ✓" : ` · senin cevabın ${sec} ✗`) : ""}</span>${v.cozum || ""}${v.not ? `<p class="soluk"><i>Yazar notu:</i> ${v.not}</p>` : ""}</div>` : ""}
+        ${acik ? `<div class="kp-cozum"><span class="etiket" style="color:var(--turkuaz)">Cevap ${v.dogru}${cozdu && !yon ? (sec === v.dogru ? " · senin cevabın da bu ✓" : ` · senin cevabın ${sec} ✗`) : ""}</span>${v.cozum || ""}${v.not ? `<p class="soluk"><i>Yazar notu:</i> ${v.not}</p>` : ""}</div>${kunyeHtml(v)}` : ""}${yon && v.analiz ? analizOzetHtml(v) : ""}
         ${o.celiski ? '<div class="sq-uyari"><b>Cevap çelişkisi:</b> en az bir hakemin bulduğu cevap anahtarla uyuşmuyor. Soru yeniden incelenmeli.</div>' : ""}
       </article>${gorusPanel(x)}`;
     U.tex(k);
@@ -197,12 +198,13 @@
           <div><span class="kp-karar ${y.karar}">${y.karar === "yorum" && !y.metin && y.cevap ? "Çözdü" : KARAR[y.karar]}</span>${soru && y.cevap ? ` <span class="kp-cvp ${y.cevap === x.veri.dogru ? "dogru" : "yanlis"}">çözdüğü cevap: ${y.cevap}</span>` : ""}</div>
           ${y.metin ? `<p>${U.kacis(y.metin).replace(/\n/g, "<br>")}</p>` : ""}${y.yazar === me || yetki === "yonetici" ? `<button class="btn btn-hayalet btn-kucuk" data-gsil="${y.id}">Sil</button>` : ""}</div>`).join("") : '<p class="soluk">Henüz görüş yok.</p>'}
       <form class="kp-gorus-form" id="kpGorusForm"><div class="segment kp-kararlar">${Object.entries(KARAR).map(([k, a], i) => `<label><input type="radio" name="karar" value="${k}" ${i === 0 ? "checked" : ""}><span>${a}</span></label>`).join("")}</div>
+        ${soru && x.veri.kunye ? `<details class="kp-kontrol"><summary>Yeni nesil kontrol listesi · sorunlu gördüğün maddeleri işaretle</summary>${KONTROL.map((m, i) => `<label class="anahtar"><input type="checkbox" name="kl" value="${i}"> ${m}</label>`).join("")}</details>` : ""}
         <textarea class="girdi" name="metin" rows="3" maxlength="4000" placeholder="${soru ? "Notun: dil, şekil, seçenekler, zorluk, alternatif çözüm…" : "Konu özeti hakkında notun…"}"></textarea>
         <button class="btn btn-ikinci">Görüşü gönder</button></form></section>`;
   }
   function gorusBagla(k, x) {
     const f = U.$("#kpGorusForm", k);
-    if (f) f.addEventListener("submit", (e) => { e.preventDefault(); const karar = f.karar.value, metin = f.metin.value.trim(); if (karar !== "onay" && !metin) { U.bildir("Bu karar için kısa bir not yaz."); return; } gorusGonder(x, { karar, metin, cevap: x.tur === "soru" ? (benimGorus(x.id).find((g) => g.cevap) || {}).cevap || secim[x.id] || "" : "" }); });
+    if (f) f.addEventListener("submit", (e) => { e.preventDefault(); const karar = f.karar.value, kl = [...f.querySelectorAll('[name="kl"]:checked')].map((c) => KONTROL[+c.value]), metin = (kl.length ? "Kontrol listesinde sorun: " + kl.join("; ") + (f.metin.value.trim() ? "\n" : "") : "") + f.metin.value.trim(); if (karar !== "onay" && !metin) { U.bildir("Bu karar için kısa bir not yaz."); return; } gorusGonder(x, { karar, metin, cevap: x.tur === "soru" ? (benimGorus(x.id).find((g) => g.cevap) || {}).cevap || secim[x.id] || "" : "" }); });
     k.querySelectorAll("[data-gsil]").forEach((b) => (b.onclick = async () => { if (!b.dataset.emin) { b.dataset.emin = 1; b.textContent = "Silinsin mi?"; return; } try { await api(`/rest/v1/kitap_gorusler?id=eq.${b.dataset.gsil}`, { yontem: "DELETE", ek: { Prefer: "return=minimal" } }); gorusler = gorusler.filter((g) => String(g.id) !== b.dataset.gsil); listeCiz(); detayCiz(); } catch (e) { const m = hataYaz(e); if (m) U.bildir(m); } }));
   }
   async function gorusGonder(x, g, sessiz) {
@@ -251,6 +253,126 @@
     });
   }
 
+  /* ---------------- Yeni nesil: madde künyesi ve kontrol listesi ---------------- */
+  // Hakemin bağlam temelli maddeyi denetlediği sorular (MEB 2026 kılavuzunun ilkeleri + Haladyna ve ark. 2002)
+  const KONTROL = [
+    "Bağlam işlevsel değil: soru bağlam okunmadan da çözülebiliyor",
+    "Okuma yükü ölçülen beceriye göre fazla",
+    "Bağlam gerçekçi / yaşa uygun değil ya da önyargı içeriyor",
+    "Şekil ya da tablo gereksiz, eksik veya yanıltıcı",
+    "Kök tek ve açık bir görev vermiyor",
+    "Birden çok doğru ya da hiç doğru seçenek yok",
+    "Çeldiriciler gerçek yanılgılara dayanmıyor / kolay eleniyor",
+    "Seçenekler uzunluk, dil ya da sıralama ipucu veriyor"];
+  function kunyeHtml(v) {
+    const k = v.kunye; if (!k) return "";
+    const sat = (a, b) => (b ? `<tr><th>${a}</th><td>${b}</td></tr>` : "");
+    return `<details class="kp-kunye" open><summary>Madde künyesi</summary><table>
+      ${sat("Kazanım", U.kacis(k.kazanim))}${sat("Beceriler", U.kacis((k.beceri || []).join(" · ")))}${sat("Süreç (PISA)", U.kacis(k.surec))}${sat("Bağlam", U.kacis(k.baglam))}
+      ${sat("Bilişsel düzey", U.kacis(k.bloom))}${sat("Tahmini güçlük", U.kacis(k.gucluk))}${sat("Tahmini süre", k.sure ? k.sure + " sn" : "")}</table>
+      ${k.celdirici ? `<b>Çeldiriciler neden orada?</b><ul>${Object.entries(k.celdirici).sort().map(([h, g]) => `<li><b>${h})</b> ${U.kacis(g)}</li>`).join("")}</ul>` : ""}
+      ${k.neden ? `<p class="soluk"><b>Yeni nesil gerekçesi:</b> ${U.kacis(k.neden)}</p>` : ""}</details>`;
+  }
+  function analizOzetHtml(v) {
+    const a = v.analiz, r = AN.yorum(a.p, a.r);
+    return `<div class="kp-analiz-ozet"><span class="etiket soluk">Pilot uygulama · ${U.kacis(a.tarih || "")} · n = ${a.n}</span>
+      <div>p = <b>${a.p.toFixed(2)}</b> · r = <b>${a.r.toFixed(2)}</b> · <span class="kp-rozet ${r.renk}">${r.metin}</span></div>
+      <div class="soluk" style="font-size:13px">Seçenek oranları (üst %27 / alt %27): ${HARF.map((h) => `${h}${h === v.dogru ? "✓" : ""} ${Math.round(100 * (a.ust[h] || 0))}/${Math.round(100 * (a.alt[h] || 0))}`).join(" · ")}</div></div>`;
+  }
+
+  /* ---------------- Yazar: madde analizi (Klasik Test Kuramı) ----------------
+     Veri yalnızca bu tarayıcıda işlenir; öğrenci adı değil kod girilir (KVKK).
+     p: madde güçlüğü (doğru oranı) · r: ayırıcılık, üst–alt %27 grup farkı (Kelley)
+     rpb: düzeltilmiş nokta çift serili korelasyon · KR-20: iç tutarlılık
+     Ölçüt (Ebel ve Frisbie): r ≥ .40 çok iyi, .30–.39 iyi, .20–.29 düzeltilmeli, < .20 çıkarılmalı/yenilenmeli. */
+  const AN = {
+    oku(metin, uzunluk) {
+      const satirlar = String(metin).split(/\r?\n/).map((x) => x.trim()).filter(Boolean), sonuc = [], hata = [];
+      satirlar.forEach((st, i) => {
+        const p = st.split(/[;,\t ]+/).filter(Boolean); if (p.length < 2 && !/^[A-E*\-.]+$/i.test(st)) { hata.push(i + 1); return; }
+        const kod = p.length >= 2 ? p[0] : "Ö" + (i + 1), cev = (p.length >= 2 ? p.slice(1).join("") : p[0]).toUpperCase().replace(/[^A-E\-.*]/g, "");
+        if (/^(kod|ogrenci|öğrenci)$/i.test(kod)) return;
+        if (cev.length !== uzunluk) { hata.push(i + 1); return; }
+        sonuc.push({ kod, cev: [...cev].map((c) => (/[A-E]/.test(c) ? c : "")) });
+      });
+      return { sonuc, hata };
+    },
+    hesapla(ogr, anahtar) {
+      const n = ogr.length, m = anahtar.length;
+      ogr.forEach((o) => { o.puan = o.cev.reduce((t, c, j) => t + (c === anahtar[j] ? 1 : 0), 0); });
+      const ort = ogr.reduce((t, o) => t + o.puan, 0) / n, ss = Math.sqrt(ogr.reduce((t, o) => t + (o.puan - ort) ** 2, 0) / n);
+      const sirali = [...ogr].sort((a, b) => b.puan - a.puan), g = Math.max(1, Math.round(n * 0.27)), ust = sirali.slice(0, g), alt = sirali.slice(-g);
+      const oran = (grup, j, h) => grup.filter((o) => o.cev[j] === h).length / grup.length;
+      const maddeler = anahtar.map((d, j) => {
+        const p = ogr.filter((o) => o.cev[j] === d).length / n, r = oran(ust, j, d) - oran(alt, j, d);
+        const x = ogr.map((o) => (o.cev[j] === d ? 1 : 0)), y = ogr.map((o) => o.puan - (o.cev[j] === d ? 1 : 0));
+        const my = y.reduce((t, v) => t + v, 0) / n, sy = Math.sqrt(y.reduce((t, v) => t + (v - my) ** 2, 0) / n), sx = Math.sqrt(p * (1 - p));
+        const rpb = sx && sy ? x.reduce((t, v, i) => t + (v - p) * (y[i] - my), 0) / n / (sx * sy) : 0;
+        const sec = {}, ustO = {}, altO = {}; for (const h of HARF) { sec[h] = ogr.filter((o) => o.cev[j] === h).length / n; ustO[h] = oran(ust, j, h); altO[h] = oran(alt, j, h); }
+        const bos = ogr.filter((o) => !o.cev[j]).length / n;
+        const isaret = [];
+        for (const h of HARF) if (h !== d) { if (sec[h] < 0.05) isaret.push(`${h} çeldiricisi işlemiyor (%${Math.round(100 * sec[h])})`); if (ustO[h] > altO[h] && ustO[h] >= 0.1) isaret.push(`${h} üst grubu çekiyor: anahtar/ifade kontrol edilmeli`); }
+        return { no: j + 1, dogru: d, p, r, rpb, sec, ust: ustO, alt: altO, bos, isaret };
+      });
+      const pq = maddeler.reduce((t, x) => t + x.p * (1 - x.p), 0), kr20 = m > 1 && ss > 0 ? (m / (m - 1)) * (1 - pq / (ss * ss)) : 0;
+      return { n, m, ort, ss, kr20, g, maddeler };
+    },
+    yorum(p, r) {
+      if (r < 0.2) return { renk: "kirmizi", metin: "Çıkar ya da yenile" };
+      if (r < 0.3) return { renk: "turuncu", metin: "Düzeltilmeli" };
+      if (p < 0.2 || p > 0.9) return { renk: "turuncu", metin: p < 0.2 ? "Çok zor" : "Çok kolay" };
+      return { renk: "yesil", metin: r >= 0.4 ? "Çok iyi" : "İyi" };
+    },
+  };
+  K._analiz = AN;
+  let analizDurum = { bolum: null, test: null, metin: "", sonuc: null };
+  function analizCiz(k) {
+    const bl = tumBolumler(); if (!analizDurum.bolum && bl[0]) analizDurum.bolum = bl[0].id;
+    const ts = analizDurum.bolum ? testler(analizDurum.bolum) : []; if (!ts.some(([t]) => t === analizDurum.test)) analizDurum.test = ts[0] ? ts[0][0] : null;
+    const liste = (ts.find(([t]) => t === analizDurum.test) || [null, []])[1].filter((s) => s.durum !== "cikarildi"), anahtar = liste.map((s) => s.veri.dogru);
+    k.innerHTML = `<div class="panel yigin"><span class="etiket" style="color:var(--altin)">Madde analizi · pilot uygulama sonuçları</span>
+      <p class="soluk">Testi bir sınıfta uyguladıktan sonra öğrencilerin işaretlediği seçenekleri yapıştır: her satıra bir öğrenci, <b>kod</b> ve <b>cevaplar</b> (örn. <span class="mono">Ö01 ADCE-DABBECD</span>; boş için - ya da .). <b>Öğrenci adı yazma</b>, kod kullan. Veriler bu tarayıcıda işlenir; yalnızca soru başına özet istatistikleri kaydetmeyi seçebilirsin.</p>
+      <div class="satir"><label class="alan" style="flex:2 1 260px"><span>Bölüm</span><select class="girdi" id="anBolum">${bl.map((b) => `<option value="${U.kacis(b.id)}" ${b.id === analizDurum.bolum ? "selected" : ""}>${U.kacis(kitapAdi(b) + " · " + b.veri.ad)}</option>`).join("")}</select></label>
+        <label class="alan" style="flex:1 1 200px"><span>Test</span><select class="girdi" id="anTest">${ts.map(([t, l]) => `<option ${t === analizDurum.test ? "selected" : ""}>${U.kacis(t)}</option>`).join("")}</select></label></div>
+      <p class="soluk" style="font-size:13px">Cevap anahtarı (${anahtar.length} soru): <b class="mono">${anahtar.join("")}</b></p>
+      <textarea class="girdi mono" id="anVeri" rows="8" placeholder="Ö01 ${anahtar.join("")}\nÖ02 ${anahtar.map((h, i) => (i % 3 ? h : "B")).join("")}">${U.kacis(analizDurum.metin)}</textarea>
+      <div class="satir"><button class="btn btn-ana" id="anHesap">Analiz et</button><label class="btn btn-hayalet sq-dosya">CSV / metin dosyası<input type="file" accept=".csv,.txt,text/plain" id="anDosya" hidden></label></div>
+      <div id="anSonuc"></div></div>`;
+    U.$("#anBolum", k).onchange = (e) => { analizDurum.bolum = e.target.value; analizDurum.test = null; analizDurum.sonuc = null; analizCiz(k); };
+    U.$("#anTest", k).onchange = (e) => { analizDurum.test = e.target.value; analizDurum.sonuc = null; analizCiz(k); };
+    U.$("#anVeri", k).oninput = (e) => { analizDurum.metin = e.target.value; };
+    U.$("#anDosya", k).onchange = async (e) => { const f = e.target.files[0]; if (!f) return; analizDurum.metin = await f.text(); U.$("#anVeri", k).value = analizDurum.metin; };
+    U.$("#anHesap", k).onclick = () => {
+      const { sonuc, hata } = AN.oku(analizDurum.metin, anahtar.length);
+      if (sonuc.length < 10) { U.$("#anSonuc", k).innerHTML = `<p class="hata-metin">En az 10 öğrencinin cevabı gerekli (okunan: ${sonuc.length}).${hata.length ? ` Okunamayan satırlar: ${hata.slice(0, 12).join(", ")} — cevap sayısı ${anahtar.length} olmalı.` : ""}</p>`; return; }
+      analizDurum.sonuc = AN.hesapla(sonuc, anahtar); analizDurum.hata = hata; sonucCiz();
+    };
+    const sonucCiz = () => {
+      const a = analizDurum.sonuc, el = U.$("#anSonuc", k); if (!a) return;
+      el.innerHTML = `<div class="kp-an-ozet"><div><small>Öğrenci</small><b>${a.n}</b></div><div><small>Ortalama</small><b>${a.ort.toFixed(2)} / ${a.m}</b></div><div><small>Std. sapma</small><b>${a.ss.toFixed(2)}</b></div><div><small>KR-20</small><b>${a.kr20.toFixed(2)}</b></div><div><small>Grup (%27)</small><b>${a.g} + ${a.g}</b></div></div>
+        ${analizDurum.hata && analizDurum.hata.length ? `<p class="soluk">Okunamayan satırlar atlandı: ${analizDurum.hata.slice(0, 12).join(", ")}</p>` : ""}
+        <p class="soluk" style="font-size:13px">${a.n < 30 ? "<b>Uyarı:</b> 30'dan az öğrenciyle değerler kararsızdır; yön göstergesi olarak kullan. " : ""}KR-20 ≥ 0,70 genellikle yeterli kabul edilir. p: doğru cevap oranı · r: üst ve alt %27 grupların doğru oranı farkı · rpb: madde–kalan test korelasyonu.</p>
+        <div style="overflow-x:auto"><table class="kp-an-tablo"><tr><th>Soru</th><th>Anahtar</th><th>p</th><th>r</th><th>rpb</th>${HARF.map((h) => `<th>${h}<br><small>üst/alt</small></th>`).join("")}<th>Boş</th><th>Karar</th></tr>
+        ${a.maddeler.map((x) => { const y = AN.yorum(x.p, x.r); return `<tr><td><b>${x.no}</b></td><td>${x.dogru}</td><td>${x.p.toFixed(2)}</td><td>${x.r.toFixed(2)}</td><td>${x.rpb.toFixed(2)}</td>
+          ${HARF.map((h) => `<td class="${h === x.dogru ? "anahtar-h" : x.ust[h] > x.alt[h] && x.ust[h] >= 0.1 ? "sorun-h" : ""}">${Math.round(100 * x.sec[h])}%<br><small>${Math.round(100 * x.ust[h])}/${Math.round(100 * x.alt[h])}</small></td>`).join("")}
+          <td>${Math.round(100 * x.bos)}%</td><td><span class="kp-rozet ${y.renk}">${y.metin}</span>${x.isaret.length ? `<div class="soluk" style="font-size:12px">${x.isaret.map(U.kacis).join("<br>")}</div>` : ""}</td></tr>`; }).join("")}</table></div>
+        <div class="satir"><button class="btn btn-ikinci" id="anKaydet">Özetleri sorulara kaydet</button><button class="btn btn-hayalet" id="anCsv">Sonuç tablosunu indir (CSV)</button></div>`;
+      U.$("#anCsv", el).onclick = () => {
+        const s = ["soru;anahtar;p;r;rpb;" + HARF.map((h) => `${h}_oran;${h}_ust;${h}_alt`).join(";") + ";bos;karar"].concat(a.maddeler.map((x) => [x.no, x.dogru, x.p.toFixed(3), x.r.toFixed(3), x.rpb.toFixed(3), ...HARF.flatMap((h) => [x.sec[h].toFixed(3), x.ust[h].toFixed(3), x.alt[h].toFixed(3)]), x.bos.toFixed(3), AN.yorum(x.p, x.r).metin].join(";"))).join("\n");
+        const l = document.createElement("a"); l.href = URL.createObjectURL(new Blob(["\ufeff" + s], { type: "text/csv" })); l.download = `madde-analizi-${analizDurum.bolum}.csv`; l.click();
+      };
+      U.$("#anKaydet", el).onclick = async () => {
+        const tarih = new Date().toLocaleDateString("tr-TR");
+        try {
+          for (const [j, x] of a.maddeler.entries()) { const s = liste[j]; const veri = { ...s.veri, analiz: { tarih, n: a.n, p: +x.p.toFixed(3), r: +x.r.toFixed(3), rpb: +x.rpb.toFixed(3), ust: x.ust, alt: x.alt, kr20: +a.kr20.toFixed(3) } };
+            await api(`/rest/v1/kitap_icerik?id=eq.${encodeURIComponent(s.id)}`, { yontem: "PATCH", govde: { veri }, ek: { Prefer: "return=minimal" } }); s.veri = veri; }
+          U.bildir(`${a.maddeler.length} sorunun özeti kaydedildi.`);
+        } catch (e) { const m = hataYaz(e); if (m) U.bildir(m); }
+      };
+    };
+    sonucCiz();
+  }
+
   /* ---------------- Yazar: yazdır ---------------- */
   function yazdirCiz(k) {
     k.innerHTML = `<div class="panel"><span class="etiket" style="color:var(--altin)">Yazdır / PDF</span><p class="soluk">Bölümü kitap sayfası düzeninde yazdır ya da “PDF olarak kaydet” ile PDF yap. Çıkarılan sorular basılmaz.</p>
@@ -262,7 +384,7 @@
     const sorularHtml = testler(bolumId).map(([t, l]) => {
       l = l.filter((s) => s.durum !== "cikarildi");
       if (tip === "cevap") return `<section class="yz-test"><h2>${U.kacis(t)} · Cevap anahtarı</h2><table class="yz-anahtar"><tr>${l.map((s) => `<td>${s.sira}</td>`).join("")}</tr><tr>${l.map((s) => `<td><b>${s.veri.dogru}</b></td>`).join("")}</tr></table>
-        ${l.map((s) => `<div class="yz-cozum"><b>${s.sira}.</b> ${s.veri.cozum || ""}</div>`).join("")}</section>`;
+        ${l.map((s) => `<div class="yz-cozum"><b>${s.sira}.</b> ${s.veri.cozum || ""}${s.veri.kunye ? `<div class="yz-kunye">${U.kacis([s.veri.kunye.surec, s.veri.kunye.baglam, s.veri.kunye.bloom].filter(Boolean).join(" · "))} — ${U.kacis(s.veri.kunye.kazanim || "")}</div>` : ""}</div>`).join("")}</section>`;
       if (tip === "hakem") return `<section class="yz-test"><h2>${U.kacis(t)} · Hakem raporu</h2>${l.map((s) => { const o = ozetDurum(s); return `<div class="yz-cozum"><b>Soru ${s.sira}</b> · ${DURUM[s.durum]} · anahtar ${s.veri.dogru} · ${o.onay} onay${o.celiski ? " · <b>CEVAP ÇELİŞKİSİ</b>" : ""}${gorusOf(s.id).map((g) => `<div>— ${U.kacis(g.yazar_ad)}: ${KARAR[g.karar]}${g.cevap ? ` (cevap ${g.cevap})` : ""}${g.metin ? ": " + U.kacis(g.metin) : ""}</div>`).join("")}</div>`; }).join("")}</section>`;
       return `<section class="yz-test"><h2>${U.kacis(t)}</h2><div class="yz-sorular">${l.map((s) => `<div class="yz-soru"><div class="yz-no">${s.sira}</div><div>${svgHtml(s.veri.svg)}<div class="yz-metin">${s.veri.metin}</div><div class="yz-sec">${s.veri.secenekler.map((x, j) => `<span><b>${HARF[j]})</b> ${x}</span>`).join("")}</div></div></div>`).join("")}</div></section>`;
     }).join("");
