@@ -13,6 +13,8 @@
     return `<svg class="ayin-svg" viewBox="${kutu.x} ${kutu.y} ${kutu.w} ${kutu.h}" role="img" aria-label="${U.kacis(q.baslik)} şekli">${icerik}</svg>`;
   }
   function kur(el) {
+    /* Ayın sorusu yerini Haftanın Soruları'na bıraktı; eski #ayin bağlantıları oraya yönlenir. */
+    if (MC.haftaninSorulari) { el.innerHTML = '<div class="panel"><p>Ayın sorusu artık <a href="../hafta/">Haftanın Soruları</a> sayfasında.</p></div>'; location.replace("../hafta/#arsiv"); return; }
     const liste = MC.ayinSorulari || [];
     if (!liste.length) { el.innerHTML = '<div class="panel"><h2>Ayın sorusu yakında</h2></div>'; return; }
     const q = liste[0], cozulen = U.depoAl("geo_soru_cozulen", {})[q.id];

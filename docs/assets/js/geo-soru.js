@@ -504,10 +504,10 @@
   }
   function cozPanel() {
     const k = U.$("#sqYan", el), q = coz && coz.soru;
-    const liste = [...(MC.ayinSorulari || []), ...MC.soruOrnekleri, ...kayitlar()];
+    const liste = [...haftaGeo(), ...(MC.haftaninSorulari ? [] : MC.ayinSorulari || []), ...MC.soruOrnekleri, ...kayitlar()];
     const cozulen = U.depoAl("geo_soru_cozulen", {});
     if (!q) {
-      k.innerHTML = `<div class="panel"><span class="etiket" style="color:var(--turkuaz)">Bir soru seç</span><div class="gorev-liste">${liste.map((x) => `<button class="gorev" data-coz="${x.id}"><b>${U.kacis(x.baslik || "Başlıksız soru")}</b><small>${x.ayin ? `<span style="color:var(--altin)">★ Ayın sorusu · ${U.kacis(x.ay)}</span>` : x.ornek ? "Örnek soru" : "Bu cihazda hazırlandı"}${cozulen[x.id] ? " · ✓ çözüldü" : ""}</small></button>`).join("")}</div></div>`;
+      k.innerHTML = `<div class="panel"><span class="etiket" style="color:var(--turkuaz)">Bir soru seç</span><div class="gorev-liste">${liste.map((x) => `<button class="gorev" data-coz="${x.id}"><b>${U.kacis(x.baslik || "Başlıksız soru")}</b><small>${x.hafta ? `<span style="color:var(--altin)">★ Haftanın sorusu · ${U.kacis(x.ay)}</span>` : x.ayin ? `<span style="color:var(--altin)">★ Ayın sorusu · ${U.kacis(x.ay)}</span>` : x.ornek ? "Örnek soru" : "Bu cihazda hazırlandı"}${cozulen[x.id] ? " · ✓ çözüldü" : ""}</small></button>`).join("")}</div></div>`;
     } else {
       const birim = q.birim === "°" ? "°" : q.birim;
       k.innerHTML = `
@@ -634,12 +634,25 @@
         try { const q = JSON.parse(b64.oku(param.slice(4))); if (!Array.isArray(q.nesne)) throw 0; history.replaceState(null, "", "#soru"); cozBaslat(q); U.bildir("Paylaşılan soru açıldı."); }
         catch (e) { U.bildir("Bu soru bağlantısı bozuk."); }
       } else if (param === "coz") kipSec("coz");
+      else if (param.startsWith("hafta")) {
+        const id = param.split(".").slice(1).join("."), q = haftaGeo().find((x) => !id || x.id === id);
+        if (q) { history.replaceState(null, "", "#soru"); cozBaslat(JSON.parse(JSON.stringify(q))); }
+      }
       else if (param.startsWith("ayin")) {
         const id = param.split(".")[1], q = (MC.ayinSorulari || []).find((x) => !id || x.id === id);
         if (q) { history.replaceState(null, "", "#soru"); cozBaslat(JSON.parse(JSON.stringify(q))); }
       }
     },
   });
+  /* Haftanın Soruları'ndaki yayımlanmış geometri soruları, Soru Masası biçiminde */
+  function haftaGeo() {
+    const V = MC.haftaninSorulari; if (!V) return [];
+    const d = new Date(), bugun = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    return V.sorular.filter((q) => q.tur === "geometri" && q.baslangic <= bugun).map((q) => ({
+      ...q.sekil, id: q.id, baslik: q.baslik, metin: q.metin.replace(/<[^>]+>/g, ""), ipuclari: q.ipuclari, cozum: q.cozum ? q.cozum.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : "",
+      cevapMetin: q.cevapMetin, birim: q.birim, hafta: true, ay: q.etiket || q.baslangic.split("-").reverse().join("."),
+    }));
+  }
   /* Başka bölümler için durağan çizim (ör. Ayın Sorusu): mantıksal 1000×700 düzleminde SVG içeriği ve sınır kutusu */
   function statikSvg(q) {
     const yedek = { S, ekran, secim, olcumler, hs, konum, fare };

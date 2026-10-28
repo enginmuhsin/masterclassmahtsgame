@@ -1,6 +1,6 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v11";
+const SURUM = "mc-v13";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
@@ -89,7 +89,7 @@ const DOSYALAR = [
   "./geometri/index.html",
   "./index.html",
   "./manifest.webmanifest",
-  "./bilsem/",
+  "./ogretmen/",
   "./assets/css/bilsem.css",
   "./assets/js/bilsem-akis-oyg.js",
   "./assets/js/bilsem-akis-puy.js",
@@ -98,6 +98,10 @@ const DOSYALAR = [
   "./assets/js/bilsem-etkinlik.js",
   "./assets/js/bilsem-program.js",
   "./assets/js/bilsem.js",
+  "./hafta/",
+  "./assets/css/hafta.css",
+  "./assets/js/hafta.js",
+  "./assets/js/haftanin-sorulari.js",
 ];
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(SURUM).then((c) => c.addAll(DOSYALAR)).then(() => self.skipWaiting()));
