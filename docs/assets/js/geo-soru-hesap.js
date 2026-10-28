@@ -42,6 +42,8 @@
 
   /* ---------------- Konum hesabı ----------------
      nokta  : {x,y} | {uzerinde, t} | {turet:"kesisim", a, b, i} | {turet:"orta", a, b}
+              | {turet:"dondur", m, a, derece, k?} | {turet:"yansit", a, p, q}
+     bolge  : {noktalar:[...]}  (çözüm adımlarında vurgulanan çokgen)
      parca  : {p, q, sonsuz?} | {turet:"dik"|"paralel", nokta, dogru}
      cember : {m, p}
      t: parça ve doğruda p→q vektörünün katı; türetilmiş doğruda piksel; çemberde açı (radyan) */
@@ -59,6 +61,17 @@
       if (o.uzerinde) { const h = P(o.uzerinde); if (!h) return gec; const q = H.cizgiNokta(h, o.t); return { gecerli: true, x: q.x, y: q.y }; }
       if (o.turet === "orta") { const a = P(o.a), b = P(o.b); return a && b ? { gecerli: true, x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 } : gec; }
       if (o.turet === "kesisim") { const a = P(o.a), b = P(o.b); if (!a || !b) return gec; const k = G.kesisim(a, b)[o.i]; return k ? { gecerli: true, x: k.x, y: k.y } : gec; }
+      if (o.turet === "dondur") {       // a noktasını m merkezli, saat yönünün tersine derece kadar döndür (k: ölçek)
+        const m = P(o.m), a = P(o.a); if (!m || !a) return gec;
+        const r = -o.derece * Math.PI / 180, k = o.k || 1, x = (a.x - m.x) * k, y = (a.y - m.y) * k;
+        return { gecerli: true, x: m.x + x * Math.cos(r) - y * Math.sin(r), y: m.y + x * Math.sin(r) + y * Math.cos(r) };
+      }
+      if (o.turet === "yansit") {       // a noktasının pq doğrusuna göre yansıması
+        const a = P(o.a), p = P(o.p), q = P(o.q); if (!a || !p || !q) return gec;
+        const d = G.birim(q.x - p.x, q.y - p.y); if (!d) return gec;
+        const t = (a.x - p.x) * d.x + (a.y - p.y) * d.y, h = { x: p.x + d.x * t, y: p.y + d.y * t };
+        return { gecerli: true, x: 2 * h.x - a.x, y: 2 * h.y - a.y };
+      }
       return { gecerli: true, x: o.x, y: o.y };
     }
     if (o.tur === "parca") {

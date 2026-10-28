@@ -66,3 +66,19 @@ Bu rehber, TÜBİTAK Bilim Olimpiyatları matematik sınavlarının son üç yı
 - **Çözüm:** Her adım gerekçeli olsun. Sonda bir "Bir adım ileri" bölümü bulunsun: genelleme ya da aynı fikirle çözülen kısa bir ek soru.
 - **Doğrulama:** Her cevap yayından önce bilgisayarla (kaba kuvvet, koordinat hesabı) doğrulanır; cevabın tek olduğu kontrol edilir.
 - **İkinci aşama tadı (isteğe bağlı):** Ayda bir, ★★★ sorunun "Bir adım ileri" bölümüne kısa bir ispat sorusu ("… olduğunu gösteriniz") eklenebilir.
+
+## 5. Geometri çözümü: şekil ve ek çizim
+
+Olimpiyat geometrisinde asıl beceri, verilenlerden şekli kurmak ve **ek çizimle** sonuca şekil üzerinden ulaşmaktır. Trigonometri (sinüs, kosinüs teoremi) ya da koordinat yalnızca doğrulama ve "başka bir yol" olarak yazılır.
+
+- **Ana çözüm sentetik olur:** eş üçgen, ikizkenar ve eşkenar üçgen, açı kovalamaca, paralellik, benzerlik, çember (kirişler dörtgeni, çevre açı).
+- **Sık kullanılan ek çizimler:** bir üçgeni başka bir kenarın üzerine kopyalamak (döndürme; kenar-açı-kenar eşliği), eşkenar üçgen kurmak, simetri ya da yansıma, bir kenarı uzatmak, paralel ya da dik çizmek, orta nokta ve orta taban, yardımcı çember.
+- **Bağlantı ilkesi:** Bir eşitlik birbirinden uzak iki parçayı bağlıyorsa (ör. |BP| = |AC|), bu iki parçayı ek çizimle aynı üçgende buluşturmaya çalış.
+- **Adım adım çözüm (`adimlar`):** Her geometri çözümüyle birlikte 3–7 adımlık bir adimlar.json yazılır. Soru Masası bu adımları tahtada sırayla çizer; Haftanın Soruları sayfası da adım adım gösterir. Her adımda:
+  - `metin`: kısa, gerekçeli bir cümle (HTML; anahtar sonucu `<b>` ile vurgula). Açı ölçüsünde sorunun gösterimini kullan (s ya da m).
+  - `ekle`: o adımda çizilen nesneler. Ek nokta için `{"turet":"dondur","m":"P","a":"A","derece":60}` (A'yı P etrafında saat yönünün tersine 60° döndür), `{"turet":"yansit","a","p","q"}`, `orta`, `kesisim`; parça, çentik, açı notu (`aci` ve `metin`).
+  - `vurgu`: o adımda altın renkle öne çıkan nesneler. `bolge`: renklendirilen üçgenler, örneğin `[["B","P","E"],["C","A","P"]]`, isteğe bağlı `bolgeRenk`.
+  - `gizle`: o adımda kalabalık yapan önceki etiketler. Aynı köşede üst üste binen açı yazısı bırakma.
+- **Yayın:** `node araclar/haftanin-sorulari.js cozum <id> <cevap> cozum.html adimlar.json`, ardından `svg` ve `kontrol`. adimlar.json da pazara kadar herkese açık depoya girmez.
+- **Görsel kontrol:** Her adımın çizimine bak: etiketler çakışmasın, ek çizim kesik turkuaz, o adımdaki yeni çizgi altın renkte görünsün.
+- Örnek: Eylül 2026 Ayın Sorusu (`ayin-2026-09`). |BP| = |AC| bilgisini buluşturmak için CAP üçgeni [BP] üzerine kopyalanır, eşkenar APE ortaya çıkar, ikizkenar EAB'den x = 30° gelir.

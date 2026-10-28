@@ -95,3 +95,12 @@ nav.menu a.menu-ayin { color: var(--altin); }
 .ayin-imza b { font-family: var(--f-baslik); color: var(--altin); }
 .ayin-imza small { grid-column: 2; color: var(--soluk); font-family: var(--f-sayi); font-size: 12px; }
 @media (max-width: 960px) { .ayin-duzen { grid-template-columns: minmax(0, 1fr); } }
+/* Soru Masası · ek çizimlerle adım adım çözüm */
+.sq-adim { border-top: 4px solid var(--altin); }
+.sq-adim h3 { font-size: 1.15rem; margin: 4px 0; }
+.sq-adim-metin { font-size: 1.08rem; line-height: 1.6; }
+.sq-adim-metin p { margin: 0 0 6px; }
+.sq-adim-metin b { color: var(--altin); }
+.sq-adim-nokta { display: inline-flex; gap: 5px; }
+.sq-adim-nokta i { width: 9px; height: 9px; border-radius: 50%; background: var(--cizgi-guclu, rgba(150,180,255,.3)); }
+.sq-adim-nokta i.dolu { background: var(--altin); }

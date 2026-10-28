@@ -50,3 +50,17 @@
 }
 .hafta .cip { background: var(--panel-2); color: var(--metin); font-size: .85rem; padding: 5px 10px; font-weight: 600; }
 .basari { background: linear-gradient(120deg, rgba(53, 224, 176, .25), rgba(53, 224, 176, .06)); border: 1px solid rgba(53, 224, 176, .55); border-radius: 16px; padding: 12px 14px; }
+/* Ek çizimlerle adım adım çözüm */
+.hs-adimlar { display: grid; gap: 10px; margin-top: 6px; }
+.hs-adim-ust { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hs-adim-metin { line-height: 1.6; min-height: 3.2em; }
+.hs-adim-metin p { margin: 0 0 6px; }
+.hs-adim-metin b { color: var(--altin); }
+.hs-adim-hepsi { display: none; }
+@media print {
+  .hs-adimlar .hs-adim-oynat { display: none !important; }
+  body.yazdir-cozumlu .hs-adim-hepsi { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hs-adim-hepsi figure { margin: 0; break-inside: avoid; }
+  .hs-adim-hepsi figcaption { font-size: 12px; color: #000; }
+  .hafta .hs-adim-metin b { color: #000; }
+}

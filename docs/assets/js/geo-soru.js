@@ -18,6 +18,7 @@
   let taslak = null;             // öğretmenin hazırladığı soru
   let coz = null;                // öğrenci oturumu {soru, deneme, ipucu, cozuldu}
   let gecmis = [], ileri = [], hs = { hesap: {}, P: () => null }, konum = {}, olcumler = [], izgara = false, sonUydur = null;
+  let vurgu = new Set(), gizli = new Set();   // çözüm adımında vurgulanan / o adımda gizlenen nesneler
   const bul = (id) => S.nesne.find((o) => o.id === id);
   const P = (id) => hs.P(id);
   const px = (n) => n / ekran;   // ekranda n piksel görünen mantıksal uzunluk
@@ -102,7 +103,7 @@
   }
   function bagimlilar(id, set = new Set([id])) {
     let degisti = true;
-    while (degisti) { degisti = false; for (const o of S.nesne) if (!set.has(o.id) && ["a", "b", "c", "v", "p", "q", "m", "uzerinde", "nokta", "dogru"].some((k) => set.has(o[k]))) { set.add(o.id); degisti = true; } }
+    while (degisti) { degisti = false; for (const o of S.nesne) if (!set.has(o.id) && (["a", "b", "c", "v", "p", "q", "m", "uzerinde", "nokta", "dogru"].some((k) => set.has(o[k])) || (o.noktalar || []).some((k) => set.has(k)))) { set.add(o.id); degisti = true; } }
     return set;
   }
   const anlikAl = () => JSON.stringify({ nesne: S.nesne, sayac: S.sayac });
@@ -216,7 +217,7 @@
     return { d: `M${v.x + u.x * r} ${v.y + u.y * r} A${r} ${r} 0 0 ${sweep} ${v.x + w.x * r} ${v.y + w.y * r}`, u, w, ort };
   }
   function svgYaz(onizleme = true) {
-    const p = [], ag = agirlik(), secili = new Set(secim);
+    const p = [], ag = agirlik(), secili = new Set(secim), L = S.nesne.filter((o) => !gizli.has(o.id));
     konum = {};
     p.push(`<rect x="-2000" y="-2000" width="${W + 4000}" height="${Y + 4000}" fill="${RENK.kagit}"/>`);
     if (S.gorsel && S.gorselGoster && (kip === "hazirla" || S.gorselOgrenci)) {
@@ -225,45 +226,51 @@
     }
     if (izgara) { for (let x = 0; x <= W; x += 50) p.push(`<line x1="${x}" y1="0" x2="${x}" y2="${Y}" stroke="rgba(91,140,255,.10)"/>`); for (let y = 0; y <= Y; y += 50) p.push(`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(91,140,255,.10)"/>`); }
     p.push(`<rect x="0" y="0" width="${W}" height="${Y}" fill="none" stroke="rgba(150,180,255,.12)" stroke-width="${px(1)}"/>`);
+    // Çözüm adımı bölgeleri (vurgulanan üçgenler)
+    for (const o of L) {
+      if (o.tur !== "bolge") continue; const q = (o.noktalar || []).map(P); if (q.length < 3 || q.some((x) => !x)) continue;
+      const r = o.renk || RENK.secili;
+      p.push(`<polygon points="${q.map((x) => `${x.x},${x.y}`).join(" ")}" fill="${r}" fill-opacity=".22" stroke="${r}" stroke-opacity=".7" stroke-width="${px(2)}" stroke-dasharray="${px(6)} ${px(5)}" stroke-linejoin="round"/>`);
+    }
     // Çemberler ve çizgiler
-    for (const o of S.nesne) {
+    for (const o of L) {
       const h = P(o.id); if (!h || o.tur !== "cember") continue;
-      const v = secili.has(o.id);
+      const v = secili.has(o.id) || vurgu.has(o.id);
       p.push(`<circle cx="${h.x}" cy="${h.y}" r="${h.r}" fill="none" stroke="${v ? RENK.secili : o.ogr ? RENK.ogr : RENK.cember}" stroke-width="${px(v ? 4 : 2.5)}"${o.ogr ? ` stroke-dasharray="${px(8)} ${px(6)}"` : ""}/>`);
     }
-    for (const o of S.nesne) {
+    for (const o of L) {
       const h = P(o.id); if (!h || o.tur !== "parca") continue;
-      const [a, b] = dogruUclari(h), v = secili.has(o.id);
+      const [a, b] = dogruUclari(h), v = secili.has(o.id) || vurgu.has(o.id);
       const renk = v ? RENK.secili : o.ogr ? RENK.ogr : o.turet ? RENK.turev : o.sonsuz ? RENK.dogru : RENK.parca;
-      const kesik = o.ogr || o.turet ? ` stroke-dasharray="${px(10)} ${px(7)}"` : "";
+      const kesik = (o.ogr || o.turet) && !vurgu.has(o.id) ? ` stroke-dasharray="${px(10)} ${px(7)}"` : "";
       p.push(`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${renk}" stroke-width="${px(v ? 5 : o.sonsuz || o.ogr || o.turet ? 2.2 : 3.2)}" stroke-linecap="round"${kesik}/>`);
     }
     // Kalem
-    for (const o of S.nesne) if (o.tur === "kalem" && o.yol.length) p.push(`<path d="M${o.yol.map((q) => q.join(" ")).join(" L")}" fill="none" stroke="${RENK.kalem}" stroke-width="${px(3)}" stroke-linecap="round" stroke-linejoin="round"/>`);
+    for (const o of L) if (o.tur === "kalem" && o.yol.length) p.push(`<path d="M${o.yol.map((q) => q.join(" ")).join(" L")}" fill="none" stroke="${RENK.kalem}" stroke-width="${px(3)}" stroke-linecap="round" stroke-linejoin="round"/>`);
     // Çentikler
-    for (const o of S.nesne) {
+    for (const o of L) {
       if (o.tur !== "centik") continue; const a = P(o.a), b = P(o.b); if (!a || !b) continue;
       const d = G.birim(b.x - a.x, b.y - a.y); if (!d) continue;
       const m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }, nx = -d.y, ny = d.x, L = px(9), ara = px(6);
-      for (let i = 0; i < o.n; i++) { const k = (i - (o.n - 1) / 2) * ara, c = { x: m.x + d.x * k, y: m.y + d.y * k }; p.push(`<line x1="${c.x - nx * L + d.x * px(2)}" y1="${c.y - ny * L + d.y * px(2)}" x2="${c.x + nx * L - d.x * px(2)}" y2="${c.y + ny * L - d.y * px(2)}" stroke="${RENK.esit}" stroke-width="${px(2.6)}" stroke-linecap="round"/>`); }
+      for (let i = 0; i < o.n; i++) { const k = (i - (o.n - 1) / 2) * ara, c = { x: m.x + d.x * k, y: m.y + d.y * k }; p.push(`<line x1="${c.x - nx * L + d.x * px(2)}" y1="${c.y - ny * L + d.y * px(2)}" x2="${c.x + nx * L - d.x * px(2)}" y2="${c.y + ny * L - d.y * px(2)}" stroke="${vurgu.has(o.id) ? RENK.secili : RENK.esit}" stroke-width="${px(2.6)}" stroke-linecap="round"/>`); }
       konum[o.id] = m;
     }
     // Eş açı yayları
-    for (const o of S.nesne) {
+    for (const o of L) {
       if (o.tur !== "yay") continue; const a = P(o.a), v = P(o.v), c = P(o.c); if (!a || !v || !c) continue;
       for (let i = 0; i < o.n; i++) { const y = aciYayi(a, v, c, px(24 + i * 6)); if (y) p.push(`<path d="${y.d}" fill="none" stroke="${RENK.esit}" stroke-width="${px(2.4)}"/>`); }
       const y = aciYayi(a, v, c, px(24)); if (y) konum[o.id] = { x: v.x + y.ort.x * px(24), y: v.y + y.ort.y * px(24) };
     }
     // Açı ve uzunluk etiketleri
-    for (const o of S.nesne) {
+    for (const o of L) {
       if (o.tur === "aci") {
         const a = P(o.a), v = P(o.v), c = P(o.c); if (!a || !v || !c) continue;
-        const e = H.ifade(o.metin), soru = e && e.soru, renk = o.ogr ? RENK.not : soru || (e && Object.keys(e.kat).length) ? RENK.soru : RENK.veri;
+        const e = H.ifade(o.metin), soru = e && e.soru, renk = vurgu.has(o.id) ? RENK.secili : o.ogr ? RENK.not : soru || (e && Object.keys(e.kat).length) ? RENK.soru : RENK.veri;
         const dik = e && !e.soru && !Object.keys(e.kat).length && Math.abs(e.sabit - 90) < 1e-9;
-        const derece = G.aci(a, v, c), r = px((o.ogr ? 40 : 34) * Math.min(1.8, Math.max(1, 45 / (derece || 45)))), y = aciYayi(a, v, c, r); if (!y) continue;
+        const derece = G.aci(a, v, c), genis = derece > 100, r = px((o.ogr ? 40 : 34) * (genis ? .75 : Math.min(1.8, Math.max(1, 45 / (derece || 45))))), y = aciYayi(a, v, c, r); if (!y) continue;
         if (dik) { const k = px(16); p.push(`<path d="M${v.x + y.u.x * k} ${v.y + y.u.y * k} L${v.x + (y.u.x + y.w.x) * k} ${v.y + (y.u.y + y.w.y) * k} L${v.x + y.w.x * k} ${v.y + y.w.y * k}" fill="none" stroke="${renk}" stroke-width="${px(2.4)}"/>`); }
         else p.push(`<path d="${y.d}" fill="none" stroke="${renk}" stroke-width="${px(2.4)}"/>`);
-        const q = { x: v.x + y.ort.x * (r + px(22)), y: v.y + y.ort.y * (r + px(22)) };
+        const q = { x: v.x + y.ort.x * (r + px(genis ? 15 : 22)), y: v.y + y.ort.y * (r + px(genis ? 15 : 22)) };
         const yazi = dik ? "" : e && !e.soru && !Object.keys(e.kat).length ? `${H.yuvarla(e.sabit)}°` : o.metin.replace(/°$/, "") + (e && !e.soru ? "" : "");
         if (yazi) p.push(metin(q.x, q.y, yazi, renk, 17));
         konum[o.id] = dik ? { x: v.x + (y.u.x + y.w.x) * px(16), y: v.y + (y.u.y + y.w.y) * px(16) } : q;
@@ -291,12 +298,12 @@
       if (son && ["aci", "yay", "not", "olcAci"].includes(arac)) p.push(`<line x1="${son.x}" y1="${son.y}" x2="${fare.x}" y2="${fare.y}" stroke="${RENK.secili}" stroke-width="${px(1.5)}" stroke-dasharray="${px(5)} ${px(5)}"/>`);
     }
     // Noktalar
-    for (const o of S.nesne) {
+    for (const o of L) {
       const h = P(o.id); if (!h || o.tur !== "nokta") continue;
-      const v = secili.has(o.id), renk = v ? RENK.secili : o.ogr ? RENK.ogr : o.turet ? RENK.kesisim : o.uzerinde ? RENK.uzerinde : RENK.nokta;
+      const v = secili.has(o.id) || vurgu.has(o.id), renk = v ? RENK.secili : o.ogr ? RENK.ogr : o.turet ? RENK.kesisim : o.uzerinde ? RENK.uzerinde : RENK.nokta;
       p.push(`<circle cx="${h.x}" cy="${h.y}" r="${px(v ? 8 : 5.5)}" fill="${renk}" stroke="${RENK.kagit}" stroke-width="${px(2)}"/>`);
       const d = G.birim(h.x - ag.x, h.y - ag.y) || { x: 0.7, y: -0.7 };
-      p.push(metin(h.x + d.x * px(20), h.y + d.y * px(20), o.ad, o.ogr ? RENK.ogr : "#eef3ff", 18, 800));
+      p.push(metin(h.x + d.x * px(20), h.y + d.y * px(20), o.ad, vurgu.has(o.id) ? RENK.secili : o.ogr ? RENK.ogr : "#eef3ff", 18, 800));
     }
     return p.join("");
   }
@@ -499,8 +506,42 @@
     q = Object.assign(bosSoru(), q);
     q.nesne = q.nesne.filter((o) => !o.ogr);
     if (!q.uyduruldu && !q.olceksizGoster) { const s = H.uydur(q.nesne, { olcek: q.olcek || undefined }); if (s.basarili) { q.nesne = s.nesne; q.olcek = s.olcek; q.uyduruldu = true; } }
-    coz = { soru: q, deneme: 0, ipucu: 0, cozuldu: false };
+    coz = { soru: q, deneme: 0, ipucu: 0, cozuldu: false, adim: -1 };
+    vurgu = new Set(); gizli = new Set();
     kipSec("coz", true);
+  }
+
+  /* ---------------- Çözüm adımları: ek çizimlerle sentetik çözüm ----------------
+     q.adimlar = [{ baslik, metin (HTML), ekle: [nesne…], vurgu: [id…], bolge: [[A,B,C]…] }]
+     Her adım öncekilerin üstüne kurulur; yeni eklenenler ve vurgulananlar altın renkte görünür. */
+  function adimNesneleri(q, k) {
+    const ek = [], yeni = new Set(), gizle = new Set(((q.adimlar || [])[k] || {}).gizle || []);
+    (q.adimlar || []).slice(0, k + 1).forEach((a, i) => {
+      for (const o of a.ekle || []) { ek.push({ ...o, ogr: true, adim: true }); if (i === k) yeni.add(o.id); }
+      if (i === k) { (a.vurgu || []).forEach((id) => yeni.add(id)); (a.bolge || []).forEach((n, j) => ek.push({ id: `bolge${i}_${j}`, tur: "bolge", noktalar: n, adim: true, renk: Array.isArray(a.bolgeRenk) ? a.bolgeRenk[j] : undefined })); }
+    });
+    return { ek, yeni, gizle };
+  }
+  function adimGit(k) {
+    const q = coz.soru, n = (q.adimlar || []).length;
+    coz.adim = Math.max(-1, Math.min(n - 1, k));
+    S.nesne = S.nesne.filter((o) => !o.adim);
+    if (coz.adim >= 0) { const { ek, yeni, gizle } = adimNesneleri(q, coz.adim); S.nesne.push(...ek); vurgu = yeni; gizli = gizle; } else { vurgu = new Set(); gizli = new Set(); }
+    secim = []; degisti(); cozPanel(); Ses.efekt(coz.adim >= 0 ? "dokun" : "sec");
+    if (U.animasyon() && coz.adim >= 0) gsap.fromTo(U.$("#sqAdimKart", el), { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: .3, overwrite: true });
+  }
+  function adimPanel(q) {
+    const n = (q.adimlar || []).length; if (!n) return "";
+    if (coz.adim < 0) return `<div class="panel sq-adim"><span class="etiket" style="color:var(--altin)">Ek çizimlerle çözüm · ${n} adım</span>
+        <p class="soluk" style="font-size:14px">${coz.cozuldu ? "Şimdi bir olimpiyatçının bu soruyu nasıl çözdüğünü izle: önce ek çizim, sonra şekil üzerinden akıl yürütme." : "Önce kendin dene. Takıldıysan ya da derste tahtada göstermek istiyorsan çözümü adım adım aç."}</p>
+        <button class="btn ${coz.cozuldu ? "btn-ana" : "btn-ikinci"}" id="sqAdimBasla">${coz.cozuldu ? "Adım adım izle" : "Çözümü adım adım göster"}</button></div>`;
+    const a = q.adimlar[coz.adim];
+    return `<div class="panel sq-adim" id="sqAdimKart"><div class="satir" style="justify-content:space-between"><span class="etiket" style="color:var(--altin)">Adım ${coz.adim + 1} / ${n}</span>
+        <span class="sq-adim-nokta">${q.adimlar.map((_, i) => `<i class="${i <= coz.adim ? "dolu" : ""}"></i>`).join("")}</span></div>
+      ${a.baslik ? `<h3>${U.kacis(a.baslik)}</h3>` : ""}<div class="sq-adim-metin">${a.metin}</div>
+      <div class="satir"><button class="btn btn-hayalet btn-kucuk" id="sqAdimGeri" ${coz.adim === 0 ? "disabled" : ""}>◀ Önceki</button>
+        ${coz.adim < n - 1 ? '<button class="btn btn-ana btn-kucuk" id="sqAdimIleri">Sonraki ▶</button>' : '<button class="btn btn-ana btn-kucuk" id="sqAdimBitir">Şekli bırak</button>'}
+        <button class="btn btn-hayalet btn-kucuk" id="sqAdimKapat">Çözümü kapat</button></div></div>`;
   }
   function cozPanel() {
     const k = U.$("#sqYan", el), q = coz && coz.soru;
@@ -511,6 +552,7 @@
     } else {
       const birim = q.birim === "°" ? "°" : q.birim;
       k.innerHTML = `
+        ${coz.adim >= 0 ? adimPanel(q) : ""}
         <div class="panel"><span class="etiket" style="color:var(--turkuaz)">Soru</span><h3>${U.kacis(q.baslik || "Geometri sorusu")}</h3>
           <p class="sq-soru-metni">${U.kacis(q.metin || "Şekildeki verilere göre istenen değeri bul.")}</p>
           <p class="soluk" style="font-size:13px"><span style="color:var(--altin)">Sarı</span>: verilenler · <span style="color:#ff6fa0">Pembe</span>: istenen · <span style="color:var(--turkuaz)">Çentik ve yaylar</span>: eşitlikler</p></div>
@@ -522,13 +564,20 @@
         </div>
         ${q.ipuclari.length && !coz.cozuldu ? `<div class="panel"><span class="etiket soluk">İpuçları</span>${q.ipuclari.slice(0, coz.ipucu).map((x, i) => `<div class="ipucu-kart">İpucu ${i + 1}: ${U.kacis(x)}</div>`).join("")}
           ${coz.ipucu < q.ipuclari.length ? `<button class="btn btn-ikinci btn-kucuk" id="sqIpucuAc">İpucu aç (${coz.ipucu}/${q.ipuclari.length})</button>` : ""}</div>` : ""}
+        ${coz.adim < 0 ? adimPanel(q) : ""}
         <div class="satir"><button class="btn btn-hayalet btn-kucuk" id="sqBaska">Başka soru seç</button><button class="btn btn-hayalet btn-kucuk" id="sqTemizleOgr">Çizdiklerimi sil</button></div>`;
+      U.tex(k);
     }
     k.onclick = (e) => {
       const b = e.target.closest("[data-coz]"); if (b) { const x = liste.find((y) => y.id === b.dataset.coz); if (x) { Ses.efekt("basla"); cozBaslat(JSON.parse(JSON.stringify(x))); } }
       if (e.target.closest("#sqIpucuAc")) { coz.ipucu++; Ses.efekt("dokun"); cozPanel(); }
-      if (e.target.closest("#sqBaska")) { coz = null; S = { nesne: [] }; olcumler = []; yenile(); cozPanel(); araclariCiz(); }
-      if (e.target.closest("#sqTemizleOgr")) { anlik(); S.nesne = S.nesne.filter((o) => !o.ogr); olcumler = []; degisti(); }
+      if (e.target.closest("#sqAdimBasla")) adimGit(0);
+      if (e.target.closest("#sqAdimIleri")) adimGit(coz.adim + 1);
+      if (e.target.closest("#sqAdimGeri")) adimGit(coz.adim - 1);
+      if (e.target.closest("#sqAdimKapat")) adimGit(-1);
+      if (e.target.closest("#sqAdimBitir")) { vurgu = new Set(); gizli = new Set(); S.nesne = S.nesne.filter((o) => o.tur !== "bolge"); S.nesne.forEach((o) => { if (o.adim) delete o.adim; }); coz.adim = -1; degisti(); cozPanel(); U.bildir("Ek çizimler şekilde kaldı; üzerine kendin de çizebilirsin."); }
+      if (e.target.closest("#sqBaska")) { vurgu = new Set(); gizli = new Set(); coz = null; S = { nesne: [] }; olcumler = []; yenile(); cozPanel(); araclariCiz(); }
+      if (e.target.closest("#sqTemizleOgr")) { anlik(); S.nesne = S.nesne.filter((o) => !o.ogr); olcumler = []; vurgu = new Set(); gizli = new Set(); coz.adim = -1; degisti(); cozPanel(); }
     };
     const f = U.$("#sqCevapForm", k);
     if (f) f.addEventListener("submit", (e) => {
@@ -553,7 +602,7 @@
   /* ---------------- Kip ---------------- */
   function kipSec(yeni, zorla) {
     if (kip === yeni && !zorla) return;
-    kip = yeni; secim = []; olcumler = []; gecmis = []; ileri = [];
+    kip = yeni; secim = []; olcumler = []; gecmis = []; ileri = []; vurgu = new Set(); gizli = new Set();
     U.$$("#sqKip button", el).forEach((b) => b.setAttribute("aria-pressed", b.dataset.d === kip));
     el.classList.toggle("sq-coz", kip === "coz");
     if (kip === "hazirla") { S = taslak; arac = S.nesne.length ? "parca" : "parca"; hazirlaPanel(); }
@@ -635,8 +684,8 @@
         catch (e) { U.bildir("Bu soru bağlantısı bozuk."); }
       } else if (param === "coz") kipSec("coz");
       else if (param.startsWith("hafta")) {
-        const id = param.split(".").slice(1).join("."), q = haftaGeo().find((x) => !id || x.id === id);
-        if (q) { history.replaceState(null, "", "#soru"); cozBaslat(JSON.parse(JSON.stringify(q))); }
+        const par = param.split(".").slice(1), adim = par[par.length - 1] === "adim" && par.pop(), id = par.join("."), q = haftaGeo().find((x) => !id || x.id === id);
+        if (q) { history.replaceState(null, "", "#soru"); cozBaslat(JSON.parse(JSON.stringify(q))); if (adim && q.adimlar) adimGit(0); }
       }
       else if (param.startsWith("ayin")) {
         const id = param.split(".")[1], q = (MC.ayinSorulari || []).find((x) => !id || x.id === id);
@@ -650,17 +699,22 @@
     const d = new Date(), bugun = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
     return V.sorular.filter((q) => q.tur === "geometri" && q.baslangic <= bugun).map((q) => ({
       ...q.sekil, id: q.id, baslik: q.baslik, metin: q.metin.replace(/<[^>]+>/g, ""), ipuclari: q.ipuclari, cozum: q.cozum ? q.cozum.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : "",
-      cevapMetin: q.cevapMetin, birim: q.birim, hafta: true, ay: q.etiket || q.baslangic.split("-").reverse().join("."),
+      cevapMetin: q.cevapMetin, birim: q.birim, hafta: true, adimlar: q.cozum && q.adimlar ? q.adimlar.map(({ svg, ...a }) => a) : undefined, ay: q.etiket || q.baslangic.split("-").reverse().join("."),
     }));
   }
   /* Başka bölümler için durağan çizim (ör. Ayın Sorusu): mantıksal 1000×700 düzleminde SVG içeriği ve sınır kutusu */
   function statikSvg(q) {
-    const yedek = { S, ekran, secim, olcumler, hs, konum, fare };
-    S = { ...q, gorsel: null }; ekran = 1; secim = []; olcumler = []; fare = null; hs = H.hesapla(S.nesne);
+    const yedek = { S, ekran, secim, olcumler, hs, konum, fare, vurgu, gizli };
+    S = { ...q, gorsel: null }; ekran = 1; secim = []; olcumler = []; fare = null; vurgu = new Set(q.vurgu || []); gizli = new Set(q.gizle || []); hs = H.hesapla(S.nesne);
     const icerik = svgYaz(false).replace(/<rect x="0" y="0" width="1000" height="700"[^>]*\/>/, ""), nlar = S.nesne.filter((o) => o.tur === "nokta").map((o) => hs.P(o.id)).filter(Boolean);
-    ({ S, ekran, secim, olcumler, hs, konum, fare } = yedek);
+    ({ S, ekran, secim, olcumler, hs, konum, fare, vurgu, gizli } = yedek);
     const x0 = Math.min(...nlar.map((p) => p.x)), x1 = Math.max(...nlar.map((p) => p.x)), y0 = Math.min(...nlar.map((p) => p.y)), y1 = Math.max(...nlar.map((p) => p.y));
     return { icerik, kutu: { x: x0 - 70, y: y0 - 70, w: x1 - x0 + 140, h: y1 - y0 + 140 } };
   }
-  MC.geoSoru = { statikSvg, cozBaslat: (q) => cozBaslat(JSON.parse(JSON.stringify(q))), durum: () => ({ kip, S, coz, sonUydur, arac, secim }), _test: { kipSec, aracSec, cozBaslat, uydur, taslakYukle, baglanti, b64, tiklaXY: (x, y) => { const r = svg.getBoundingClientRect(), s = Math.min(r.width / W, r.height / Y); return tikla({ clientX: r.left + (r.width - W * s) / 2 + x * s, clientY: r.top + (r.height - Y * s) / 2 + y * s, pointerId: 1 }); } } };
+  /* Bir sorunun k. çözüm adımının durağan çizimi (Haftanın Soruları sayfası ve yazdırma için) */
+  function adimSvg(q, k) {
+    const { ek, yeni, gizle } = adimNesneleri(q, k);
+    return statikSvg({ ...q, nesne: q.nesne.filter((o) => !o.ogr).concat(ek), vurgu: [...yeni], gizle: [...gizle] });
+  }
+  MC.geoSoru = { statikSvg, adimSvg, cozBaslat: (q) => cozBaslat(JSON.parse(JSON.stringify(q))), durum: () => ({ kip, S, coz, sonUydur, arac, secim }), _test: { kipSec, aracSec, cozBaslat, uydur, taslakYukle, baglanti, b64, tiklaXY: (x, y) => { const r = svg.getBoundingClientRect(), s = Math.min(r.width / W, r.height / Y); return tikla({ clientX: r.left + (r.width - W * s) / 2 + x * s, clientY: r.top + (r.height - Y * s) / 2 + y * s, pointerId: 1 }); } } };
 })();

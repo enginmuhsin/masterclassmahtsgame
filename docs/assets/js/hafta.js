@@ -28,8 +28,23 @@
     const o = await ozet(q.id, girilen); if (o === null) return null;
     return o === q.cevapOzet;
   }
-  const sekilHtml = (q, sinif = "hs-svg") => (q.svg ? `<svg class="${sinif}" viewBox="${q.svg.kutu.x} ${q.svg.kutu.y} ${q.svg.kutu.w} ${q.svg.kutu.h}" role="img" aria-label="${U.kacis(q.baslik)} şekli">${q.svg.icerik}</svg>` : "");
-  const cozumHtml = (q) => `<div class="hs-cozum"><span class="etiket" style="color:var(--turkuaz)">Çözüm · cevap ${U.kacis(q.cevapAcik)}${q.birim === "°" ? "°" : q.birim ? " " + U.kacis(q.birim) : ""}</span><div class="hs-cozum-metin">${q.cozum}</div></div>`;
+  const svgHtml = (v, sinif, ad) => `<svg class="${sinif}" viewBox="${v.kutu.x} ${v.kutu.y} ${v.kutu.w} ${v.kutu.h}" role="img" aria-label="${U.kacis(ad)}">${v.icerik}</svg>`;
+  const sekilHtml = (q, sinif = "hs-svg") => (q.svg ? svgHtml(q.svg, sinif, q.baslik + " şekli") : "");
+  const adimVar = (q) => q.cozum && Array.isArray(q.adimlar) && q.adimlar.length && q.adimlar.every((a) => a.svg);
+  const adimIcerik = (q, i) => { const a = q.adimlar[i], n = q.adimlar.length; return `${svgHtml(a.svg, "hs-svg", `Adım ${i + 1} şekli`)}
+      <div class="hs-adim-ust"><b>Adım ${i + 1} / ${n}${a.baslik ? " · " + U.kacis(a.baslik) : ""}</b><span class="satir"><button class="btn btn-hayalet btn-kucuk" data-adim-git="-1" ${i === 0 ? "disabled" : ""}>◀ Önceki</button><button class="btn btn-ana btn-kucuk" data-adim-git="1" ${i === n - 1 ? "disabled" : ""}>Sonraki ▶</button></span></div>
+      <div class="hs-adim-metin">${a.metin}</div>`; };
+  const adimHtml = (q) => !adimVar(q) ? "" : `<div class="hs-adimlar" data-adim="${q.id}" data-i="0"><span class="etiket" style="color:var(--altin)">Ek çizimlerle çözüm · ${q.adimlar.length} adım</span>
+      <div class="hs-adim-oynat">${adimIcerik(q, 0)}</div>
+      <div class="hs-adim-hepsi">${q.adimlar.map((a, i) => `<figure>${svgHtml(a.svg, "hs-svg kucuk", `Adım ${i + 1}`)}<figcaption><b>${i + 1}.</b> ${a.metin}</figcaption></figure>`).join("")}</div>
+      <a class="btn btn-ikinci btn-kucuk hs-adim-oynat" href="../geometri/#soru-hafta.${q.id}.adim">Soru Masası'nda tahtada adım adım aç →</a></div>`;
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-adim-git]"); if (!b) return;
+    const kutu = b.closest("[data-adim]"), q = V.sorular.find((x) => x.id === kutu.dataset.adim);
+    const i = Math.max(0, Math.min(q.adimlar.length - 1, +kutu.dataset.i + +b.dataset.adimGit));
+    kutu.dataset.i = i; const o = U.$(".hs-adim-oynat", kutu); o.innerHTML = adimIcerik(q, i); U.tex(o); Ses.efekt("dokun");
+  });
+  const cozumHtml = (q) => `<div class="hs-cozum"><span class="etiket" style="color:var(--turkuaz)">Çözüm · cevap ${U.kacis(q.cevapAcik)}${q.birim === "°" ? "°" : q.birim ? " " + U.kacis(q.birim) : ""}</span>${adimHtml(q)}<div class="hs-cozum-metin">${q.cozum}</div></div>`;
 
   /* ===================================================================
      BU HAFTA
@@ -135,7 +150,7 @@
       U.$("#arYaz", el).onclick = () => yazdir(false); U.$("#arCozYaz", el).onclick = () => yazdir(true);
       window.addEventListener("afterprint", () => document.body.classList.remove("yazdir-cozumlu", "yazdir-secili"));
       U.$("#arIndir", el).onclick = () => {
-        const veri = yayinda().filter((q) => q.cozum).map(({ svg, sekil, cevapOzet, ...q }) => q);
+        const veri = yayinda().filter((q) => q.cozum).map(({ svg, sekil, cevapOzet, ...q }) => (q.adimlar ? { ...q, adimlar: q.adimlar.map(({ svg, ...a }) => a) } : q));
         const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify({ tur: "master-class-soru-bankasi", tarih: bugun(), sorular: veri }, null, 1)], { type: "application/json" })); a.download = "haftanin-sorulari-bankasi.json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
       };
       ciz();
