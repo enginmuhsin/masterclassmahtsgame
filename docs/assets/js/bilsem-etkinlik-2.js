@@ -193,7 +193,7 @@ MC.bilsemEtkinlik = MC.bilsemEtkinlik || {};
         const disSut = Math.max(1, Math.floor((W - 10 - (geo.bx + r) - 8) / 34));
         for (const [b, l] of Object.entries(gruplar)) l.sort((x, y) => x - y).forEach((n, i) => {
           const sut = b === "AB" ? 2 : b === "D" ? disSut : 3, [mx, my] = merkez[b], x = mx + ((i % sut) - (sut - 1) / 2) * 34, y = my + (Math.floor(i / sut) - (Math.ceil(l.length / sut) - 1) / 2) * 30;
-          g.fillStyle = R.panel || "#142a57"; g.beginPath(); g.arc(x, y, 14, 0, 7); g.fill(); Y.yazi(g, String(n), x, y + 1, { boyut: 14, hiza: "center", taban: "middle", kalin: 800 });
+          g.fillStyle = R.panel || "#1c3034"; g.beginPath(); g.arc(x, y, 14, 0, 7); g.fill(); Y.yazi(g, String(n), x, y + 1, { boyut: 14, hiza: "center", taban: "middle", kalin: 800 });
         });
         if (!gruplar.AB.length && yerlesen.size > 6) Y.yazi(g, "A ∩ B = ∅ ?", cx, cy + r * .9, { boyut: 13, hiza: "center", renk: R.soluk });
       });
@@ -410,7 +410,7 @@ MC.bilsemEtkinlik = MC.bilsemEtkinlik || {};
         <p class="e-soru">Bir fonksiyonun tersini çizmek için grafiği hangi doğruya göre katlamalıyız?</p>
         <label>a = <span class="e-deger" id="tsAd">1</span><input type="range" id="tsA" min="-3" max="3" step=".1" value="1"></label>
         <div class="satir"><button class="btn btn-etkinlik" id="tsKat">▶ y = x'e göre katla</button><label class="satir" style="grid-template-columns:auto 1fr"><input type="checkbox" id="tsKis"> x ≥ 0 ile kısıtla</label></div>
-        <div class="panel-ic"><div id="tsF" class="mono" style="color:#ffc657"></div><div id="tsT" class="mono" style="color:#35e0b0"></div></div>
+        <div class="panel-ic"><div id="tsF" class="mono" style="color:#ffb04a"></div><div id="tsT" class="mono" style="color:#5fd39d"></div></div>
         <p class="e-not" id="tsNokta"></p>
         <p class="e-not">Altın nokta (a, f(a)), turkuaz nokta (f(a), a). İki nokta y = x'e göre simetrik mi?</p>`);
       const t = Y.tuval(sol, .75, (g, W, H) => {

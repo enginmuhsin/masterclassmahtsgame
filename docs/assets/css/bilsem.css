@@ -4,7 +4,7 @@
    ===================================================================== */
 /* Öğretmen sayfasında sıralama takma adı ve müzik gerekmez */
 .bilsem #kimlikBtn, .bilsem #muzikBtn { display: none; }
-.logo-isaret.bl { background: var(--altin); color: #2a1a00; box-shadow: 0 0 24px rgba(255, 198, 87, .45); font-size: 20px; }
+.logo-isaret.bl { background: var(--altin); color: #2a1a00; box-shadow: 0 0 24px rgba(255, 176, 74, .45); font-size: 20px; }
 
 /* ---------- Grup seçici ---------- */
 .grup-sec { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 18px; }
@@ -102,7 +102,7 @@
 @media (max-width: 560px) { .kz-gezin a { max-width: 100%; } }
 
 /* ---------- Sunum modu ---------- */
-.sunum { position: fixed; inset: 0; z-index: 80; background: radial-gradient(1200px 700px at 85% -10%, color-mix(in srgb, var(--renk) 25%, #081227) 0%, transparent 60%), var(--zemin);
+.sunum { position: fixed; inset: 0; z-index: 80; background: radial-gradient(1200px 700px at 85% -10%, color-mix(in srgb, var(--renk) 25%, #0c1415) 0%, transparent 60%), var(--zemin);
   display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: clamp(16px, 3vw, 40px); gap: 16px; }
 .sunum[hidden] { display: none; }
 .sunum-ust { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
@@ -173,7 +173,7 @@
 .om-bugun.tatil { color: var(--altin); }
 .om-sonraki { color: var(--soluk); font-size: .95rem; }
 .hafta-gez { display: inline-flex; gap: 6px; align-items: center; }
-.om-tatil-not { margin: 6px 0 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 198, 87, .12); border: 1px solid rgba(255, 198, 87, .4); font-size: .95rem; }
+.om-tatil-not { margin: 6px 0 0; padding: 8px 12px; border-radius: 12px; background: rgba(255, 176, 74, .12); border: 1px solid rgba(255, 176, 74, .4); font-size: .95rem; }
 .om-yazildi { margin-left: auto; }
 .serit button.tatilli::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 6px; height: 6px; margin-left: -3px; border-radius: 50%; background: var(--altin); }
 .serit button.yazildi::before { content: ""; position: absolute; left: 2px; right: 2px; top: -6px; height: 3px; border-radius: 2px; background: var(--turkuaz); }
@@ -182,9 +182,9 @@
 .om-defter { margin-top: 18px; display: grid; gap: 12px; }
 .om-defter .ust-satir { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; justify-content: space-between; }
 .om-ozet { font-size: 1rem; }
-.om-eksik { color: var(--kirmizi, #ff4d61); font-weight: 800; }
+.om-eksik { color: var(--kirmizi, #ff7a72); font-weight: 800; }
 .om-liste { display: grid; gap: 6px; max-height: 520px; overflow-y: auto; padding-right: 4px; }
-.om-satir { display: grid; grid-template-columns: 34px 130px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--panel-2); border-left: 4px solid var(--kirmizi, #ff4d61); }
+.om-satir { display: grid; grid-template-columns: 34px 130px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--panel-2); border-left: 4px solid var(--kirmizi, #ff7a72); }
 .om-satir.tamam { border-left-color: var(--turkuaz); opacity: .7; }
 .om-tik input { width: 22px; height: 22px; accent-color: var(--turkuaz); }
 .om-h { background: none; border: 0; color: var(--metin); text-align: left; font: inherit; cursor: pointer; display: grid; padding: 0; }

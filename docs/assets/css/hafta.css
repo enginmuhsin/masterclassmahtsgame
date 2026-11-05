@@ -2,7 +2,7 @@
    HAFTANIN SORULARI — stiller (site.css'in üstüne)
    ===================================================================== */
 .hafta #kimlikBtn, .hafta #muzikBtn { display: none; }
-.logo-isaret.hs { background: var(--altin); color: #2a1a00; box-shadow: 0 0 24px rgba(255, 198, 87, .45); font-size: 20px; }
+.logo-isaret.hs { background: var(--altin); color: #2a1a00; box-shadow: 0 0 24px rgba(255, 176, 74, .45); font-size: 20px; }
 .hs-izgara { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 16px; align-items: start; }
 .hs-kart { border-top: 4px solid var(--renk); }
 .hs-kart:fullscreen { overflow: auto; border-radius: 0; padding: 32px 48px; font-size: 1.25rem; background: var(--zemin); }
@@ -12,7 +12,7 @@
 .hs-ust .btn { padding: 8px 14px; min-height: 42px; }
 .hs-kart h2 { font-size: clamp(1.25rem, 2.4vw, 1.6rem); }
 .hs-metin { font-size: 1.12rem; line-height: 1.6; }
-.hs-svg { width: 100%; height: auto; max-height: 360px; display: block; border-radius: 16px; background: #06122a; }
+.hs-svg { width: 100%; height: auto; max-height: 360px; display: block; border-radius: 16px; background: #0a1416; }
 .hs-svg.kucuk { max-height: 220px; }
 .hs-foto { width: 100%; border-radius: 12px; margin-top: 8px; }
 .hs-cevap { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
@@ -49,7 +49,7 @@
   .hs-ac summary { display: none; }
 }
 .hafta .cip { background: var(--panel-2); color: var(--metin); font-size: .85rem; padding: 5px 10px; font-weight: 600; }
-.basari { background: linear-gradient(120deg, rgba(53, 224, 176, .25), rgba(53, 224, 176, .06)); border: 1px solid rgba(53, 224, 176, .55); border-radius: 16px; padding: 12px 14px; }
+.basari { background: linear-gradient(120deg, rgba(95, 211, 157, .25), rgba(95, 211, 157, .06)); border: 1px solid rgba(95, 211, 157, .55); border-radius: 16px; padding: 12px 14px; }
 /* Ek çizimlerle adım adım çözüm */
 .hs-adimlar { display: grid; gap: 10px; margin-top: 6px; }
 .hs-adim-ust { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }

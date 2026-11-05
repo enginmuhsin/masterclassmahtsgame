@@ -36,7 +36,7 @@ MC.bilsemProgram = {
  "des": {
   "ad": "Destek Eğitim",
   "kisa": "Destek",
-  "renk": "#35e0b0",
+  "renk": "#5fd39d",
   "grup": "İlkokul",
   "aciklama": "Uyum sonrası ilk program: matematiğin tarihi, sayı hissi, oyunlardaki algoritmalar.",
   "temalar": [
@@ -451,7 +451,7 @@ MC.bilsemProgram = {
  "byf": {
   "ad": "Bireysel Yetenekleri Fark Ettirme",
   "kisa": "BYF",
-  "renk": "#5b8cff",
+  "renk": "#8fb3ff",
   "grup": "Ortaokul",
   "aciklama": "Sayı sistemleri, asallar ve sanılar, algoritmalar, geometri ve veri.",
   "temalar": [
@@ -995,7 +995,7 @@ MC.bilsemProgram = {
  "oyg1": {
   "ad": "Özel Yeteneklerin Geliştirilmesi · 1. seviye",
   "kisa": "ÖYG-1",
-  "renk": "#ffc657",
+  "renk": "#ffb04a",
   "grup": "Lise",
   "aciklama": "Matematik felsefesi, kümeler ve sayma, modelleme, mantık ve ispat.",
   "temalar": [
@@ -1534,7 +1534,7 @@ MC.bilsemProgram = {
  "oyg2": {
   "ad": "Özel Yeteneklerin Geliştirilmesi · 2. seviye",
   "kisa": "ÖYG-2",
-  "renk": "#ff8a1f",
+  "renk": "#ff9a4d",
   "grup": "Lise",
   "aciklama": "Milenyum problemleri, karesel fonksiyonlar, graf ve şifreleme, olasılık.",
   "temalar": [
@@ -2133,7 +2133,7 @@ MC.bilsemProgram = {
  "oyg3": {
   "ad": "Özel Yeteneklerin Geliştirilmesi · 3. seviye",
   "kisa": "ÖYG-3",
-  "renk": "#ff4d61",
+  "renk": "#ff7a72",
   "grup": "Lise",
   "aciklama": "Fonksiyonlar, trigonometri, üstel-logaritmik, diziler, Öklid dışı geometri.",
   "temalar": [
@@ -2523,7 +2523,7 @@ MC.bilsemProgram = {
  "puy": {
   "ad": "Proje Üretimi ve Yönetimi",
   "kisa": "PÜY",
-  "renk": "#a66bff",
+  "renk": "#b79cff",
   "grup": "Lise",
   "aciklama": "Matematiğin doğası ve alanları, matematik yapmak, etik, araştırma ve yayın.",
   "temalar": [

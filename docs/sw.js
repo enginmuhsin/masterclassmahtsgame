@@ -1,6 +1,6 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v23";
+const SURUM = "mc-v24";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
@@ -29,12 +29,6 @@ const DOSYALAR = [
   "./assets/fonts/onest-latin-ext-500-normal.woff2",
   "./assets/fonts/onest-latin-ext-600-normal.woff2",
   "./assets/fonts/onest-latin-ext-700-normal.woff2",
-  "./assets/fonts/unbounded-latin-500-normal.woff2",
-  "./assets/fonts/unbounded-latin-700-normal.woff2",
-  "./assets/fonts/unbounded-latin-900-normal.woff2",
-  "./assets/fonts/unbounded-latin-ext-500-normal.woff2",
-  "./assets/fonts/unbounded-latin-ext-700-normal.woff2",
-  "./assets/fonts/unbounded-latin-ext-900-normal.woff2",
   "./assets/img/simge.svg",
   "./assets/img/ayin/2026-09.jpg",
   "./assets/js/ana.js",

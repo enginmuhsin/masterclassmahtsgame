@@ -57,7 +57,7 @@
   }
   function konfeti(kart, adet = 26) {
     if (!U.animasyon()) return;
-    const renkler = ["#ffc657", "#35e0b0", "#ff4d61", "#9db0d6", "#a66bff"];
+    const renkler = ["#ffb04a", "#5fd39d", "#ff7a72", "#a8b6b0", "#b79cff"];
     for (let i = 0; i < adet; i++) {
       const p = document.createElement("div"); p.className = "parca"; p.style.background = renkler[i % 5]; p.style.left = "50%"; p.style.top = "45%"; kart.appendChild(p);
       gsap.to(p, { x: (Math.random() - .5) * 560, y: (Math.random() - .7) * 320, rotation: Math.random() * 720, opacity: 0, duration: 1.1 + Math.random() * .5, ease: "power3.out", onComplete: () => p.remove() });

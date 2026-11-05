@@ -73,7 +73,7 @@
   const haftaninKazanimi = (p, w) => hepsi(p).find((c) => w >= c.hafta[0] && w <= c.hafta[1]);
   const depo = () => { const d = U.depoAl(DEPO, { program: "byf", notlar: {}, baglantilar: {}, isaret: {} }); d.defter = d.defter || {}; return d; };
   const depoGuncelle = (f) => { const d = depo(); f(d); U.depoYaz(DEPO, d); };
-  const temaRenk = ["#5b8cff", "#35e0b0", "#ffc657", "#ff8a1f", "#ff4d61", "#a66bff", "#4cc3ff", "#f472b6"];
+  const temaRenk = ["#8fb3ff", "#5fd39d", "#ffb04a", "#ff9a4d", "#ff7a72", "#b79cff", "#4cc3ff", "#f472b6"];
   const etkinlikleri = (id) => ((AKIS[id] && AKIS[id].etkinlik) || []).filter((e) => ETK[e]);
 
   async function kopyala(metin, mesaj) {
@@ -352,7 +352,7 @@
   MC.modul("araclar", {
     baslik: "Tahta Araçları",
     kur(el) {
-      el.style.setProperty("--renk", "#ffc657");
+      el.style.setProperty("--renk", "#ffb04a");
       el.innerHTML = `<div class="bolum-basi"><span class="etiket">Tahta Araçları</span><h2>Her derste işe yarayanlar</h2><p>Zamanlayıcı, numara çekici ve grup kurucu. Öğrenci adı istenmez; numaralarla çalışır.</p></div>
         <div class="arac-izgara">
           <section class="panel"><span class="etiket soluk">Zamanlayıcı</span><div class="dev-saat" id="zSaat">5:00</div>
@@ -405,7 +405,7 @@
   MC.modul("rehber", {
     baslik: "Nasıl Kullanılır?",
     kur(el) {
-      el.style.setProperty("--renk", "#35e0b0");
+      el.style.setProperty("--renk", "#5fd39d");
       el.innerHTML = `<div class="bolum-basi"><span class="etiket">Nasıl Kullanılır?</span><h2>Kazanım yazılır, ders yaşanır</h2>
         <p>BİLSEM'de kazanım bir yazı satırı değil, öğrencinin geçeceği bir yoldur. Çerçeve programdaki her kazanımın altındaki a), b), c)… basamakları o yolun duraklarıdır. Bu masa her etkinliği ve ders adımını bu duraklara bağlar.</p></div>
         <div class="rehber-izgara">

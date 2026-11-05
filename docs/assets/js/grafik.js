@@ -4,7 +4,7 @@
    ===================================================================== */
 "use strict";
 (function () {
-  const RENK = { cizgi: "rgba(150,180,255,.14)", eksen: "rgba(150,180,255,.35)", metin: "#9db0d6", ana: "#eef3ff" };
+  const RENK = { cizgi: "rgba(150,180,255,.14)", eksen: "rgba(150,180,255,.35)", metin: "#a8b6b0", ana: "#eef3ee" };
   const FONT = "13px 'JetBrains Mono', ui-monospace, monospace";
 
   function guzelAdimlar(lo, hi, n = 5) {

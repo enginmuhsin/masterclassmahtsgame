@@ -11,7 +11,7 @@
   --a:#E8590C; --a-soft:#FFE6D5; --b:#7C3AED; --b-soft:#EDE4FE;
   --ok:#15803D; --bad:#B91C1C;
   --arena:#0A0F2C; --arena2:#160E35; --arena-ink:#EEF1FF; --arena-muted:#929BD0; --arena-line:rgba(255,255,255,.12);
-  --la:#FF8A1F; --lb:#A66BFF;
+  --la:#ff9a4d; --lb:#b79cff;
   --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
   --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
@@ -547,9 +547,9 @@ $('sigI').addEventListener('input',e=>{$('sigLine').textContent=e.target.value;t
 try{const s=localStorage.getItem('fy_sig');if(s){$('sigI').value=s;$('sigLine').textContent=s;}}catch(_){}
 
 // ---------- Arena drawing ----------
-const LANE={a:{base:'#FF8A1F',light:'#FFE2B0',dark:'#9A3A00',glow:'rgba(255,150,40,.95)'},
-            b:{base:'#A66BFF',light:'#EBDDFF',dark:'#41169A',glow:'rgba(175,115,255,.95)'}};
-const HUES=['#FF5D73','#FFC233','#3DDC97','#33C3F0','#5B8CFF','#FF7AC6','#8BE36B','#2EE6D6'];
+const LANE={a:{base:'#ff9a4d',light:'#FFE2B0',dark:'#9A3A00',glow:'rgba(255,150,40,.95)'},
+            b:{base:'#b79cff',light:'#EBDDFF',dark:'#41169A',glow:'rgba(175,115,255,.95)'}};
+const HUES=['#FF5D73','#FFC233','#3DDC97','#33C3F0','#8fb3ff','#FF7AC6','#8BE36B','#2EE6D6'];
 const cv=$('cv'),cx=cv.getContext('2d'),gv=$('gv'),gx=gv.getContext('2d');
 let W=0,H=0,GW=0,GH=0,dpr=1,patCanvas=null,patFor='';
 function resize(){dpr=Math.min(window.devicePixelRatio||1,2);

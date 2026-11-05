@@ -7,8 +7,8 @@
 (function () {
   const U = MC.ui, Ses = MC.Ses, H = MC.soruHesap, G = H.G;
   const W = 1000, Y = 700;                       // mantıksal tahta (her ekranda aynı oran)
-  const RENK = { kagit: "#06122a", parca: "#eef3ff", dogru: "#5b8cff", cember: "#35e0b0", turev: "#a66bff", ogr: "#35e0b0", kalem: "#ff8a1f",
-    nokta: "#eef3ff", uzerinde: "#5b8cff", kesisim: "#ff4d61", veri: "#ffc657", soru: "#ff6fa0", esit: "#35e0b0", secili: "#ffc657", olcu: "#ffc657", not: "#ff8a1f" };
+  const RENK = { kagit: "#0a1416", parca: "#eef3ee", dogru: "#8fb3ff", cember: "#5fd39d", turev: "#b79cff", ogr: "#5fd39d", kalem: "#ff9a4d",
+    nokta: "#eef3ee", uzerinde: "#8fb3ff", kesisim: "#ff7a72", veri: "#ffb04a", soru: "#ff6fa0", esit: "#5fd39d", secili: "#ffb04a", olcu: "#ffb04a", not: "#ff9a4d" };
   const ADLAR = "ABCDEFGHKLMNOPRSTUVYZ";
   /* Çözüm Stüdyosu (yalnızca studyo/ sayfasında, öğretmen girişiyle): ek araçlar, adım kaydı, ayrı yerel kayıt anahtarları */
   const STUDYO = () => !!window.MC_STUDYO;
@@ -330,7 +330,7 @@
       const v = secili.has(o.id) || vurgu.has(o.id), renk = v ? RENK.secili : o.ogr ? RENK.ogr : o.turet ? RENK.kesisim : o.uzerinde ? RENK.uzerinde : RENK.nokta;
       p.push(`<circle cx="${h.x}" cy="${h.y}" r="${px(v ? 8 : 5.5)}" fill="${renk}" stroke="${RENK.kagit}" stroke-width="${px(2)}"/>`);
       const d = G.birim(h.x - ag.x, h.y - ag.y) || { x: 0.7, y: -0.7 };
-      p.push(metin(h.x + d.x * px(20), h.y + d.y * px(20), o.ad, vurgu.has(o.id) ? RENK.secili : o.ogr ? RENK.ogr : "#eef3ff", 18, 800));
+      p.push(metin(h.x + d.x * px(20), h.y + d.y * px(20), o.ad, vurgu.has(o.id) ? RENK.secili : o.ogr ? RENK.ogr : "#eef3ee", 18, 800));
     }
     // Bağlam yazıları (yeni nesil sorular: “ayna”, “güneş ışını”, “kuzey” …) — işaretsiz bir noktaya bağlıdır
     for (const o of L) {

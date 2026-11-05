@@ -109,10 +109,10 @@
     const minX = Math.min(...dugumler.map((d) => d.x - gen(d.t) / 2)) - 10;
     const kay = minX < 0 ? -minX : 0;
     return `<svg width="${W + kay}" height="${H}" viewBox="${-kay} 0 ${W + kay} ${H}" role="img" aria-label="Çarpan ağacı">
-      ${kenarlar.map(([a, b, c2, d]) => `<line x1="${a}" y1="${b + 16}" x2="${c2}" y2="${d - 16}" stroke="#5b8cff" stroke-width="2" opacity=".6"/>`).join("")}
+      ${kenarlar.map(([a, b, c2, d]) => `<line x1="${a}" y1="${b + 16}" x2="${c2}" y2="${d - 16}" stroke="#8fb3ff" stroke-width="2" opacity=".6"/>`).join("")}
       ${dugumler.map((d) => { const w = gen(d.t); return d.asal
-        ? `<g><rect x="${d.x - w / 2}" y="${d.y - 18}" width="${w}" height="36" rx="18" fill="#ff4d61"/><text x="${d.x}" y="${d.y + 6}" text-anchor="middle" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="700" font-size="16">${d.t}</text></g>`
-        : `<g><rect x="${d.x - w / 2}" y="${d.y - 18}" width="${w}" height="36" rx="10" fill="#142a57" stroke="#5b8cff"/><text x="${d.x}" y="${d.y + 6}" text-anchor="middle" fill="#eef3ff" font-family="JetBrains Mono, monospace" font-weight="700" font-size="16">${d.t}</text></g>`; }).join("")}
+        ? `<g><rect x="${d.x - w / 2}" y="${d.y - 18}" width="${w}" height="36" rx="18" fill="#ff7a72"/><text x="${d.x}" y="${d.y + 6}" text-anchor="middle" fill="#fff" font-family="JetBrains Mono, monospace" font-weight="700" font-size="16">${d.t}</text></g>`
+        : `<g><rect x="${d.x - w / 2}" y="${d.y - 18}" width="${w}" height="36" rx="10" fill="#1c3034" stroke="#8fb3ff"/><text x="${d.x}" y="${d.y + 6}" text-anchor="middle" fill="#eef3ee" font-family="JetBrains Mono, monospace" font-weight="700" font-size="16">${d.t}</text></g>`; }).join("")}
     </svg>`;
   }
   function noktaIzgara(sat, sut, renk) { return `<div class="nokta-izgara" style="grid-template-columns:repeat(${sut},14px)">${`<i style="background:${renk}"></i>`.repeat(sat * sut)}</div>`; }
@@ -125,8 +125,8 @@
       const ciftler = bol.filter((d) => d > 1n && d * d <= n).map((d) => [Number(d), Number(n / d)]);
       dikdortgen = `<h3>Dikdörtgen testi</h3><div class="benzetme"><b>Benzetme:</b> ${N} bilyeyi dolu bir dikdörtgen olarak dizebiliyorsan sayı bileşiktir. Asallar yalnızca tek sıra hâlinde dizilebilir.</div>` +
         (ciftler.length ? (c.length === 2 ? `<p>Yarı asalların yalnızca <b>bir</b> gerçek dikdörtgeni vardır: <b>${ciftler[0][0]} × ${ciftler[0][1]}</b>.</p>` : "") +
-          ciftler.slice(-3).reverse().map(([a, b]) => `<p class="mono">${a} satır × ${b} sütun</p>${noktaIzgara(a, b, c.length > 2 ? "#5b8cff" : "#ff4d61")}`).join("")
-          : `<p>${N} bilyeden 1 × ${N} dışında dikdörtgen kurulamaz; asaldır.</p>${N <= 48 ? noktaIzgara(1, N, "#35e0b0") : ""}`);
+          ciftler.slice(-3).reverse().map(([a, b]) => `<p class="mono">${a} satır × ${b} sütun</p>${noktaIzgara(a, b, c.length > 2 ? "#8fb3ff" : "#ff7a72")}`).join("")
+          : `<p>${N} bilyeden 1 × ${N} dışında dikdörtgen kurulamaz; asaldır.</p>${N <= 48 ? noktaIzgara(1, N, "#5fd39d") : ""}`);
     }
     if (n >= 4n && n <= S.DENEME_SINIRI) {
       const r = S.asallikIzi(n);
@@ -204,7 +204,7 @@
           <p class="soluk">Kural: çiftse ikiye böl, tekse 3n + 1. Her sayının sonunda 1'e indiği sanılıyor; 2⁶⁸'e kadar denendi, ispat yok.</p>
         </div>
       </div>`);
-    MC.grafik.cizgi(U.$("#dCollatz", k), { seriler: [{ ad: "Değer", y: yol.map(Number), renk: "#a66bff" }], logY: maks > 2000n, xBaslik: "adım", lejant: false });
+    MC.grafik.cizgi(U.$("#dCollatz", k), { seriler: [{ ad: "Değer", y: yol.map(Number), renk: "#b79cff" }], logY: maks > 2000n, xBaslik: "adım", lejant: false });
   }
 
   /* ---------- 4) Kimlik kartı ---------- */
@@ -235,14 +235,14 @@
   function vennSvg(a, b) {
     const ca = S.carpanlar(a).slice(), cb = S.carpanlar(b).slice(), ortak = [], sadeceA = [];
     for (const p of ca) { const i = cb.findIndex((q) => q === p); if (i >= 0) { ortak.push(p); cb.splice(i, 1); } else sadeceA.push(p); }
-    const yaz = (l, x) => { if (!l.length) return `<text x="${x}" y="200" text-anchor="middle" fill="#9db0d6" font-size="20">—</text>`; const s = l.map(S.tr); const sat = []; for (let i = 0; i < s.length; i += 3) sat.push(s.slice(i, i + 3).join(" · ")); return sat.slice(0, 6).map((t, i) => `<text x="${x}" y="${200 - (Math.min(sat.length, 6) - 1) * 14 + i * 28}" text-anchor="middle" fill="#eef3ff" font-family="JetBrains Mono, monospace" font-weight="700" font-size="${t.length > 16 ? 14 : 18}">${t}</text>`).join(""); };
+    const yaz = (l, x) => { if (!l.length) return `<text x="${x}" y="200" text-anchor="middle" fill="#a8b6b0" font-size="20">—</text>`; const s = l.map(S.tr); const sat = []; for (let i = 0; i < s.length; i += 3) sat.push(s.slice(i, i + 3).join(" · ")); return sat.slice(0, 6).map((t, i) => `<text x="${x}" y="${200 - (Math.min(sat.length, 6) - 1) * 14 + i * 28}" text-anchor="middle" fill="#eef3ee" font-family="JetBrains Mono, monospace" font-weight="700" font-size="${t.length > 16 ? 14 : 18}">${t}</text>`).join(""); };
     return `<svg viewBox="0 0 640 380" style="width:100%;height:auto" role="img" aria-label="Asal çarpan Venn şeması">
-      <circle cx="230" cy="195" r="160" fill="rgba(91,140,255,.18)" stroke="#5b8cff" stroke-width="3"/>
-      <circle cx="410" cy="195" r="160" fill="rgba(255,77,97,.18)" stroke="#ff4d61" stroke-width="3"/>
-      <text x="170" y="26" text-anchor="middle" fill="#5b8cff" font-family="Unbounded, sans-serif" font-weight="700" font-size="18">${S.tr(a).slice(0, 22)}</text>
-      <text x="470" y="26" text-anchor="middle" fill="#ff4d61" font-family="Unbounded, sans-serif" font-weight="700" font-size="18">${S.tr(b).slice(0, 22)}</text>
+      <circle cx="230" cy="195" r="160" fill="rgba(91,140,255,.18)" stroke="#8fb3ff" stroke-width="3"/>
+      <circle cx="410" cy="195" r="160" fill="rgba(255,77,97,.18)" stroke="#ff7a72" stroke-width="3"/>
+      <text x="170" y="26" text-anchor="middle" fill="#8fb3ff" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="18">${S.tr(a).slice(0, 22)}</text>
+      <text x="470" y="26" text-anchor="middle" fill="#ff7a72" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="18">${S.tr(b).slice(0, 22)}</text>
       ${yaz(sadeceA, 150)}${yaz(ortak, 320)}${yaz(cb, 490)}
-      <text x="320" y="372" text-anchor="middle" fill="#9db0d6" font-size="14">Ortak bölge = EBOB · Tüm bölgeler = EKOK</text></svg>`;
+      <text x="320" y="372" text-anchor="middle" fill="#a8b6b0" font-size="14">Ortak bölge = EBOB · Tüm bölgeler = EKOK</text></svg>`;
   }
   function karsilastir(k) {
     const onceki = U.$("#dIkinci", k) ? U.$("#dIkinci", k).value : "84";

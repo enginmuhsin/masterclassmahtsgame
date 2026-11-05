@@ -8,7 +8,7 @@
   const U = MC.ui, Ses = MC.Ses, S = MC.sayi;
   const BIRIM = 40;                 // 1 birim = 40 piksel (ızgara karesi)
   const TOL = 0.5;                  // denetim toleransı (piksel)
-  const RENK = { dogru: "#5b8cff", parca: "#eef3ff", cember: "#35e0b0", turev: "#a66bff", olcu: "#ffc657", serbest: "#eef3ff", turevNokta: "#ff4d61", sabit: "#ffc657", secili: "#ffc657", izgara: "rgba(91,140,255,.10)", izgaraKalin: "rgba(91,140,255,.22)" };
+  const RENK = { dogru: "#8fb3ff", parca: "#eef3ee", cember: "#5fd39d", turev: "#b79cff", olcu: "#ffb04a", serbest: "#eef3ee", turevNokta: "#ff7a72", sabit: "#ffb04a", secili: "#ffb04a", izgara: "rgba(91,140,255,.10)", izgaraKalin: "rgba(91,140,255,.22)" };
 
   /* ---------------- Saf geometri ---------------- */
   const G = {};
@@ -269,7 +269,7 @@
   }
   function svgYaz(onizleme) {
     const p = [];
-    p.push(`<rect width="${W}" height="${H}" fill="#06122a"/>`);
+    p.push(`<rect width="${W}" height="${H}" fill="#0a1416"/>`);
     if (izgara) {
       for (let x = (W / 2) % BIRIM, i = 0; x < W; x += BIRIM, i++) { const k = Math.round((x - W / 2) / BIRIM) % 5 === 0; p.push(`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="${k ? RENK.izgaraKalin : RENK.izgara}"/>`); }
       for (let y = (H / 2) % BIRIM; y < H; y += BIRIM) { const k = Math.round((y - H / 2) / BIRIM) % 5 === 0; p.push(`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="${k ? RENK.izgaraKalin : RENK.izgara}"/>`); }
@@ -292,14 +292,14 @@
         const a = P(o.a), b = P(o.b), d = G.birim(b.x - a.x, b.y - a.y); if (!d) continue;
         const nx = -d.y * 16, ny = d.x * 16, m = { x: (a.x + b.x) / 2 + nx * 1.5, y: (a.y + b.y) / 2 + ny * 1.5 };
         p.push(`<line x1="${a.x + nx}" y1="${a.y + ny}" x2="${b.x + nx}" y2="${b.y + ny}" stroke="${RENK.olcu}" stroke-width="1.5" stroke-dasharray="4 3"/>`);
-        p.push(`<text x="${m.x}" y="${m.y + 5}" text-anchor="middle" fill="${RENK.olcu}" font-family="JetBrains Mono, monospace" font-weight="700" font-size="15" paint-order="stroke" stroke="#06122a" stroke-width="4">${S.ondalik(G.uz(a, b) / BIRIM)}</text>`);
+        p.push(`<text x="${m.x}" y="${m.y + 5}" text-anchor="middle" fill="${RENK.olcu}" font-family="JetBrains Mono, monospace" font-weight="700" font-size="15" paint-order="stroke" stroke="#0a1416" stroke-width="4">${S.ondalik(G.uz(a, b) / BIRIM)}</text>`);
       }
       if (o.tur === "aci") {
         const a = P(o.a), v = P(o.b), c = P(o.c), deg = G.aci(a, v, c); if (!isFinite(deg)) continue;
         const u = G.birim(a.x - v.x, a.y - v.y), w = G.birim(c.x - v.x, c.y - v.y), r = 32;
         const buyuk = 0, sweep = (u.x * w.y - u.y * w.x) > 0 ? 1 : 0, ort = G.birim(u.x + w.x, u.y + w.y) || { x: -u.y, y: u.x };
         p.push(`<path d="M${v.x + u.x * r} ${v.y + u.y * r} A${r} ${r} 0 ${buyuk} ${sweep} ${v.x + w.x * r} ${v.y + w.y * r}" fill="rgba(255,198,87,.15)" stroke="${RENK.olcu}" stroke-width="2"/>`);
-        p.push(`<text x="${v.x + ort.x * (r + 22)}" y="${v.y + ort.y * (r + 22) + 5}" text-anchor="middle" fill="${RENK.olcu}" font-family="JetBrains Mono, monospace" font-weight="700" font-size="15" paint-order="stroke" stroke="#06122a" stroke-width="4">${S.ondalik(deg, 1)}°</text>`);
+        p.push(`<text x="${v.x + ort.x * (r + 22)}" y="${v.y + ort.y * (r + 22) + 5}" text-anchor="middle" fill="${RENK.olcu}" font-family="JetBrains Mono, monospace" font-weight="700" font-size="15" paint-order="stroke" stroke="#0a1416" stroke-width="4">${S.ondalik(deg, 1)}°</text>`);
       }
     }
     if (onizleme && fare && secim.length && arac !== "tasi") {
@@ -312,9 +312,9 @@
     for (const o of nesne) {
       const h = P(o.id); if (!h || o.tur !== "nokta") continue;
       const vurgu = secili.has(o.id), renk = vurgu ? RENK.secili : o.sabit ? RENK.sabit : o.turet ? RENK.turevNokta : RENK.serbest;
-      p.push(`<circle cx="${h.x}" cy="${h.y}" r="${vurgu ? 8 : 6}" fill="${renk}" stroke="#06122a" stroke-width="2"/>`);
+      p.push(`<circle cx="${h.x}" cy="${h.y}" r="${vurgu ? 8 : 6}" fill="${renk}" stroke="#0a1416" stroke-width="2"/>`);
       if (!o.turet) p.push(`<circle cx="${h.x}" cy="${h.y}" r="11" fill="none" stroke="${renk}" stroke-opacity=".35" stroke-width="2"/>`);
-      p.push(`<text x="${h.x + 10}" y="${h.y - 10}" fill="#eef3ff" font-family="Onest, sans-serif" font-weight="700" font-size="16" paint-order="stroke" stroke="#06122a" stroke-width="4">${U.kacis(o.ad)}</text>`);
+      p.push(`<text x="${h.x + 10}" y="${h.y - 10}" fill="#eef3ee" font-family="Onest, sans-serif" font-weight="700" font-size="16" paint-order="stroke" stroke="#0a1416" stroke-width="4">${U.kacis(o.ad)}</text>`);
     }
     return p.join("");
   }

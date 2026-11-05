@@ -30,7 +30,7 @@
 
   /* ---------- 2) Ulam spirali ---------- */
   function ulam(k) {
-    k.innerHTML = `<div class="lab-duzen"><div class="panel" style="padding:10px"><div style="position:relative"><canvas id="lUlam" style="width:100%;aspect-ratio:1;display:block;border-radius:16px;background:#050c1c"></canvas><div class="etiket-yuzen" id="lUlamEt" hidden></div></div></div>
+    k.innerHTML = `<div class="lab-duzen"><div class="panel" style="padding:10px"><div style="position:relative"><canvas id="lUlam" style="width:100%;aspect-ratio:1;display:block;border-radius:16px;background:#081012"></canvas><div class="etiket-yuzen" id="lUlamEt" hidden></div></div></div>
       <div class="panel"><span class="etiket">Ayarlar</span>
         <label class="alan"><span>Sayı adedi: <b id="lUN">10.000</b></span><input type="range" id="lUNR" min="400" max="40000" step="400" value="10000"></label>
         <label class="alan"><span>Vurgulanacak tür</span><select class="girdi" id="lUK">${S.KAT.filter((c) => !["tek", "cift"].includes(c.k)).map((c) => `<option value="${c.k}">${c.ad}</option>`).join("")}</select></label>
@@ -44,7 +44,7 @@
       if (!W) return;
       cv.width = W * dpr; cv.height = W * dpr; const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
       koor = S.ulam(N); const yari = Math.ceil(Math.sqrt(N) / 2) + 1; olcek = W / (2 * yari + 1); merkez = W / 2;
-      g.fillStyle = "#050c1c"; g.fillRect(0, 0, W, W);
+      g.fillStyle = "#081012"; g.fillRect(0, 0, W, W);
       const f = S.KATK[kat].f; let say = 0; const boy = Math.max(1, olcek * .86);
       for (let n = 1; n <= N; n++) {
         const [x, y] = koor[n - 1], px = merkez + x * olcek - boy / 2, py = merkez - y * olcek - boy / 2;
@@ -67,7 +67,7 @@
   }
 
   /* ---------- 3) Eratosthenes kalburu ---------- */
-  const ELEK_RENK = { 2: "#33c3f0", 3: "#a66bff", 5: "#ff8a1f", 7: "#20c997", 11: "#ff7ac6", 13: "#6f5bff" };
+  const ELEK_RENK = { 2: "#33c3f0", 3: "#b79cff", 5: "#ff9a4d", 7: "#20c997", 11: "#ff7ac6", 13: "#6f5bff" };
   function elek(k) {
     k.innerHTML = `<div class="lab-duzen"><div class="panel"><div class="elek" id="lElek"></div></div>
       <div class="panel"><span class="etiket">Kalbur</span>
@@ -93,12 +93,12 @@
         if (U.animasyon()) gsap.fromTo(U.$$(".asal-son", grid), { scale: .5 }, { scale: 1, duration: .4, stagger: .01, ease: "back.out(3)", overwrite: true, clearProps: "transform" });
         return;
       }
-      const p = eleyiciler[adim++], renk = ELEK_RENK[p] || "#9db0d6", hucre = U.$(`span[data-n="${p}"]`, grid);
+      const p = eleyiciler[adim++], renk = ELEK_RENK[p] || "#a8b6b0", hucre = U.$(`span[data-n="${p}"]`, grid);
       hucre.classList.add("eleyici");
       const katlar = []; for (let m = p * p; m <= N; m += p) { const s = U.$(`span[data-n="${m}"]`, grid); if (!s.classList.contains("elendi")) katlar.push(s); }
       katlar.forEach((s, i) => setTimeout(() => { s.classList.add("elendi"); s.style.background = renk; if (i % 4 === 0) Ses.efekt("tik"); }, MC.uc.AZ_HAREKET ? 0 : i * 22));
       U.$("#lEAc", k).innerHTML = `<b>${p}</b>'nin katları <b>${p}² = ${p * p}</b>'den başlayarak elendi (${katlar.length} yeni sayı). Neden ${p}²? Daha küçük katları (${p}·2, ${p}·3 …) daha küçük bir asal tarafından zaten elenmişti.`;
-      U.$("#lELej", k).insertAdjacentHTML("beforeend", `<span class="rozet" style="background:${renk};color:#081227">${p}'nin katları</span>`);
+      U.$("#lELej", k).insertAdjacentHTML("beforeend", `<span class="rozet" style="background:${renk};color:#0c1415">${p}'nin katları</span>`);
     }
     U.segment(U.$("#lEN", k), [[100, "1–100"], [200, "1–200"]], N, (d) => { N = +d; sifirla(); });
     U.$("#lEAdim", k).addEventListener("click", ilerle);
@@ -113,7 +113,7 @@
   /* ---------- 4) (a+b)³ küpü ---------- */
   function kup(k) {
     k.innerHTML = `<div class="lab-duzen"><div class="yigin"><div class="sahne-kutu" id="lKup" style="height:min(64vh,560px)"><span class="ipucu-surukle">Sürükle · döndür</span>
-        <div class="lejant"><span><i style="background:#2e5fd6"></i>a³</span><span><i style="background:#ff4d61"></i>a²b (3 tane)</span><span><i style="background:#ffc657"></i>ab² (3 tane)</span><span><i style="background:#35e0b0"></i>b³</span></div></div>
+        <div class="lejant"><span><i style="background:#2e5fd6"></i>a³</span><span><i style="background:#ff7a72"></i>a²b (3 tane)</span><span><i style="background:#ffb04a"></i>ab² (3 tane)</span><span><i style="background:#5fd39d"></i>b³</span></div></div>
         <div class="panel-ic" id="lKupTex" style="overflow-x:auto"></div></div>
       <div class="panel"><span class="etiket">Ayarlar</span>
         <label class="alan"><span>a = <b id="lKa">3</b></span><input type="range" id="lKaR" min="1" max="5" step=".5" value="3"></label>
@@ -129,12 +129,12 @@
       U.texYaz(U.$("#lKupTex", k), `(${f(a)} + ${f(b)})^3 = ${f(a ** 3)} + 3\\cdot ${f(a * a * b)} + 3\\cdot ${f(a * b * b)} + ${f(b ** 3)} = ${f((a + b) ** 3)}`);
       const s = a + b, o = 300 / s;
       U.$("#lKare", k).innerHTML = `<svg class="kare-svg" viewBox="-10 -10 320 320" role="img" aria-label="(a+b) kare açılımı">
-        <rect x="0" y="0" width="${a * o}" height="${a * o}" fill="#2e5fd6" stroke="#081227" stroke-width="3"/><rect x="${a * o}" y="0" width="${b * o}" height="${a * o}" fill="#ff4d61" stroke="#081227" stroke-width="3"/>
-        <rect x="0" y="${a * o}" width="${a * o}" height="${b * o}" fill="#ff4d61" stroke="#081227" stroke-width="3"/><rect x="${a * o}" y="${a * o}" width="${b * o}" height="${b * o}" fill="#35e0b0" stroke="#081227" stroke-width="3"/>
-        <text x="${a * o / 2}" y="${a * o / 2 + 8}" text-anchor="middle" fill="#fff" font-family="Unbounded, sans-serif" font-weight="700" font-size="24">a²</text>
-        <text x="${a * o + b * o / 2}" y="${a * o / 2 + 7}" text-anchor="middle" fill="#fff" font-family="Unbounded, sans-serif" font-weight="700" font-size="20">ab</text>
-        <text x="${a * o / 2}" y="${a * o + b * o / 2 + 7}" text-anchor="middle" fill="#fff" font-family="Unbounded, sans-serif" font-weight="700" font-size="20">ab</text>
-        <text x="${a * o + b * o / 2}" y="${a * o + b * o / 2 + 7}" text-anchor="middle" fill="#081227" font-family="Unbounded, sans-serif" font-weight="700" font-size="20">b²</text></svg>
+        <rect x="0" y="0" width="${a * o}" height="${a * o}" fill="#2e5fd6" stroke="#0c1415" stroke-width="3"/><rect x="${a * o}" y="0" width="${b * o}" height="${a * o}" fill="#ff7a72" stroke="#0c1415" stroke-width="3"/>
+        <rect x="0" y="${a * o}" width="${a * o}" height="${b * o}" fill="#ff7a72" stroke="#0c1415" stroke-width="3"/><rect x="${a * o}" y="${a * o}" width="${b * o}" height="${b * o}" fill="#5fd39d" stroke="#0c1415" stroke-width="3"/>
+        <text x="${a * o / 2}" y="${a * o / 2 + 8}" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="24">a²</text>
+        <text x="${a * o + b * o / 2}" y="${a * o / 2 + 7}" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="20">ab</text>
+        <text x="${a * o / 2}" y="${a * o + b * o / 2 + 7}" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="20">ab</text>
+        <text x="${a * o + b * o / 2}" y="${a * o + b * o / 2 + 7}" text-anchor="middle" fill="#0c1415" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="20">b²</text></svg>
         <p class="soluk">(a + b)² = a² + 2ab + b². Sık yapılan hata (a + b)² = a² + b² yazmaktır: iki kırmızı dikdörtgen unutulmuş olur.</p>`;
     };
     ["#lKaR", "#lKbR", "#lKcR"].forEach((s) => U.$(s, k).addEventListener("input", yaz));
@@ -143,13 +143,13 @@
 
   /* ---------- 5) Fibonacci spirali ---------- */
   function fib(k) {
-    k.innerHTML = `<div class="lab-duzen"><div class="panel" style="padding:10px"><canvas id="lFib" style="width:100%;aspect-ratio:1.618;display:block;border-radius:16px;background:#050c1c"></canvas></div>
+    k.innerHTML = `<div class="lab-duzen"><div class="panel" style="padding:10px"><canvas id="lFib" style="width:100%;aspect-ratio:1.618;display:block;border-radius:16px;background:#081012"></canvas></div>
       <div class="panel"><span class="etiket">Ayarlar</span><label class="alan"><span>Kare sayısı: <b id="lFN">10</b></span><input type="range" id="lFR" min="3" max="14" value="10"></label>
         <button class="btn btn-ikinci" id="lFOyna">Spirali yeniden çiz</button>
         <div class="bilgi-kutu">Kenarları 1, 1, 2, 3, 5, 8 … olan kareler yan yana dizilir. Her karenin içine çeyrek çember çizilince altın spiral ortaya çıkar. Ayçiçeği tohumları ve salyangoz kabukları benzer bir düzen gösterir.</div>
         <span class="etiket soluk">Ardışık terimlerin oranı φ ≈ 1,618'e yaklaşır</span><div class="grafik-kutu" id="lFOran" style="height:220px"></div></div></div>`;
     const cv = U.$("#lFib", k); let adet = 10, ilerleme = 1;
-    const RENK = ["#2e5fd6", "#ff4d61", "#ffc657", "#35e0b0", "#a66bff", "#ff8a1f", "#ff7ac6", "#33c3f0", "#20c997"];
+    const RENK = ["#2e5fd6", "#ff7a72", "#ffb04a", "#5fd39d", "#b79cff", "#ff9a4d", "#ff7ac6", "#33c3f0", "#20c997"];
     function kareler(n) {
       const f = [1, 1]; while (f.length < n) f.push(f[f.length - 1] + f[f.length - 2]);
       let xmin = 0, ymin = 0, xmax = 1, ymax = 1; const out = [];
@@ -164,7 +164,7 @@
     function ciz() {
       const dpr = Math.min(devicePixelRatio || 1, 2), W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
       cv.width = W * dpr; cv.height = H * dpr; const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-      g.fillStyle = "#050c1c"; g.fillRect(0, 0, W, H);
+      g.fillStyle = "#081012"; g.fillRect(0, 0, W, H);
       const { out, xmin, ymin, xmax, ymax } = kareler(adet), pad = 16, o = Math.min((W - 2 * pad) / (xmax - xmin), (H - 2 * pad) / (ymax - ymin));
       const ox = (W - (xmax - xmin) * o) / 2, oy = (H - (ymax - ymin) * o) / 2;
       const X = (x) => ox + (x - xmin) * o, Y = (y) => H - (oy + (y - ymin) * o);
@@ -173,9 +173,9 @@
         const r = RENK[i % RENK.length];
         g.fillStyle = r + "33"; g.strokeStyle = r; g.lineWidth = 2;
         g.fillRect(X(q.x0), Y(q.y0 + q.s), q.s * o, q.s * o); g.strokeRect(X(q.x0), Y(q.y0 + q.s), q.s * o, q.s * o);
-        if (q.s * o > 26) { g.fillStyle = "#eef3ff"; g.font = `700 ${Math.min(30, 10 + q.s * o / 10)}px 'Unbounded', sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(q.s, X(q.x0 + q.s / 2), Y(q.y0 + q.s / 2)); }
+        if (q.s * o > 26) { g.fillStyle = "#eef3ee"; g.font = `700 ${Math.min(30, 10 + q.s * o / 10)}px 'Bricolage Grotesque', sans-serif`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(q.s, X(q.x0 + q.s / 2), Y(q.y0 + q.s / 2)); }
       });
-      g.strokeStyle = "#ff4d61"; g.lineWidth = 4; g.shadowColor = "#ff4d61"; g.shadowBlur = 12; g.beginPath();
+      g.strokeStyle = "#ff7a72"; g.lineWidth = 4; g.shadowColor = "#ff7a72"; g.shadowBlur = 12; g.beginPath();
       out.slice(0, gor).forEach((q, i) => {
         const [mx, my, a0, a1] = { 0: [q.x0, q.y0 + q.s, -90, 0], 1: [q.x0, q.y0, 0, 90], 2: [q.x0 + q.s, q.y0, 90, 180], 3: [q.x0 + q.s, q.y0 + q.s, 180, 270] }[q.yon];
         for (let t = 0; t <= 24; t++) { const a = (a0 + (a1 - a0) * t / 24) * Math.PI / 180, px = X(mx + q.s * Math.cos(a)), py = Y(my + q.s * Math.sin(a)); if (i === 0 && t === 0) g.moveTo(px, py); else g.lineTo(px, py); }
@@ -187,7 +187,7 @@
     U.$("#lFOyna", k).addEventListener("click", () => { Ses.efekt("basla"); oynat(); });
     new ResizeObserver(() => ciz()).observe(cv);
     const f = [1, 1]; while (f.length < 22) f.push(f[f.length - 1] + f[f.length - 2]);
-    MC.grafik.cizgi(U.$("#lFOran", k), { seriler: [{ ad: "Fₙ₊₁ / Fₙ", y: f.slice(1).map((v, i) => v / f[i]), renk: "#a66bff", nokta: true }, { ad: "φ ≈ 1,618", y: f.slice(1).map(() => (1 + Math.sqrt(5)) / 2), renk: "#ff4d61", kesik: true, kalinlik: 2 }], xBaslik: "n" });
+    MC.grafik.cizgi(U.$("#lFOran", k), { seriler: [{ ad: "Fₙ₊₁ / Fₙ", y: f.slice(1).map((v, i) => v / f[i]), renk: "#b79cff", nokta: true }, { ad: "φ ≈ 1,618", y: f.slice(1).map(() => (1 + Math.sqrt(5)) / 2), renk: "#ff7a72", kesik: true, kalinlik: 2 }], xBaslik: "n" });
     oynat();
   }
 
@@ -202,7 +202,7 @@
         <div class="bilgi-kutu">Collatz Sanısı: hangi sayıdan başlarsan başla, “çiftse ikiye böl, tekse 3n + 1” kuralı seni sonunda 1'e götürür. 2⁶⁸'e kadar bütün sayılar denendi; ispatı hâlâ yok. 27, 111 adımda ve 9.232'ye kadar tırmanarak iner.</div>
         <div class="benzetme"><b>Benzetme:</b> Sayılar dağlara tırmanıp inen yolculardır. Tek sayıda fırtına (3n + 1) onları yukarı fırlatır, çift sayıda yokuş aşağı (÷2) inerler.</div></div></div>`;
     const ciz = () => {
-      const seriler = [], m = [], renk = ["#a66bff", "#ffc657"];
+      const seriler = [], m = [], renk = ["#b79cff", "#ffb04a"];
       ["#lC1", "#lC2"].forEach((s, i) => {
         const v = U.$(s, k).value.trim(); if (!v) return;
         let n; try { n = S.ifadeCoz(v, 10n ** 15n); } catch (e) { m.push(`<div class="metrik"><small>${i + 1}. sayı</small><b style="font-size:1rem;color:var(--kirmizi)">${e.message}</b></div>`); return; }
@@ -237,7 +237,7 @@
           xs.push(x); p.push(say); t.push(x > 1 ? x / Math.log(x) : 0); li.push(lis);
         }
       }
-      MC.grafik.cizgi(U.$("#lPi", k), { seriler: [{ ad: "π(x) gerçek", x: xs, y: p, renk: "#ff4d61", basamak: true }, { ad: "x / ln x", x: xs, y: t, renk: "#5b8cff", kesik: true }, { ad: "Li(x)", x: xs, y: li, renk: "#35e0b0", kesik: true }], xBaslik: "x" });
+      MC.grafik.cizgi(U.$("#lPi", k), { seriler: [{ ad: "π(x) gerçek", x: xs, y: p, renk: "#ff7a72", basamak: true }, { ad: "x / ln x", x: xs, y: t, renk: "#8fb3ff", kesik: true }, { ad: "Li(x)", x: xs, y: li, renk: "#5fd39d", kesik: true }], xBaslik: "x" });
       const tah = N / Math.log(N);
       U.$("#lPiAc", k).innerHTML = `x = ${S.tr(N)} için gerçek asal sayısı <b>${S.tr(say)}</b>, x / ln x tahmini <b>${S.tr(Math.round(tah))}</b> (hata %${S.ondalik(100 * Math.abs(say - tah) / say, 1)}), Li(x) tahmini <b>${S.tr(Math.round(lis))}</b> (hata %${S.ondalik(100 * Math.abs(say - lis) / say, 2)}).`;
     };

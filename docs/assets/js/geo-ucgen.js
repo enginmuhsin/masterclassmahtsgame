@@ -6,12 +6,12 @@
   const U = MC.ui, S = MC.sayi, Ses = MC.Ses;
   const BIRIM = 40;
   const KATMAN = [
-    { id: "kenarortay", ad: "Kenarortaylar · Ağırlık merkezi G", renk: "#ffc657", acik: true },
-    { id: "aciortay", ad: "Açıortaylar · İç teğet çember I", renk: "#35e0b0", acik: false },
-    { id: "ortadik", ad: "Orta dikmeler · Çevrel çember O", renk: "#5b8cff", acik: false },
-    { id: "yukseklik", ad: "Yükseklikler · Diklik merkezi H", renk: "#ff4d61", acik: false },
-    { id: "euler", ad: "Euler doğrusu (O, G, H)", renk: "#eef3ff", acik: false },
-    { id: "dokuz", ad: "Dokuz nokta çemberi", renk: "#a66bff", acik: false },
+    { id: "kenarortay", ad: "Kenarortaylar · Ağırlık merkezi G", renk: "#ffb04a", acik: true },
+    { id: "aciortay", ad: "Açıortaylar · İç teğet çember I", renk: "#5fd39d", acik: false },
+    { id: "ortadik", ad: "Orta dikmeler · Çevrel çember O", renk: "#8fb3ff", acik: false },
+    { id: "yukseklik", ad: "Yükseklikler · Diklik merkezi H", renk: "#ff7a72", acik: false },
+    { id: "euler", ad: "Euler doğrusu (O, G, H)", renk: "#eef3ee", acik: false },
+    { id: "dokuz", ad: "Dokuz nokta çemberi", renk: "#b79cff", acik: false },
   ];
   const ACIKLAMA = {
     kenarortay: "Köşeyi karşı kenarın orta noktasına bağlayan doğru parçasına <b>kenarortay</b> denir. Üç kenarortay tek bir noktada, <b>ağırlık merkezinde</b> kesişir. G her kenarortayı köşeden itibaren 2 : 1 oranında böler. Üçgen karton olsaydı, onu G noktasından parmağının ucunda dengede tutabilirdin.",
@@ -43,32 +43,32 @@
 
   function ciz() {
     const m = merkezler(A, B, C), p = [];
-    p.push(`<rect width="${W}" height="${H}" fill="#06122a"/>`);
+    p.push(`<rect width="${W}" height="${H}" fill="#0a1416"/>`);
     for (let x = (W / 2) % BIRIM; x < W; x += BIRIM) p.push(`<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="rgba(91,140,255,.08)"/>`);
     for (let y = (H / 2) % BIRIM; y < H; y += BIRIM) p.push(`<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="rgba(91,140,255,.08)"/>`);
-    p.push(`<polygon points="${A.x},${A.y} ${B.x},${B.y} ${C.x},${C.y}" fill="rgba(91,140,255,.10)" stroke="#eef3ff" stroke-width="3" stroke-linejoin="round"/>`);
+    p.push(`<polygon points="${A.x},${A.y} ${B.x},${B.y} ${C.x},${C.y}" fill="rgba(91,140,255,.10)" stroke="#eef3ee" stroke-width="3" stroke-linejoin="round"/>`);
     const cizgi = (P, Q, renk, kesik) => `<line x1="${P.x}" y1="${P.y}" x2="${Q.x}" y2="${Q.y}" stroke="${renk}" stroke-width="2"${kesik ? ' stroke-dasharray="7 5"' : ""}/>`;
-    const nokta = (P, renk, ad) => `<circle cx="${P.x}" cy="${P.y}" r="6" fill="${renk}" stroke="#06122a" stroke-width="2"/><text x="${P.x + 10}" y="${P.y + 18}" fill="${renk}" font-family="Onest, sans-serif" font-weight="800" font-size="16" paint-order="stroke" stroke="#06122a" stroke-width="4">${ad}</text>`;
+    const nokta = (P, renk, ad) => `<circle cx="${P.x}" cy="${P.y}" r="6" fill="${renk}" stroke="#0a1416" stroke-width="2"/><text x="${P.x + 10}" y="${P.y + 18}" fill="${renk}" font-family="Onest, sans-serif" font-weight="800" font-size="16" paint-order="stroke" stroke="#0a1416" stroke-width="4">${ad}</text>`;
     const uzat = (P, Q) => { const dx = Q.x - P.x, dy = Q.y - P.y, L = Math.hypot(dx, dy) || 1, k = (W + H) * 2 / L; return [{ x: P.x - dx * k, y: P.y - dy * k }, { x: P.x + dx * k, y: P.y + dy * k }]; };
     const V = [A, B, C], K = [[B, C], [C, A], [A, B]];
     if (!m.dejenere) {
-      if (acik.ortadik) { K.forEach(([P, Q]) => { const o = orta(P, Q), d = { x: o.x - (Q.y - P.y), y: o.y + (Q.x - P.x) }; const [u, v] = uzat(o, d); p.push(cizgi(u, v, "#5b8cff", true)); }); p.push(`<circle cx="${m.O.x}" cy="${m.O.y}" r="${m.R}" fill="none" stroke="#5b8cff" stroke-width="2"/>`); }
-      if (acik.aciortay) { V.forEach((P, i) => { const [Q, T] = K[i], sQ = Math.hypot(P.x - Q.x, P.y - Q.y), sT = Math.hypot(P.x - T.x, P.y - T.y), D = { x: (Q.x * sT + T.x * sQ) / (sQ + sT), y: (Q.y * sT + T.y * sQ) / (sQ + sT) }; p.push(cizgi(P, D, "#35e0b0")); }); p.push(`<circle cx="${m.I.x}" cy="${m.I.y}" r="${m.r}" fill="rgba(53,224,176,.08)" stroke="#35e0b0" stroke-width="2"/>`); }
-      if (acik.kenarortay) V.forEach((P, i) => p.push(cizgi(P, orta(...K[i]), "#ffc657")));
-      if (acik.yukseklik) V.forEach((P, i) => { const f = ayak(P, ...K[i]); p.push(cizgi(P, f, "#ff4d61")); p.push(cizgi(f, m.H, "#ff4d61", true)); p.push(`<circle cx="${f.x}" cy="${f.y}" r="3.5" fill="#ff4d61"/>`); });
-      if (acik.euler) { const [u, v] = uzat(m.O, m.H); p.push(`<line x1="${u.x}" y1="${u.y}" x2="${v.x}" y2="${v.y}" stroke="#eef3ff" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>`); }
+      if (acik.ortadik) { K.forEach(([P, Q]) => { const o = orta(P, Q), d = { x: o.x - (Q.y - P.y), y: o.y + (Q.x - P.x) }; const [u, v] = uzat(o, d); p.push(cizgi(u, v, "#8fb3ff", true)); }); p.push(`<circle cx="${m.O.x}" cy="${m.O.y}" r="${m.R}" fill="none" stroke="#8fb3ff" stroke-width="2"/>`); }
+      if (acik.aciortay) { V.forEach((P, i) => { const [Q, T] = K[i], sQ = Math.hypot(P.x - Q.x, P.y - Q.y), sT = Math.hypot(P.x - T.x, P.y - T.y), D = { x: (Q.x * sT + T.x * sQ) / (sQ + sT), y: (Q.y * sT + T.y * sQ) / (sQ + sT) }; p.push(cizgi(P, D, "#5fd39d")); }); p.push(`<circle cx="${m.I.x}" cy="${m.I.y}" r="${m.r}" fill="rgba(53,224,176,.08)" stroke="#5fd39d" stroke-width="2"/>`); }
+      if (acik.kenarortay) V.forEach((P, i) => p.push(cizgi(P, orta(...K[i]), "#ffb04a")));
+      if (acik.yukseklik) V.forEach((P, i) => { const f = ayak(P, ...K[i]); p.push(cizgi(P, f, "#ff7a72")); p.push(cizgi(f, m.H, "#ff7a72", true)); p.push(`<circle cx="${f.x}" cy="${f.y}" r="3.5" fill="#ff7a72"/>`); });
+      if (acik.euler) { const [u, v] = uzat(m.O, m.H); p.push(`<line x1="${u.x}" y1="${u.y}" x2="${v.x}" y2="${v.y}" stroke="#eef3ee" stroke-width="2.5" stroke-dasharray="2 6" stroke-linecap="round"/>`); }
       if (acik.dokuz) {
-        p.push(`<circle cx="${m.N.x}" cy="${m.N.y}" r="${m.R / 2}" fill="none" stroke="#a66bff" stroke-width="2"/>`);
+        p.push(`<circle cx="${m.N.x}" cy="${m.N.y}" r="${m.R / 2}" fill="none" stroke="#b79cff" stroke-width="2"/>`);
         const dokuz = [...K.map(([P, Q]) => orta(P, Q)), ...V.map((P, i) => ayak(P, ...K[i])), ...V.map((P) => orta(P, m.H))];
-        dokuz.forEach((P) => p.push(`<circle cx="${P.x}" cy="${P.y}" r="4" fill="#a66bff"/>`));
-        p.push(nokta(m.N, "#a66bff", "N"));
+        dokuz.forEach((P) => p.push(`<circle cx="${P.x}" cy="${P.y}" r="4" fill="#b79cff"/>`));
+        p.push(nokta(m.N, "#b79cff", "N"));
       }
-      if (acik.kenarortay || acik.euler) p.push(nokta(m.G, "#ffc657", "G"));
-      if (acik.aciortay) p.push(nokta(m.I, "#35e0b0", "I"));
-      if (acik.ortadik || acik.euler) p.push(nokta(m.O, "#5b8cff", "O"));
-      if (acik.yukseklik || acik.euler) p.push(nokta(m.H, "#ff4d61", "H"));
+      if (acik.kenarortay || acik.euler) p.push(nokta(m.G, "#ffb04a", "G"));
+      if (acik.aciortay) p.push(nokta(m.I, "#5fd39d", "I"));
+      if (acik.ortadik || acik.euler) p.push(nokta(m.O, "#8fb3ff", "O"));
+      if (acik.yukseklik || acik.euler) p.push(nokta(m.H, "#ff7a72", "H"));
     }
-    ["A", "B", "C"].forEach((ad, i) => { const P = V[i]; p.push(`<circle cx="${P.x}" cy="${P.y}" r="13" fill="rgba(238,243,255,.12)" stroke="#eef3ff" stroke-width="2"/><circle cx="${P.x}" cy="${P.y}" r="6" fill="#eef3ff"/><text x="${P.x - 14}" y="${P.y - 16}" fill="#eef3ff" font-family="Unbounded, sans-serif" font-weight="700" font-size="18" paint-order="stroke" stroke="#06122a" stroke-width="5">${ad}</text>`); });
+    ["A", "B", "C"].forEach((ad, i) => { const P = V[i]; p.push(`<circle cx="${P.x}" cy="${P.y}" r="13" fill="rgba(238,243,255,.12)" stroke="#eef3ee" stroke-width="2"/><circle cx="${P.x}" cy="${P.y}" r="6" fill="#eef3ee"/><text x="${P.x - 14}" y="${P.y - 16}" fill="#eef3ee" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="18" paint-order="stroke" stroke="#0a1416" stroke-width="5">${ad}</text>`); });
     svg.innerHTML = p.join("");
     bilgiYaz(m);
   }

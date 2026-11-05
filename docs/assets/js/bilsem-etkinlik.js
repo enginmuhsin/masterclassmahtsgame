@@ -11,7 +11,7 @@ window.MC = window.MC || {};
 MC.bilsemEtkinlik = MC.bilsemEtkinlik || {};
 (function (E) {
   const U = MC.ui, S = MC.sayi, Ses = MC.Ses;
-  const RENK = { metin: "#eef3ff", soluk: "#9db0d6", cizgi: "rgba(150,180,255,.22)", kirmizi: "#ff4d61", turkuaz: "#35e0b0", altin: "#ffc657", mavi: "#5b8cff", mor: "#a66bff", turuncu: "#ff8a1f", zemin: "#081227" };
+  const RENK = { metin: "#eef3ee", soluk: "#a8b6b0", cizgi: "rgba(150,180,255,.22)", kirmizi: "#ff7a72", turkuaz: "#5fd39d", altin: "#ffb04a", mavi: "#8fb3ff", mor: "#b79cff", turuncu: "#ff9a4d", zemin: "#0c1415" };
 
   /* ---------- Ortak yardımcılar ---------- */
   const Y = (MC.bilsemYardim = {

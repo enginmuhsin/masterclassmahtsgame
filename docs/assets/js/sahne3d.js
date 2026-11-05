@@ -75,14 +75,14 @@
     const yildiz = [];
     for (let i = 0; i < 700; i++) { const r = 70 + Math.random() * 80, a = Math.random() * Math.PI * 2, b = Math.acos(2 * Math.random() - 1); yildiz.push(r * Math.sin(b) * Math.cos(a), r * Math.sin(b) * Math.sin(a), r * Math.cos(b)); }
     const yg = new THREE.BufferGeometry(); yg.setAttribute("position", new THREE.Float32BufferAttribute(yildiz, 3));
-    s.scene.add(new THREE.Points(yg, new THREE.PointsMaterial({ size: .5, map: noktaDokusu(), transparent: true, color: 0x9db0d6, depthWrite: false, opacity: .6 })));
+    s.scene.add(new THREE.Points(yg, new THREE.PointsMaterial({ size: .5, map: noktaDokusu(), transparent: true, color: 0xa8b6b0, depthWrite: false, opacity: .6 })));
     let veriler = [];
     function kur(N2, olcut2) {
       temizle(s.grup);
       const koor = S.ulam(N2), tauD = S.tauDizisi(N2), olcek = Math.max(.32, .62 * Math.sqrt(900 / N2));
       const yukseklik = (n) => olcut2 === "omega" ? S.carpanlar(BigInt(n)).length * 1.6 : olcut2 === "bolluk" ? Number(S.sigma(BigInt(n))) / n * 2.6 : (tauD[n] - 1) * .55;
       const gruplar = { asal: [], yari: [], diger: [] }, digerRenk = [];
-      const renk = new THREE.Color(), dusuk = new THREE.Color("#2e5fd6"), yuksek = new THREE.Color("#35e0b0");
+      const renk = new THREE.Color(), dusuk = new THREE.Color("#2e5fd6"), yuksek = new THREE.Color("#5fd39d");
       veriler = [];
       let zMax = 0;
       for (let n = 1; n <= N2; n++) {
@@ -100,12 +100,12 @@
         s.grup.add(new THREE.Points(g, new THREE.PointsMaterial({ size: b, map: noktaDokusu(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: !!renkler, color: renkler ? 0xffffff : rengi })));
       };
       yap(gruplar.diger, 0, boyut, digerRenk);
-      yap(gruplar.yari, 0xffc657, boyut * 1.1);
-      yap(gruplar.asal, 0xff4d61, boyut * 1.2);
+      yap(gruplar.yari, 0xffb04a, boyut * 1.1);
+      yap(gruplar.asal, 0xff7a72, boyut * 1.2);
       const esik = zMax * .32, kule = [];
       for (const v of veriler) if (v.z >= esik && v.tur === "diger") kule.push(v.x, v.y, 0, v.x, v.y, v.z);
       const kg = new THREE.BufferGeometry(); kg.setAttribute("position", new THREE.Float32BufferAttribute(kule, 3));
-      s.grup.add(new THREE.LineSegments(kg, new THREE.LineBasicMaterial({ color: 0x35e0b0, transparent: true, opacity: .22 })));
+      s.grup.add(new THREE.LineSegments(kg, new THREE.LineBasicMaterial({ color: 0x5fd39d, transparent: true, opacity: .22 })));
       if (window.gsap && !AZ_HAREKET) gsap.fromTo(s.grup.scale, { x: .2, y: .2, z: .01 }, { x: 1, y: 1, z: 1, duration: 1.8, ease: "expo.out" });
     }
     kur(N, olcut);
@@ -141,7 +141,7 @@
       while (u.length < 3) u.push([1n, 0]);
       const [[p, a], [q, b], [r, c]] = u, adet = (a + 1) * (b + 1) * (c + 1);
       const ox = a / 2, oy = b / 2, oz = c / 2, adim = Math.max(1, 6 / Math.max(a, b, c, 1)) * .55;
-      const dusuk = new THREE.Color("#2e5fd6"), yuksek = new THREE.Color("#ff4d61"), renk = new THREE.Color();
+      const dusuk = new THREE.Color("#2e5fd6"), yuksek = new THREE.Color("#ff7a72"), renk = new THREE.Color();
       const enBuyuk = Math.log(Number(n)) || 1;
       const kure = new THREE.SphereGeometry(Math.min(.24, adim * .28), 18, 12);
       const kenar = [];
@@ -158,7 +158,7 @@
         if (k < c) kenar.push(...P(i, j, k), ...P(i, j, k + 1));
       }
       const kg = new THREE.BufferGeometry(); kg.setAttribute("position", new THREE.Float32BufferAttribute(kenar, 3));
-      s.grup.add(new THREE.LineSegments(kg, new THREE.LineBasicMaterial({ color: 0x9db0d6, transparent: true, opacity: .45 })));
+      s.grup.add(new THREE.LineSegments(kg, new THREE.LineBasicMaterial({ color: 0xa8b6b0, transparent: true, opacity: .45 })));
       if (window.gsap && !AZ_HAREKET) gsap.fromTo(s.grup.scale, { x: .01, y: .01, z: .01 }, { x: 1, y: 1, z: 1, duration: 1, ease: "expo.out" });
       return { eksenler: [[p, a], [q, b], [r, c]].filter(([pp]) => pp > 1n), adet, farkli: S.ussler(n).size };
     }
@@ -171,7 +171,7 @@
     if (!s) return null;
     s.scene.add(new THREE.AmbientLight(0xffffff, .6));
     const isik = new THREE.DirectionalLight(0xffffff, .85); isik.position.set(6, -9, 12); s.scene.add(isik);
-    const RENK = { "a³": 0x2e5fd6, "a²b": 0xff4d61, "ab²": 0xffc657, "b³": 0x35e0b0 };
+    const RENK = { "a³": 0x2e5fd6, "a²b": 0xff7a72, "ab²": 0xffb04a, "b³": 0x5fd39d };
     function ciz(a, b, ayir) {
       temizle(s.grup);
       const parcalar = [
@@ -187,7 +187,7 @@
         const m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: RENK[ad], roughness: .45, metalness: .05, emissive: RENK[ad], emissiveIntensity: .12 }));
         m.position.set(ox + dx / 2 - merkez, oy + dy / 2 - merkez, oz + dz / 2 - merkez);
         s.grup.add(m);
-        const kenar = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x081227 }));
+        const kenar = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0x0c1415 }));
         kenar.position.copy(m.position); s.grup.add(kenar);
       }
     }

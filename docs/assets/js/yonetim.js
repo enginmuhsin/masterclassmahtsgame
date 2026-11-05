@@ -313,7 +313,7 @@
         <div class="metrik"><small>Günlük ortalama ziyaretçi</small><b>${(tz / gun).toLocaleString("tr-TR", { maximumFractionDigits: 1 })}</b></div>
         <div class="metrik"><small>En çok açılan bölüm</small><b style="font-size:1.05rem">${enCok ? U.kacis(SAYFA_AD[enCok[0]] || enCok[0]) : "—"}</b></div>`;
       MC.grafik.cubuk(U.$("#ynZGrafik", kap), { kategoriler: gunler.map((x) => x.slice(8, 10) + "." + x.slice(5, 7)),
-        seriler: [{ ad: "Ziyaretçi", degerler: z, renk: "#35e0b0" }, { ad: "Görüntülenme", degerler: g, renk: "#5b8cff" }] });
+        seriler: [{ ad: "Ziyaretçi", degerler: z, renk: "#5fd39d" }, { ad: "Görüntülenme", degerler: g, renk: "#8fb3ff" }] });
       const sirali = Object.entries(sayfa).sort((a, b) => b[1][1] - a[1][1]);
       U.$("#ynZTablo", kap).innerHTML = sirali.length ? `<div class="tablo-kutu"><table class="tablo"><tr><th>Bölüm</th><th>Görüntülenme</th><th>Siteye bu bölümden giren</th></tr>
         ${sirali.map(([k, [zz, gg]]) => `<tr><td>${U.kacis(SAYFA_AD[k] || k)}</td><td class="mono"><b>${t(gg)}</b></td><td class="mono soluk">${t(zz)}</td></tr>`).join("")}</table></div>` : '<p class="soluk">Bu dönemde kayıt yok.</p>';

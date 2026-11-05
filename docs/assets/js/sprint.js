@@ -183,7 +183,7 @@
         ${konular.length ? '<span class="etiket soluk">Konu karnesi</span><div class="grafik-kutu" id="spKarne" style="height:300px"></div>' : ""}
         <div class="satir"><button class="btn btn-ana" id="spTekrar">Yeni Sprint</button><button class="btn btn-ikinci" id="spAyar">Konuları değiştir</button></div></div>
       ${sp.hatalar.length ? `<div class="panel"><span class="etiket">Pit stop: doğrularıyla tekrar et</span><div class="yigin" id="spHatalar"></div></div>` : ""}`;
-    if (konular.length) MC.grafik.cubuk(U.$("#spKarne", s), { kategoriler: konular, seriler: [{ ad: "Doğru", degerler: konular.map((k) => sp.karne[k][0]), renk: "#35e0b0" }, { ad: "Yanlış", degerler: konular.map((k) => sp.karne[k][1]), renk: "#ff4d61" }] });
+    if (konular.length) MC.grafik.cubuk(U.$("#spKarne", s), { kategoriler: konular, seriler: [{ ad: "Doğru", degerler: konular.map((k) => sp.karne[k][0]), renk: "#5fd39d" }, { ad: "Yanlış", degerler: konular.map((k) => sp.karne[k][1]), renk: "#ff7a72" }] });
     const h = U.$("#spHatalar", s);
     if (h) sp.hatalar.forEach(({ q, s: sec }) => {
       const kutu = document.createElement("div"); kutu.className = "panel-ic";

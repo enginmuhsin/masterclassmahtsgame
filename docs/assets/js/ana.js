@@ -59,7 +59,7 @@
           <div class="moduller">
             ${MODULLER.map(([id, k, r, ad, ac, say]) => `
               <a class="modul" ${id === "geometri" ? 'href="geometri/index.html"' : id === "ayin" ? 'href="geometri/index.html#ayin"' : `href="#${id}" data-git="${id}"`}>
-                <span class="simge" style="background:${r};color:#081227">${k}</span>
+                <span class="simge" style="background:${r};color:#0c1415">${k}</span>
                 <h3>${ad}</h3><p>${ac}</p><span class="sayac">${say}</span>
               </a>`).join("")}
           </div>

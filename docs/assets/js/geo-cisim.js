@@ -6,7 +6,7 @@
 (function () {
   const U = MC.ui, Ses = MC.Ses;
   const R3 = Math.sqrt(3);
-  const RENKLER = [0x2e5fd6, 0xff4d61, 0xffc657, 0x35e0b0, 0xa66bff, 0xff8a1f, 0x33c3f0];
+  const RENKLER = [0x2e5fd6, 0xff7a72, 0xffb04a, 0x5fd39d, 0xb79cff, 0xff9a4d, 0x33c3f0];
   const kare = (a, b) => [[0, 0], [a, 0], [a, b], [0, b]];
   const ucgen = (s) => [[0, 0], [s, 0], [s / 2, s * R3 / 2]];
   const ikiz = (s, l) => [[0, 0], [s, 0], [s / 2, l]];
@@ -46,7 +46,7 @@
     const geo = new THREE.ShapeGeometry(sh);
     const g = new THREE.Group();
     g.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: renk, side: THREE.DoubleSide, transparent: true, opacity: .88, roughness: .5, emissive: renk, emissiveIntensity: .12, polygonOffset: true, polygonOffsetFactor: 1 })));
-    g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0xeef3ff })));
+    g.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0xeef3ee })));
     return g;
   }
   let renkSira = 0;
