@@ -1,6 +1,6 @@
 /* Çevrimdışı önbellek: site bir kez açıldıktan sonra internetsiz de çalışır.
    Yeni sürüm yayınlanınca SURUM değiştirilir; eski önbellek silinir. */
-const SURUM = "mc-v24";
+const SURUM = "mc-v25";
 const DOSYALAR = [
   "./",
   "./assets/css/fonts.css",
@@ -98,7 +98,8 @@ const DOSYALAR = [
   "./assets/js/haftanin-sorulari.js",
 ];
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(SURUM).then((c) => c.addAll(DOSYALAR)).then(() => self.skipWaiting()));
+  // cache: "reload" → tarayıcının HTTP önbelleğindeki eski kopyayı değil, sunucudaki güncel dosyayı al
+  e.waitUntil(caches.open(SURUM).then((c) => c.addAll(DOSYALAR.map((u) => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", (e) => {
   e.waitUntil(caches.keys().then((k) => Promise.all(k.filter((x) => x !== SURUM).map((x) => caches.delete(x)))).then(() => self.clients.claim()));
@@ -107,7 +108,9 @@ self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   if (new URL(e.request.url).origin !== self.location.origin) return; // sıralama sunucusu gibi dış adresler önbelleğe alınmaz
   e.respondWith(
-    fetch(e.request).then((yanit) => {
+    // "no-cache": her istekte sunucuya "değişti mi?" diye sor (ETag ile; değişmediyse 304, çok hızlı).
+    // Sunucu Cache-Control göndermediği için tarayıcı aksi hâlde eski CSS/JS'yi günlerce tutabiliyor.
+    fetch(e.request.mode === "navigate" ? e.request : new Request(e.request, { cache: "no-cache" })).then((yanit) => {
       const kopya = yanit.clone();
       caches.open(SURUM).then((c) => c.put(e.request, kopya)).catch(() => {});
       return yanit;
