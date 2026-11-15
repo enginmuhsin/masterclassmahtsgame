@@ -13,6 +13,198 @@ MC.haftaninSorulari = {
  "aciklama": "Haftanın Soruları ve soru bankası. En yeni soru en üstte. cozum alanı pazar akşamı doldurulur.",
  "sorular": [
   {
+   "id": "2026-H47-mat",
+   "hafta": "2026-H47",
+   "tur": "matematik",
+   "baslik": "Bir, üç ya da dört taş",
+   "seviye": "Ortaokul 7–8 · Lise 9",
+   "konu": [
+    "Kombinatorik",
+    "Oyun"
+   ],
+   "zorluk": 2,
+   "baslangic": "2026-11-16",
+   "cozumTarihi": "2026-11-22",
+   "metin": "Masada n tane taş vardır. Aslı ile Zehra, Aslı başlamak üzere sırayla hamle yapıyor. Her hamlede oyuncu masadan 1, 3 ya da 4 taş alır (masada yeterince taş varsa). Son taşı alan oyuncu kazanır. Örneğin n = 2 ise Aslı yalnızca 1 taş alabilir, Zehra kalan taşı alıp kazanır.<br>1 ≤ n ≤ 2026 olmak üzere, Aslı nasıl oynarsa oynasın <b>Zehra'nın kazanmayı garanti edebildiği</b> kaç tane n değeri vardır?",
+   "ipuclari": [
+    "Küçük n değerlerinden başla. Bir taş sayısına, sırası gelen oyuncu için <i>kaybettiren konum</i> diyelim: oradan yapılan her hamle rakibe kazandıran bir konum bırakıyorsa. 0 taş kaybettiren bir konumdur.",
+    "n = 0, 1, 2, …, 14 için her konumu “kazandıran” ya da “kaybettiren” diye işaretle. Bir konum, ondan 1, 3 ya da 4 eksiği arasında kaybettiren bir konum varsa kazandırandır. Kaybettiren konumlar düzenli bir aralıkla tekrar ediyor mu?",
+    "Kaybettiren konumların 7'ye bölümünden kalanlarına bak. Bu kalanlara sahip bir konumdan yapılan her hamlenin rakibi kazandıran konuma götürdüğünü ve öteki her kalandan bu kalanlara bir hamlede gidilebildiğini kontrol et; sonra 1 ile 2026 arasında say."
+   ],
+   "birim": "",
+   "esin": "TÜBİTAK Ortaokul 1. aşama Aslı–Zehra oyunları tarzında özgün soru",
+   "hazirlayan": "Master Class",
+   "cevapOzet": "3a97c2f1cd2cb2d87435a6a60fdf9da609137926b0962961105805f5276af3f2",
+   "cozum": null,
+   "cevapAcik": null
+  },
+  {
+   "id": "2026-H47-geo",
+   "hafta": "2026-H47",
+   "tur": "geometri",
+   "baslik": "Karede kesişen iki doğru",
+   "seviye": "Ortaokul 7–8 · Lise 9",
+   "konu": [
+    "Geometri",
+    "Benzerlik",
+    "Alan"
+   ],
+   "zorluk": 2,
+   "baslangic": "2026-11-16",
+   "cozumTarihi": "2026-11-22",
+   "metin": "ABCD, bir kenarının uzunluğu 12 olan bir kare olsun. E noktası [BC] kenarının orta noktası, F noktası [CD] kenarı üzerinde ve |CF| = 3 olsun. AE ∩ BF = {G} olduğuna göre ABG üçgeninin alanı kaç birimkaredir?",
+   "ipuclari": [
+    "ABG ve ABF üçgenleri aynı [AB] tabanını paylaşır. ABF üçgeninin alanını bulmak kolay; asıl soru G'nin [BF] üzerinde nerede olduğu.",
+    "alan(ABG) / alan(ABF) = |BG| / |BF| olur. Öyleyse |BG| : |GF| oranını bulmak yeter. Bunun için G'de birleşen ve kenarları paralel olan iki üçgen (bir “kum saati”) ara.",
+    "AE doğrusunu E'nin ötesine uzat ve DC doğrusuyla K noktasında kestir. E orta nokta olduğundan ABE ile KCE üçgenleri eştir; |CK| kaçtır? Sonra AB ∥ FK kullanarak GAB ve GKF üçgenlerinin benzerliğini yaz."
+   ],
+   "cevapMetin": "32",
+   "birim": "",
+   "sekil": {
+    "nesne": [
+     {
+      "id": "A",
+      "tur": "nokta",
+      "ad": "A",
+      "x": 80,
+      "y": 600
+     },
+     {
+      "id": "B",
+      "tur": "nokta",
+      "ad": "B",
+      "x": 500,
+      "y": 600
+     },
+     {
+      "id": "C",
+      "tur": "nokta",
+      "ad": "C",
+      "x": 500,
+      "y": 180
+     },
+     {
+      "id": "D",
+      "tur": "nokta",
+      "ad": "D",
+      "x": 80,
+      "y": 180
+     },
+     {
+      "id": "AB",
+      "tur": "parca",
+      "p": "A",
+      "q": "B"
+     },
+     {
+      "id": "BC",
+      "tur": "parca",
+      "p": "B",
+      "q": "C"
+     },
+     {
+      "id": "CD",
+      "tur": "parca",
+      "p": "C",
+      "q": "D"
+     },
+     {
+      "id": "DA",
+      "tur": "parca",
+      "p": "D",
+      "q": "A"
+     },
+     {
+      "id": "E",
+      "tur": "nokta",
+      "ad": "E",
+      "turet": "orta",
+      "a": "B",
+      "b": "C"
+     },
+     {
+      "id": "F",
+      "tur": "nokta",
+      "ad": "F",
+      "uzerinde": "CD",
+      "t": 0.25
+     },
+     {
+      "id": "AE",
+      "tur": "parca",
+      "p": "A",
+      "q": "E"
+     },
+     {
+      "id": "BF",
+      "tur": "parca",
+      "p": "B",
+      "q": "F"
+     },
+     {
+      "id": "G",
+      "tur": "nokta",
+      "ad": "G",
+      "turet": "kesisim",
+      "a": "AE",
+      "b": "BF",
+      "i": 0
+     },
+     {
+      "id": "cBE",
+      "tur": "centik",
+      "a": "B",
+      "b": "E",
+      "n": 1
+     },
+     {
+      "id": "cEC",
+      "tur": "centik",
+      "a": "E",
+      "b": "C",
+      "n": 1
+     },
+     {
+      "id": "uAB",
+      "tur": "uz",
+      "a": "A",
+      "b": "B",
+      "metin": "12"
+     },
+     {
+      "id": "uCF",
+      "tur": "uz",
+      "a": "C",
+      "b": "F",
+      "metin": "3"
+     },
+     {
+      "id": "aABC",
+      "tur": "aci",
+      "a": "A",
+      "v": "B",
+      "c": "C",
+      "metin": "90"
+     }
+    ],
+    "olcek": 35,
+    "uyduruldu": true
+   },
+   "esin": "TÜBİTAK Ortaokul 1. aşama geometri (oran-alan, ek çizim) tarzında özgün soru",
+   "hazirlayan": "Master Class",
+   "cozum": null,
+   "cevapAcik": null,
+   "svg": {
+    "icerik": "<rect x=\"-2000\" y=\"-2000\" width=\"5000\" height=\"4700\" fill=\"#0a1416\"/><line x1=\"80\" y1=\"600\" x2=\"500\" y2=\"600\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"500\" y1=\"600\" x2=\"500\" y2=\"180\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"500\" y1=\"180\" x2=\"80\" y2=\"180\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"80\" y1=\"180\" x2=\"80\" y2=\"600\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"80\" y1=\"600\" x2=\"500\" y2=\"390\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"500\" y1=\"600\" x2=\"395\" y2=\"180\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"491\" y1=\"493\" x2=\"509\" y2=\"497\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"491\" y1=\"283\" x2=\"509\" y2=\"287\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><text x=\"290\" y=\"620\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">12</text><text x=\"447.5\" y=\"160\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">3</text><path d=\"M484 600 L484 584 L500 584\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><circle cx=\"80\" cy=\"600\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"64.76346499906819\" y=\"612.9556165876187\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">A</text><circle cx=\"500\" cy=\"600\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"510.2721377190542\" y=\"617.1605124247728\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">B</text><circle cx=\"500\" cy=\"180\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"512.2289500215153\" y=\"164.17429997215666\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">C</text><circle cx=\"80\" cy=\"180\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"63.29770327628988\" y=\"168.99848718797537\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">D</text><circle cx=\"500\" cy=\"390\" r=\"5.5\" fill=\"#ff7a72\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"519.6548210466444\" y=\"393.69973102054485\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">E</text><circle cx=\"395\" cy=\"180\" r=\"5.5\" fill=\"#8fb3ff\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"398.92232270276367\" y=\"160.3883864861816\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">F</text><circle cx=\"453.3333333333333\" cy=\"413.33333333333337\" r=\"5.5\" fill=\"#ff7a72\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"471.031697780973\" y=\"422.6482619899858\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">G</text>",
+    "kutu": {
+     "x": 10,
+     "y": 110,
+     "w": 560,
+     "h": 560
+    }
+   }
+  },
+  {
    "id": "2026-H46-mat",
    "hafta": "2026-H46",
    "tur": "matematik",
@@ -35,8 +227,8 @@ MC.haftaninSorulari = {
    "esin": "TÜBİTAK Ortaokul 1. aşama cebir (simetrik ifadeler) tarzında özgün soru",
    "hazirlayan": "Master Class",
    "cevapOzet": "8f67bc9340a938dabcb4044c280bbcd3aefba04733170f8006334287c4f3932a",
-   "cozum": null,
-   "cevapAcik": null
+   "cozum": "<p><b>1. İkili çarpımların toplamı.</b> a + b + c = 0 olduğundan (a + b + c)<sup>2</sup> = 0. Açalım: a<sup>2</sup> + b<sup>2</sup> + c<sup>2</sup> + 2(ab + bc + ca) = 0, yani 2026 + 2(ab + bc + ca) = 0 ve <b>ab + bc + ca = −1013</b>.</p>\n<p><b>2. Kare çarpımların toplamı.</b> (ab + bc + ca)<sup>2</sup> ifadesini açalım: a<sup>2</sup>b<sup>2</sup> + b<sup>2</sup>c<sup>2</sup> + c<sup>2</sup>a<sup>2</sup> + 2(ab·bc + bc·ca + ca·ab) = a<sup>2</sup>b<sup>2</sup> + b<sup>2</sup>c<sup>2</sup> + c<sup>2</sup>a<sup>2</sup> + 2abc(a + b + c). Son terim a + b + c = 0 yüzünden sıfırdır. Böylece <b>a<sup>2</sup>b<sup>2</sup> + b<sup>2</sup>c<sup>2</sup> + c<sup>2</sup>a<sup>2</sup> = 1013<sup>2</sup></b>.</p>\n<p><b>3. Dördüncü kuvvetler.</b> (a<sup>2</sup> + b<sup>2</sup> + c<sup>2</sup>)<sup>2</sup> = a<sup>4</sup> + b<sup>4</sup> + c<sup>4</sup> + 2(a<sup>2</sup>b<sup>2</sup> + b<sup>2</sup>c<sup>2</sup> + c<sup>2</sup>a<sup>2</sup>) olduğundan</p>\n<p>a<sup>4</sup> + b<sup>4</sup> + c<sup>4</sup> = 2026<sup>2</sup> − 2 · 1013<sup>2</sup> = 4 · 1013<sup>2</sup> − 2 · 1013<sup>2</sup> = 2 · 1013<sup>2</sup> = 2 · 1 026 169 = <b>2 052 338</b>.</p>\n<p><i>Böyle sayılar var mı?</i> Evet: örneğin a = √1013, b = −√1013, c = 0 iki koşulu da sağlar; bu üçlü için a<sup>4</sup> + b<sup>4</sup> + c<sup>4</sup> = 2 · 1013<sup>2</sup>. Hesap bize cevabın üçlünün seçiminden bağımsız olduğunu da gösterdi.</p>\n<p><i>Bir adım ileri:</i> a + b + c = 0 ise her zaman a<sup>4</sup> + b<sup>4</sup> + c<sup>4</sup> = (a<sup>2</sup> + b<sup>2</sup> + c<sup>2</sup>)<sup>2</sup> / 2 olur. Aynı koşulda a<sup>3</sup> + b<sup>3</sup> + c<sup>3</sup> = 3abc özdeşliğini de kullanarak şunu gösterebilir misin: (a<sup>5</sup> + b<sup>5</sup> + c<sup>5</sup>)/5 = (a<sup>2</sup> + b<sup>2</sup> + c<sup>2</sup>)/2 · (a<sup>3</sup> + b<sup>3</sup> + c<sup>3</sup>)/3.</p>",
+   "cevapAcik": "2052338"
   },
   {
    "id": "2026-H46-geo",
@@ -164,8 +356,8 @@ MC.haftaninSorulari = {
    },
    "esin": "TÜBİTAK Ortaokul 1. aşama geometri (alan, ek çizim) tarzında özgün soru",
    "hazirlayan": "Master Class",
-   "cozum": null,
-   "cevapAcik": null,
+   "cozum": "<p><b>1. Neden ek çizim?</b> Eşit kenarlar |AB| = |BC|, bilinen kenarlar |AD| = 2 ve |DC| = 8 ile doğrudan bağlı değil. B'den DA doğrusuna ve DC doğrusuna dikler inelim; ayaklar E ve F olsun. (E, [DA]'nın A tarafındaki uzantısında; F, [DC] üzerinde.)</p>\n<p><b>2. Dikdörtgen.</b> DEBF dörtgeninin D, E, F açıları 90° olduğundan DEBF bir dikdörtgendir; s(EBF) = 90°.</p>\n<p><b>3. Eşlik.</b> s(EBF) = s(ABC) = 90°. İkisinden de s(ABF) çıkarılınca s(EBA) = s(FBC) kalır. ABE ve CBF dik üçgenlerinde hipotenüsler eşit (|AB| = |BC|) ve birer dar açı eşit olduğundan ABE ≅ CBF. Buradan <b>|BE| = |BF|</b> ve <b>|AE| = |CF|</b>.</p>\n<p><b>4. Kare.</b> Komşu iki kenarı eşit olan dikdörtgen karedir: DEBF bir karedir, |DE| = |DF|. |AE| = |CF| = t dersek |DE| = 2 + t ve |DF| = 8 − t; 2 + t = 8 − t, yani t = 3 ve karenin kenarı 5.</p>\n<p><b>5. Alanı taşı.</b> ABCD dörtgeni, DEBF karesinden ABE üçgeni çıkarılıp ona eş CBF üçgeni eklenerek elde edilir. Öyleyse alan(ABCD) = alan(DEBF) = 5<sup>2</sup> = <b>25</b>.</p>\n<p><i>Başka bir yol (Pisagor):</i> [AC] köşegenini çizelim. ADC dik üçgeninde |AC|<sup>2</sup> = 2<sup>2</sup> + 8<sup>2</sup> = 68 ve alan(ADC) = 2 · 8 / 2 = 8. ABC ikizkenar dik üçgeninde |AB|<sup>2</sup> = |AC|<sup>2</sup> / 2 = 34 ve alan(ABC) = 34 / 2 = 17. Toplam 8 + 17 = 25.</p>\n<p><i>Bir adım ileri:</i> Genel olarak |AD| = a ve |DC| = b ise karenin kenarı (a + b)/2 ve alan (a + b)<sup>2</sup>/4 olur. Karenin köşegeni [BD] olduğundan [BD], ADC açısının <b>açıortayıdır</b>. Bu soruda |BD| kaçtır? (Cevap: 5√2.)</p>",
+   "cevapAcik": "25",
    "svg": {
     "icerik": "<rect x=\"-2000\" y=\"-2000\" width=\"5000\" height=\"4700\" fill=\"#0a1416\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"320\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"470\" y2=\"620\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"553.311555179442\" y1=\"463.65455234972717\" x2=\"566.688444820558\" y2=\"476.34544765027283\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"493.65455234972717\" y1=\"236.68844482055783\" x2=\"506.34544765027283\" y2=\"223.31155517944217\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M641.7680679131596 333.7198868114007 L628.0481811017588 325.48795472456027 L636.2801131885993 311.7680679131596\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><path d=\"M366 620 L366 604 L350 604\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><text x=\"410\" y=\"640\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">2</text><text x=\"330\" y=\"380\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">8</text><circle cx=\"470\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"471.53392997769475\" y=\"639.9410897100316\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">A</text><circle cx=\"650\" cy=\"320\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"667.6094219984435\" y=\"310.5180035392996\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">B</text><circle cx=\"350\" cy=\"140\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"343.08589282345287\" y=\"121.2331376636578\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">C</text><circle cx=\"350\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"340.5180035392996\" y=\"637.6094219984435\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">D</text>",
     "kutu": {
@@ -174,7 +366,228 @@ MC.haftaninSorulari = {
      "w": 440,
      "h": 620
     }
-   }
+   },
+   "adimlar": [
+    {
+     "baslik": "Ek çizim: B'den dikler",
+     "metin": "<p>Eşit kenarlar |AB| = |BC| bilinen kenarlara bağlı değil. B'den DA doğrusuna ve DC doğrusuna dikler inelim; ayaklar <b>E</b> ve <b>F</b> olsun.</p><p>DEBF dörtgeninin D, E ve F açıları 90° olduğundan DEBF bir <b>dikdörtgendir</b>; B açısı da 90°.</p>",
+     "ekle": [
+      {
+       "id": "E",
+       "tur": "nokta",
+       "ad": "E",
+       "uzerinde": "DA",
+       "t": 2.5
+      },
+      {
+       "id": "F",
+       "tur": "nokta",
+       "ad": "F",
+       "uzerinde": "DC",
+       "t": 0.625
+      },
+      {
+       "id": "AE",
+       "tur": "parca",
+       "p": "A",
+       "q": "E"
+      },
+      {
+       "id": "BE",
+       "tur": "parca",
+       "p": "B",
+       "q": "E"
+      },
+      {
+       "id": "BF",
+       "tur": "parca",
+       "p": "B",
+       "q": "F"
+      },
+      {
+       "id": "n_BED",
+       "tur": "aci",
+       "a": "B",
+       "v": "E",
+       "c": "D",
+       "metin": "90"
+      },
+      {
+       "id": "n_BFD",
+       "tur": "aci",
+       "a": "B",
+       "v": "F",
+       "c": "D",
+       "metin": "90"
+      }
+     ],
+     "vurgu": [
+      "BE",
+      "BF",
+      "AE"
+     ],
+     "gizle": [
+      "aABC"
+     ],
+     "svg": {
+      "icerik": "<rect x=\"-2000\" y=\"-2000\" width=\"5000\" height=\"4700\" fill=\"#0a1416\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"320\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"470\" y2=\"620\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"620\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"650\" y2=\"620\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"320\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"553.311555179442\" y1=\"463.65455234972717\" x2=\"566.688444820558\" y2=\"476.34544765027283\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"493.65455234972717\" y1=\"236.68844482055783\" x2=\"506.34544765027283\" y2=\"223.31155517944217\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M366 620 L366 604 L350 604\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><text x=\"410\" y=\"640\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">2</text><text x=\"330\" y=\"380\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">8</text><path d=\"M650 604 L634 604 L634 620\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><path d=\"M366 320 L366 336 L350 336\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><circle cx=\"470\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"471.53392997769475\" y=\"639.9410897100316\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">A</text><circle cx=\"650\" cy=\"320\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"667.6094219984435\" y=\"310.5180035392996\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">B</text><circle cx=\"350\" cy=\"140\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"343.08589282345287\" y=\"121.2331376636578\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">C</text><circle cx=\"350\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"340.5180035392996\" y=\"637.6094219984435\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">D</text><circle cx=\"650\" cy=\"620\" r=\"8\" fill=\"#ffb04a\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"664.142135623731\" y=\"634.142135623731\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">E</text><circle cx=\"350\" cy=\"320\" r=\"8\" fill=\"#ffb04a\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"335.85786437626905\" y=\"305.85786437626905\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">F</text>",
+      "kutu": {
+       "x": 280,
+       "y": 70,
+       "w": 440,
+       "h": 620
+      }
+     }
+    },
+    {
+     "baslik": "Eş üçgenler",
+     "metin": "<p>s(EBF) = 90° = s(ABC). İkisinden de s(ABF) çıkarılırsa <b>s(EBA) = s(FBC)</b> kalır.</p><p>ABE ve CBF dik üçgenlerinde hipotenüsler eşit (|AB| = |BC|) ve birer dar açı eşit. Bu yüzden ABE ≅ CBF: <b>|BE| = |BF|</b> ve <b>|AE| = |CF|</b>.</p>",
+     "ekle": [
+      {
+       "id": "y_EBA",
+       "tur": "yay",
+       "a": "E",
+       "v": "B",
+       "c": "A",
+       "n": 1
+      },
+      {
+       "id": "y_FBC",
+       "tur": "yay",
+       "a": "F",
+       "v": "B",
+       "c": "C",
+       "n": 1
+      },
+      {
+       "id": "cBE",
+       "tur": "centik",
+       "a": "B",
+       "b": "E",
+       "n": 2
+      },
+      {
+       "id": "cBF",
+       "tur": "centik",
+       "a": "B",
+       "b": "F",
+       "n": 2
+      }
+     ],
+     "vurgu": [
+      "AB",
+      "BC"
+     ],
+     "bolge": [
+      [
+       "A",
+       "B",
+       "E"
+      ],
+      [
+       "C",
+       "B",
+       "F"
+      ]
+     ],
+     "svg": {
+      "icerik": "<rect x=\"-2000\" y=\"-2000\" width=\"5000\" height=\"4700\" fill=\"#0a1416\"/><polygon points=\"470,620 650,320 650,620\" fill=\"#ffb04a\" fill-opacity=\".22\" stroke=\"#ffb04a\" stroke-opacity=\".7\" stroke-width=\"2\" stroke-dasharray=\"6 5\" stroke-linejoin=\"round\"/><polygon points=\"350,140 650,320 350,320\" fill=\"#ffb04a\" fill-opacity=\".22\" stroke=\"#ffb04a\" stroke-opacity=\".7\" stroke-width=\"2\" stroke-dasharray=\"6 5\" stroke-linejoin=\"round\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"320\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"140\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"470\" y2=\"620\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"620\" stroke=\"#5fd39d\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-dasharray=\"10 7\"/><line x1=\"650\" y1=\"320\" x2=\"650\" y2=\"620\" stroke=\"#5fd39d\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-dasharray=\"10 7\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"320\" stroke=\"#5fd39d\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-dasharray=\"10 7\"/><line x1=\"553.311555179442\" y1=\"463.65455234972717\" x2=\"566.688444820558\" y2=\"476.34544765027283\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"493.65455234972717\" y1=\"236.68844482055783\" x2=\"506.34544765027283\" y2=\"223.31155517944217\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"659\" y1=\"469\" x2=\"641\" y2=\"465\" stroke=\"#ffb04a\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"659\" y1=\"475\" x2=\"641\" y2=\"471\" stroke=\"#ffb04a\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"501\" y1=\"329\" x2=\"505\" y2=\"311\" stroke=\"#ffb04a\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"495\" y1=\"329\" x2=\"499\" y2=\"311\" stroke=\"#ffb04a\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M650 344 A24 24 0 0 1 637.6521018697393 340.57983021710106\" fill=\"none\" stroke=\"#5fd39d\" stroke-width=\"2.4\"/><path d=\"M626 320 A24 24 0 0 1 629.4201697828989 307.65210186973934\" fill=\"none\" stroke=\"#5fd39d\" stroke-width=\"2.4\"/><path d=\"M641.7680679131596 333.7198868114007 L628.0481811017588 325.48795472456027 L636.2801131885993 311.7680679131596\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><path d=\"M366 620 L366 604 L350 604\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><text x=\"410\" y=\"640\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">2</text><text x=\"330\" y=\"380\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">8</text><path d=\"M650 604 L634 604 L634 620\" fill=\"none\" stroke=\"#ff9a4d\" stroke-width=\"2.4\"/><path d=\"M366 320 L366 336 L350 336\" fill=\"none\" stroke=\"#ff9a4d\" stroke-width=\"2.4\"/><circle cx=\"470\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"471.53392997769475\" y=\"639.9410897100316\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">A</text><circle cx=\"650\" cy=\"320\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"667.6094219984435\" y=\"310.5180035392996\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">B</text><circle cx=\"350\" cy=\"140\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"343.08589282345287\" y=\"121.2331376636578\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">C</text><circle cx=\"350\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"340.5180035392996\" y=\"637.6094219984435\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">D</text><circle cx=\"650\" cy=\"620\" r=\"5.5\" fill=\"#5fd39d\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"664.142135623731\" y=\"634.142135623731\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#5fd39d\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">E</text><circle cx=\"350\" cy=\"320\" r=\"5.5\" fill=\"#5fd39d\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"335.85786437626905\" y=\"305.85786437626905\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#5fd39d\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">F</text>",
+      "kutu": {
+       "x": 280,
+       "y": 70,
+       "w": 440,
+       "h": 620
+      }
+     }
+    },
+    {
+     "baslik": "DEBF bir kare",
+     "metin": "<p>Dikdörtgenin iki komşu kenarı eşit (|BE| = |BF|), yani <b>DEBF bir karedir</b>: |DE| = |DF|.</p><p>|AE| = |CF| = t diyelim. |DE| = 2 + t ve |DF| = 8 − t. Buradan 2 + t = 8 − t, <b>t = 3</b> ve karenin kenarı <b>5</b>.</p>",
+     "ekle": [
+      {
+       "id": "uAE",
+       "tur": "uz",
+       "a": "A",
+       "b": "E",
+       "metin": "3"
+      },
+      {
+       "id": "uCF",
+       "tur": "uz",
+       "a": "C",
+       "b": "F",
+       "metin": "3"
+      }
+     ],
+     "vurgu": [
+      "AE",
+      "DA",
+      "BE",
+      "BF"
+     ],
+     "bolge": [
+      [
+       "D",
+       "E",
+       "B"
+      ],
+      [
+       "D",
+       "B",
+       "F"
+      ]
+     ],
+     "gizle": [
+      "y_EBA",
+      "y_FBC"
+     ],
+     "svg": {
+      "icerik": "<rect x=\"-2000\" y=\"-2000\" width=\"5000\" height=\"4700\" fill=\"#0a1416\"/><polygon points=\"350,620 650,620 650,320\" fill=\"#ffb04a\" fill-opacity=\".22\" stroke=\"#ffb04a\" stroke-opacity=\".7\" stroke-width=\"2\" stroke-dasharray=\"6 5\" stroke-linejoin=\"round\"/><polygon points=\"350,620 650,320 350,320\" fill=\"#ffb04a\" fill-opacity=\".22\" stroke=\"#ffb04a\" stroke-opacity=\".7\" stroke-width=\"2\" stroke-dasharray=\"6 5\" stroke-linejoin=\"round\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"320\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"470\" y2=\"620\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"620\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"650\" y2=\"620\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"320\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"553.311555179442\" y1=\"463.65455234972717\" x2=\"566.688444820558\" y2=\"476.34544765027283\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"493.65455234972717\" y1=\"236.68844482055783\" x2=\"506.34544765027283\" y2=\"223.31155517944217\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"659\" y1=\"469\" x2=\"641\" y2=\"465\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"659\" y1=\"475\" x2=\"641\" y2=\"471\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"501\" y1=\"329\" x2=\"505\" y2=\"311\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"495\" y1=\"329\" x2=\"499\" y2=\"311\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M641.7680679131596 333.7198868114007 L628.0481811017588 325.48795472456027 L636.2801131885993 311.7680679131596\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><path d=\"M366 620 L366 604 L350 604\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><text x=\"410\" y=\"640\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">2</text><text x=\"330\" y=\"380\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">8</text><path d=\"M650 604 L634 604 L634 620\" fill=\"none\" stroke=\"#ff9a4d\" stroke-width=\"2.4\"/><path d=\"M366 320 L366 336 L350 336\" fill=\"none\" stroke=\"#ff9a4d\" stroke-width=\"2.4\"/><text x=\"560\" y=\"640\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">3</text><text x=\"330\" y=\"230\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">3</text><circle cx=\"470\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"471.53392997769475\" y=\"639.9410897100316\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">A</text><circle cx=\"650\" cy=\"320\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"667.6094219984435\" y=\"310.5180035392996\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">B</text><circle cx=\"350\" cy=\"140\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"343.08589282345287\" y=\"121.2331376636578\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">C</text><circle cx=\"350\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"340.5180035392996\" y=\"637.6094219984435\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">D</text><circle cx=\"650\" cy=\"620\" r=\"5.5\" fill=\"#5fd39d\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"664.142135623731\" y=\"634.142135623731\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#5fd39d\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">E</text><circle cx=\"350\" cy=\"320\" r=\"5.5\" fill=\"#5fd39d\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"335.85786437626905\" y=\"305.85786437626905\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#5fd39d\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">F</text>",
+      "kutu": {
+       "x": 280,
+       "y": 70,
+       "w": 440,
+       "h": 620
+      }
+     }
+    },
+    {
+     "baslik": "Alanı taşı",
+     "metin": "<p>ABCD dörtgeni kareden ABE üçgeni çıkarılıp ona eş olan CBF üçgeni eklenerek elde edilir. Bu yüzden alan(ABCD) = alan(DEBF) = 5<sup>2</sup> = <b>25</b>.</p>",
+     "ekle": [],
+     "vurgu": [
+      "AB",
+      "BC"
+     ],
+     "bolge": [
+      [
+       "A",
+       "B",
+       "E"
+      ],
+      [
+       "C",
+       "B",
+       "F"
+      ]
+     ],
+     "gizle": [
+      "y_EBA",
+      "y_FBC",
+      "n_BED",
+      "n_BFD"
+     ],
+     "svg": {
+      "icerik": "<rect x=\"-2000\" y=\"-2000\" width=\"5000\" height=\"4700\" fill=\"#0a1416\"/><polygon points=\"470,620 650,320 650,620\" fill=\"#ffb04a\" fill-opacity=\".22\" stroke=\"#ffb04a\" stroke-opacity=\".7\" stroke-width=\"2\" stroke-dasharray=\"6 5\" stroke-linejoin=\"round\"/><polygon points=\"350,140 650,320 350,320\" fill=\"#ffb04a\" fill-opacity=\".22\" stroke=\"#ffb04a\" stroke-opacity=\".7\" stroke-width=\"2\" stroke-dasharray=\"6 5\" stroke-linejoin=\"round\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"320\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"140\" stroke=\"#ffb04a\" stroke-width=\"5\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"350\" y2=\"140\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"350\" y1=\"620\" x2=\"470\" y2=\"620\" stroke=\"#eef3ee\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><line x1=\"470\" y1=\"620\" x2=\"650\" y2=\"620\" stroke=\"#5fd39d\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-dasharray=\"10 7\"/><line x1=\"650\" y1=\"320\" x2=\"650\" y2=\"620\" stroke=\"#5fd39d\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-dasharray=\"10 7\"/><line x1=\"650\" y1=\"320\" x2=\"350\" y2=\"320\" stroke=\"#5fd39d\" stroke-width=\"2.2\" stroke-linecap=\"round\" stroke-dasharray=\"10 7\"/><line x1=\"553.311555179442\" y1=\"463.65455234972717\" x2=\"566.688444820558\" y2=\"476.34544765027283\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"493.65455234972717\" y1=\"236.68844482055783\" x2=\"506.34544765027283\" y2=\"223.31155517944217\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"659\" y1=\"469\" x2=\"641\" y2=\"465\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"659\" y1=\"475\" x2=\"641\" y2=\"471\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"501\" y1=\"329\" x2=\"505\" y2=\"311\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><line x1=\"495\" y1=\"329\" x2=\"499\" y2=\"311\" stroke=\"#5fd39d\" stroke-width=\"2.6\" stroke-linecap=\"round\"/><path d=\"M641.7680679131596 333.7198868114007 L628.0481811017588 325.48795472456027 L636.2801131885993 311.7680679131596\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><path d=\"M366 620 L366 604 L350 604\" fill=\"none\" stroke=\"#ffb04a\" stroke-width=\"2.4\"/><text x=\"410\" y=\"640\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">2</text><text x=\"330\" y=\"380\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">8</text><text x=\"560\" y=\"640\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">3</text><text x=\"330\" y=\"230\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#ffb04a\" font-family=\"Onest, sans-serif\" font-weight=\"700\" font-size=\"17\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">3</text><circle cx=\"470\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"471.53392997769475\" y=\"639.9410897100316\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">A</text><circle cx=\"650\" cy=\"320\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"667.6094219984435\" y=\"310.5180035392996\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">B</text><circle cx=\"350\" cy=\"140\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"343.08589282345287\" y=\"121.2331376636578\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">C</text><circle cx=\"350\" cy=\"620\" r=\"5.5\" fill=\"#eef3ee\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"340.5180035392996\" y=\"637.6094219984435\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#eef3ee\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">D</text><circle cx=\"650\" cy=\"620\" r=\"5.5\" fill=\"#5fd39d\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"664.142135623731\" y=\"634.142135623731\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#5fd39d\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">E</text><circle cx=\"350\" cy=\"320\" r=\"5.5\" fill=\"#5fd39d\" stroke=\"#0a1416\" stroke-width=\"2\"/><text x=\"335.85786437626905\" y=\"305.85786437626905\" text-anchor=\"middle\" dominant-baseline=\"central\" fill=\"#5fd39d\" font-family=\"Onest, sans-serif\" font-weight=\"800\" font-size=\"18\" paint-order=\"stroke\" stroke=\"#0a1416\" stroke-width=\"4\">F</text>",
+      "kutu": {
+       "x": 280,
+       "y": 70,
+       "w": 440,
+       "h": 620
+      }
+     }
+    }
+   ]
   },
   {
    "id": "2026-H45-mat",
