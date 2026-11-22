@@ -329,7 +329,7 @@
       const h = P(o.id); if (!h || o.tur !== "nokta" || o.isaretsiz) continue;
       const v = secili.has(o.id) || vurgu.has(o.id), renk = v ? RENK.secili : o.ogr ? RENK.ogr : o.turet ? RENK.kesisim : o.uzerinde ? RENK.uzerinde : RENK.nokta;
       p.push(`<circle cx="${h.x}" cy="${h.y}" r="${px(v ? 8 : 5.5)}" fill="${renk}" stroke="${RENK.kagit}" stroke-width="${px(2)}"/>`);
-      const d = G.birim(h.x - ag.x, h.y - ag.y) || { x: 0.7, y: -0.7 };
+      const d = (o.etiket && G.birim(o.etiket[0], o.etiket[1])) || G.birim(h.x - ag.x, h.y - ag.y) || { x: 0.7, y: -0.7 };   // etiket: [dx, dy] isteğe bağlı ad yönü
       p.push(metin(h.x + d.x * px(20), h.y + d.y * px(20), o.ad, vurgu.has(o.id) ? RENK.secili : o.ogr ? RENK.ogr : "#eef3ee", 18, 800));
     }
     // Bağlam yazıları (yeni nesil sorular: “ayna”, “güneş ışını”, “kuzey” …) — işaretsiz bir noktaya bağlıdır
